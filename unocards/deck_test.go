@@ -1,6 +1,8 @@
 package unocards
 
-import "testing"
+import (
+	"testing"
+)
 
 const unodecksize = 108
 
@@ -57,5 +59,16 @@ func TestDeck_Shuffle(t *testing.T) {
 
 	if int(matching) == len(ordered) {
 		t.Error("The shuffled deck is EQUAL to the ordered deck, this should happen once in a lifetime")
+	}
+}
+
+func TestDeck_Multiply(t *testing.T) {
+	twice := NewVanilla(Multiply(2))
+	thrice := NewVanilla(Multiply(3))
+	if len(twice) != unodecksize*2 {
+		t.Error("Unexpected size for vanilla deck * 2:", len(twice))
+	}
+	if len(thrice) != unodecksize*3 {
+		t.Error("Unexpected size for vanilla deck * 3:", len(thrice))
 	}
 }

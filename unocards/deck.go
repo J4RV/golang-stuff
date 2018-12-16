@@ -49,11 +49,24 @@ func Shuffle(cards Deck) Deck {
 }
 
 //Filter returns a new slice of cards, containing only the cards that pass the filter function
-func Filter(f func(c Card) bool) func(Deck) Deck {
+func Filter(f func(c Card) bool) option {
 	return func(cards Deck) Deck {
 		var res Deck
 		for _, card := range cards {
 			if f(card) {
+				res = append(res, card)
+			}
+		}
+		return res
+	}
+}
+
+//Multiply returns an option that copies all cards in a deck X amount of times
+func Multiply(n int) option {
+	return func(cards Deck) Deck {
+		var res Deck
+		for _, card := range cards {
+			for i := 0; i < n; i++ {
 				res = append(res, card)
 			}
 		}
