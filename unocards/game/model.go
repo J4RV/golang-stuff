@@ -5,9 +5,11 @@ import (
 )
 
 type State struct {
-	Players       []Player
-	Currplayer    Player
-	Board         Board
+	Players       []*Player
+	Currplayer    *Player
+	Played        []uno.Card //Last card is the 'top' card
+	Deck          []uno.Card
+	Currcolor     uno.Color
 	Skip          bool
 	Orderreversed bool
 	Drawacum      int
@@ -16,9 +18,4 @@ type State struct {
 type Player struct {
 	Name string
 	Hand []uno.Card
-}
-
-type Board struct {
-	Played []uno.Card //Last card is the 'top' card
-	Deck   uno.Deck
 }

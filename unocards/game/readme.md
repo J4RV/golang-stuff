@@ -16,6 +16,7 @@ State {
   Skip bool
   Orderreversed bool
   Drawacum int
+  Currcolor Color
   ?
 }
 Player {

@@ -1,15 +1,22 @@
 package unocards
 
 import (
+	"fmt"
 	"math/rand"
+	"strings"
 )
 
-//Deck is just a slice of cards
-type Deck []Card
+func IndexedCardsString(h []Card) string {
+	strs := make([]string, len(h))
+	for i := range h {
+		strs[i] = fmt.Sprintf("(%d) %s", i, h[i].String())
+	}
+	return strings.Join(strs, ", ")
+}
 
 //NewVanilla returns a vanilla set of UNO cards
-func NewVanilla(opts ...option) Deck {
-	var cards Deck
+func NewVanilla(opts ...Option) []Card {
+	var cards []Card
 
 	for _, value := range allvalues {
 		switch value {
@@ -37,11 +44,11 @@ func NewVanilla(opts ...option) Deck {
 
 //Shuffle returns a copy of cards in a random order
 //for true randomness, remember to set a seed to the rand package
-func Shuffle(cards Deck) Deck {
+func Shuffle(cards []Card) []Card {
 	if cards == nil {
 		return cards
 	}
-	res := make(Deck, len(cards))
+	res := make([]Card, len(cards))
 	for i, j := range rand.Perm(len(cards)) {
 		res[i] = cards[j]
 	}
@@ -49,9 +56,9 @@ func Shuffle(cards Deck) Deck {
 }
 
 //Filter returns a new slice of cards, containing only the cards that pass the filter function
-func Filter(f func(c Card) bool) option {
-	return func(cards Deck) Deck {
-		var res Deck
+func Filter(f func(c Card) bool) Option {
+	return func(cards []Card) []Card {
+		var res []Card
 		for _, card := range cards {
 			if f(card) {
 				res = append(res, card)
@@ -62,9 +69,9 @@ func Filter(f func(c Card) bool) option {
 }
 
 //Multiply returns an option that copies all cards in a deck X amount of times
-func Multiply(n int) option {
-	return func(cards Deck) Deck {
-		var res Deck
+func Multiply(n int) Option {
+	return func(cards []Card) []Card {
+		var res []Card
 		for _, card := range cards {
 			for i := 0; i < n; i++ {
 				res = append(res, card)
@@ -76,9 +83,9 @@ func Multiply(n int) option {
 
 // internals
 
-type option func(Deck) Deck
+type Option func([]Card) []Card
 
-func applyOptions(c Deck, opts ...option) Deck {
+func applyOptions(c []Card, opts ...Option) []Card {
 	var res = c
 	for _, opt := range opts {
 		res = opt(res)
