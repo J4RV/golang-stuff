@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/j4rv/golang-stuff/unocards"
+	uno "github.com/j4rv/golang-stuff/unocards"
 )
 
 type State struct {
@@ -15,11 +15,10 @@ type State struct {
 
 type Player struct {
 	Name string
-	Hand []Card
+	Hand []uno.Card
 }
 
 type Board struct {
-	Topcard Card
-	Discard []Card
-	Deck    Deck
+	Played []uno.Card //Last card is the 'top' card
+	Deck   uno.Deck
 }
