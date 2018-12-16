@@ -1,6 +1,6 @@
 //go:generate stringer -type=Color,Value -linecomment=true
 
-package unocards
+package cards
 
 import (
 	"fmt"

@@ -1,4 +1,4 @@
-package unocards
+package cards
 
 import (
 	"fmt"
