@@ -18,12 +18,11 @@ func init() {
 }
 
 func initState() game.State {
-	player := game.Player{
-		Name: "Rojo",
-	}
+	player := game.Player{Name: "Rojo"}
+	player2 := game.Player{Name: "Green"}
 	deck := cards.NewVanilla(cards.Shuffle)
 	return game.State{
-		Players: []game.Player{player},
+		Players: []game.Player{player, player2},
 		Deck:    deck,
 	}
 }
@@ -54,6 +53,9 @@ func RunPhase(s game.State) game.State {
 	case game.ChoosingColor:
 		return AskPlayerInput(s)
 
+	case game.ForcingDraw:
+		return AskPlayerInput(s)
+
 	default:
 		panic("Reached non controlled phase:" + string(s.Phase))
 	}
@@ -63,12 +65,53 @@ func AskPlayerInput(s game.State) game.State {
 	res := s
 	player := s.CurrPlayerIndex
 
-	for res.Phase == game.PlayerTurn || player != res.CurrPlayerIndex {
-		res = AskPlayerTurn(res)
+	if s.Phase == game.ForcingDraw {
+		for res.Phase == game.ForcingDraw || player != res.CurrPlayerIndex {
+			res = AskPlayerToDraw(res)
+		}
+		return res
 	}
 
-	for res.Phase == game.ChoosingColor || player != res.CurrPlayerIndex {
-		res = AskChooseColor(res)
+	if s.Phase == game.PlayerTurn {
+		for res.Phase == game.PlayerTurn || player != res.CurrPlayerIndex {
+			res = AskPlayerTurn(res)
+		}
+		return res
+	}
+
+	if s.Phase == game.ChoosingColor {
+		for res.Phase == game.ChoosingColor || player != res.CurrPlayerIndex {
+			res = AskChooseColor(res)
+		}
+		return res
+	}
+
+	panic("do not know what input to ask!")
+}
+
+func AskPlayerToDraw(s game.State) game.State {
+	res := s
+
+	log.Printf("Starting %s's turn\n", res.CurrPlayer().Name)
+	log.Printf("Current top card: %v\n", res.TopCard())
+	log.Printf("Your hand: %v\n", cards.IndexedCardsString(res.CurrPlayer().Hand))
+
+	log.Printf("Do you want to (d)raw %d cards or play the nth card?", res.DrawAcum)
+
+	var input string
+	fmt.Scanf("%s\n", &input)
+	switch input {
+	case "d":
+		res = game.Draw(res)
+	case "debug":
+		log.Printf("%+v", res)
+	default:
+		i, err := strconv.ParseUint(input, 10, 32)
+		if err != nil {
+			log.Println("Not a valid action:", input)
+		} else {
+			res = game.PlayCard(i, res)
+		}
 	}
 
 	return res
@@ -131,50 +174,3 @@ func AskChooseColor(s game.State) game.State {
 
 	return res
 }
-
-/*
-func playerturn(s *State) {
-	log.Printf("Starting %s's turn\n", s.CurrPlayer().Name)
-	var input string
-	var carddrawn bool
-	for true {
-		fmt.Printf("Current top card: %v\n", topcard(*s))
-		fmt.Printf("Your hand: %v\n", uno.IndexedCardsString(s.Currplayer.Hand))
-		if carddrawn {
-			fmt.Println("Do you want to (p)ass or play the nth card?")
-		} else {
-			fmt.Println("Do you want to (d)raw or play the nth card?")
-		}
-		fmt.Scanf("%s\n", &input)
-		switch input {
-		case "d":
-			if !carddrawn {
-				drawn, err := draw(&s.Deck, &s.Currplayer.Hand)
-				if err != nil {
-					fmt.Println(err)
-				} else {
-					carddrawn = true
-					fmt.Printf("Card drawn: %v\n", drawn)
-				}
-			}
-			continue
-		case "p":
-			if carddrawn {
-				return // do nothing, player is passing
-			}
-		default:
-			i, err := strconv.ParseUint(input, 10, 32)
-			if err != nil {
-				fmt.Printf("Not a valid card index: %v\n", input)
-			}
-			playerr := PlayCard(i, s)
-			if playerr == nil {
-				return
-			} else {
-				fmt.Print(err)
-			}
-		}
-		fmt.Println("Not a valid action:", input)
-	}
-}
-*/

@@ -11,7 +11,9 @@ func Start(s State) State {
 	// Fill player hand
 	// TODO fill all players hands
 	for i := 0; i < 7; i++ {
-		moveFromTo(&res.Deck, &(res.CurrPlayer().Hand))
+		for p := range res.Players {
+			moveFromTo(&res.Deck, &(res.Players[p]).Hand)
+		}
 	}
 	// Play first card in discard pile
 	moveFromTo(&res.Deck, &res.DiscardPile)
@@ -36,6 +38,7 @@ func PlayCard(i uint64, s State) State {
 	c := s.CurrPlayer().Hand[i]
 	if !canplay(c, s) {
 		log.Printf("Not a valid card to play: %v\n", c)
+		log.Printf("Current color %s, current value: %s\n", s.TopCard().Color, s.TopCard().Value)
 		return s
 	}
 
@@ -47,11 +50,6 @@ func PlayCard(i uint64, s State) State {
 }
 
 func Draw(s State) State {
-	if s.DrawnThisTurn {
-		log.Println("Current player already drew this turn")
-		return s
-	}
-
 	res := clone(s)
 	if res.DrawAcum > 0 {
 		for i := 0; i < res.DrawAcum; i++ {
@@ -61,6 +59,10 @@ func Draw(s State) State {
 		res.DrawAcum = 0
 		res = Pass(res)
 	} else {
+		if res.DrawnThisTurn {
+			log.Println("Current player already drew this turn")
+			return res
+		}
 		// player wants to draw
 		draw(&res)
 	}
@@ -72,7 +74,9 @@ func ChangeColor(c cards.Color, s State) State {
 	res := clone(s)
 	res.CurrColor = c
 	log.Println("Current color changed to:", c)
-	return Pass(res)
+	res.Phase = PlayerTurn
+	nextplayer(&res)
+	return res
 }
 
 func Pass(s State) State {
@@ -99,11 +103,15 @@ func ProcessTopCard(s State) State {
 		res.DrawAcum += 4
 	}
 	res.CurrColor = topc.Color
-	if res.CurrColor == cards.Wild {
-		res.Phase = ChoosingColor
+	if res.DrawAcum > 0 {
+		res.Phase = ForcingDraw
 	} else {
-		res.Phase = PlayerTurn
-		nextplayer(&res)
+		if res.CurrColor == cards.Wild {
+			res.Phase = ChoosingColor
+		} else {
+			res.Phase = PlayerTurn
+			nextplayer(&res)
+		}
 	}
 	return res
 }
@@ -116,6 +124,7 @@ func nextplayer(s *State) {
 	if s.CurrPlayerIndex >= len(s.Players) {
 		s.CurrPlayerIndex = 0
 	}
+	s.DrawnThisTurn = false
 }
 
 func playcard(i uint64, s *State) {
