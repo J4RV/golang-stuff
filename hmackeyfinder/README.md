@@ -1,0 +1,1 @@
+Simple script I made to learn about goroutines, channels and the crypto package
