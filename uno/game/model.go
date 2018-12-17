@@ -10,9 +10,9 @@ const (
 	Starting Phase = iota
 	PlayerTurnStarting
 	PlayerThinkingAfterDraw
+	PlayerChoosingColor
 	ProcessingCard
 	ProcessingForcedDraw
-	PlayerChoosingColor
 	Finished
 )
 

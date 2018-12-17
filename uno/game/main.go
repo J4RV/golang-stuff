@@ -32,6 +32,7 @@ func main() {
 		state = RunPhase(state)
 	}
 	log.Println("GAME FINISHED!")
+	log.Printf("%s won!", state.CurrPlayer().Name)
 }
 
 func RunPhase(s State) State {
@@ -148,8 +149,8 @@ func AskPlayerTurn(s State) State {
 func AskChooseColor(s State) State {
 	res := s
 
-	log.Println("Choose a color: (r)ed, (y)ellow, (g)reen or (b)lue")
 	log.Printf("Your hand: %v\n", cards.IndexedCardsString(res.CurrPlayer().Hand))
+	log.Println("Choose a color: (r)ed, (y)ellow, (g)reen or (b)lue")
 
 	var input string
 	fmt.Scanf("%s\n", &input)

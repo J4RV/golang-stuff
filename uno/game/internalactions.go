@@ -38,6 +38,10 @@ func ProcessTopCard(s State) State {
 		log.Println("Skipping next player")
 		res = NextPlayer(res)
 	case cards.Reverse:
+		if len(res.Players) == 2 {
+			log.Println("Skipping next player")
+			res = NextPlayer(res)
+		}
 		res.OrderReversed = !res.OrderReversed
 	case cards.DrawTwo:
 		res.DrawAcum += 2
@@ -82,7 +86,6 @@ func NextPlayer(s State) State {
 		}
 	}
 
-	log.Println("Next player:", res.CurrPlayer().Name)
 	res.Phase = PlayerTurnStarting
 	return res
 }

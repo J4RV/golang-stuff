@@ -23,10 +23,10 @@ func PlayCard(i uint64, s State) State {
 
 	c = res.CurrPlayer().Hand[i]
 	h := res.CurrPlayer().Hand
-	h = append(h[:i], h[i+1:]...)
+	res.CurrPlayer().Hand = append(h[:i], h[i+1:]...)
 	res.DiscardPile = append(res.DiscardPile, c)
 
-	if len(h) == 0 {
+	if len(res.CurrPlayer().Hand) == 0 {
 		res = End(res)
 	} else {
 		res.Phase = ProcessingCard
