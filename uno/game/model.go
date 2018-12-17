@@ -1,4 +1,4 @@
-package game
+package main
 
 import (
 	"github.com/j4rv/golang-stuff/uno/cards"
@@ -8,10 +8,11 @@ type Phase uint8
 
 const (
 	Starting Phase = iota
-	PlayerTurn
-	ProcessingPlayedCard
-	ForcingDraw
-	ChoosingColor
+	PlayerTurnStarting
+	PlayerThinkingAfterDraw
+	ProcessingCard
+	ProcessingForcedDraw
+	PlayerChoosingColor
 	Finished
 )
 
@@ -27,10 +28,8 @@ type State struct {
 	CurrPlayerIndex int
 	DiscardPile     []cards.Card //Last card is the 'top' card
 	CurrColor       cards.Color
-	Skip            bool
 	OrderReversed   bool
 	DrawAcum        int
-	DrawnThisTurn   bool
 }
 
 func (s State) TopCard() cards.Card {
