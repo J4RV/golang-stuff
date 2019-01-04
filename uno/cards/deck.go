@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func IndexedCardsString(h []Card) string {
+func PrettyCardsString(h []Card) string {
 	strs := make([]string, len(h))
 	for i := range h {
 		strs[i] = fmt.Sprintf("(%d) %s", i, h[i].String())

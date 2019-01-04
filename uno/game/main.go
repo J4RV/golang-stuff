@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"os"
 	"strconv"
 	"time"
 
@@ -70,7 +71,7 @@ func AskPlayerToDraw(s State) State {
 
 	log.Printf("Starting %s's turn\n", res.CurrPlayer().Name)
 	log.Printf("Current top card: %v\n", res.TopCard())
-	log.Printf("Your hand: %v\n", cards.IndexedCardsString(res.CurrPlayer().Hand))
+	log.Printf("Your hand: %v\n", cards.PrettyCardsString(res.CurrPlayer().Hand))
 	log.Printf("Do you want to (d)raw %d cards or play the nth card?", res.DrawAcum)
 
 	var input string
@@ -80,6 +81,8 @@ func AskPlayerToDraw(s State) State {
 		res = ForcedDraw(res)
 	case "debug":
 		log.Printf("%+v", res)
+	case "q":
+		os.Exit(0)
 	default:
 		i, err := strconv.ParseUint(input, 10, 32)
 		if err != nil {
@@ -97,7 +100,7 @@ func AskPlayerAfterDraw(s State) State {
 
 	log.Printf("Starting %s's turn\n", res.CurrPlayer().Name)
 	log.Printf("Current top card: %v\n", res.TopCard())
-	log.Printf("Your hand: %v\n", cards.IndexedCardsString(res.CurrPlayer().Hand))
+	log.Printf("Your hand: %v\n", cards.PrettyCardsString(res.CurrPlayer().Hand))
 	log.Println("Do you want to (p)ass or play the nth card?")
 
 	var input string
@@ -107,6 +110,8 @@ func AskPlayerAfterDraw(s State) State {
 		res = Pass(res)
 	case "debug":
 		log.Printf("%+v", res)
+	case "q":
+		os.Exit(0)
 	default:
 		i, err := strconv.ParseUint(input, 10, 32)
 		if err != nil {
@@ -124,7 +129,7 @@ func AskPlayerTurn(s State) State {
 
 	log.Printf("Starting %s's turn\n", res.CurrPlayer().Name)
 	log.Printf("Current top card: %v\n", res.TopCard())
-	log.Printf("Your hand: %v\n", cards.IndexedCardsString(res.CurrPlayer().Hand))
+	log.Printf("Your hand: %v\n", cards.PrettyCardsString(res.CurrPlayer().Hand))
 	log.Println("Do you want to (d)raw or play the nth card?")
 
 	var input string
@@ -134,6 +139,8 @@ func AskPlayerTurn(s State) State {
 		res = DrawOne(res)
 	case "debug":
 		log.Printf("%+v", res)
+	case "q":
+		os.Exit(0)
 	default:
 		i, err := strconv.ParseUint(input, 10, 32)
 		if err != nil {
@@ -149,7 +156,7 @@ func AskPlayerTurn(s State) State {
 func AskChooseColor(s State) State {
 	res := s
 
-	log.Printf("Your hand: %v\n", cards.IndexedCardsString(res.CurrPlayer().Hand))
+	log.Printf("Your hand: %v\n", cards.PrettyCardsString(res.CurrPlayer().Hand))
 	log.Println("Choose a color: (r)ed, (y)ellow, (g)reen or (b)lue")
 
 	var input string
@@ -164,6 +171,8 @@ func AskChooseColor(s State) State {
 			return ChangeColor(cards.Green, res)
 		case "b":
 			return ChangeColor(cards.Blue, res)
+		case "q":
+			os.Exit(0)
 		default:
 			log.Println("Not a valid action:", input)
 		}

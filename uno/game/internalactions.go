@@ -31,7 +31,7 @@ func Start(s State) State {
 func ProcessTopCard(s State) State {
 	res := clone(s)
 
-	log.Println("Pile:", res.DiscardPile)
+	//log.Println("Pile:", res.DiscardPile)
 	log.Println("Processing card:", res.TopCard())
 	switch res.TopCard().Value {
 	case cards.Skip:
