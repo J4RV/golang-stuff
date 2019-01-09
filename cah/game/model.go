@@ -10,14 +10,14 @@ const (
 )
 
 type Card interface {
-	text() string
+	GetText() string
 }
 
 type WhiteCard interface {
-	text() string
+	GetText() string
 }
 
 type BlackCard interface {
-	text() string
-	blanksAmount() int
+	GetText() string
+	BlanksAmount() int
 }

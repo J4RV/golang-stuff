@@ -4,17 +4,28 @@ import "math/rand"
 
 func NewGame(bd []BlackCard, wd []WhiteCard, p []Player, opts ...Option) State {
 	return applyOptions(State{
-		BlackDeck: bd,
-		WhiteDeck: wd,
+		BlackDeck: shuffleB(bd),
+		WhiteDeck: shuffleW(wd),
 		Players:   p,
 	}, opts...)
 }
 
-func Shuffle(cards []Card) []Card {
+func shuffleB(cards []BlackCard) []BlackCard {
 	if cards == nil {
 		return cards
 	}
-	res := make([]Card, len(cards))
+	res := make([]BlackCard, len(cards))
+	for i, j := range rand.Perm(len(cards)) {
+		res[i] = cards[j]
+	}
+	return res
+}
+
+func shuffleW(cards []WhiteCard) []WhiteCard {
+	if cards == nil {
+		return cards
+	}
+	res := make([]WhiteCard, len(cards))
 	for i, j := range rand.Perm(len(cards)) {
 		res[i] = cards[j]
 	}
