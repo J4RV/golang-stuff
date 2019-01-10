@@ -20,6 +20,7 @@ func NewGame(bd []BlackCard, wd []WhiteCard, p []*Player, opts ...Option) State 
 	}
 	playersDraw(&ret)
 	ret = applyOptions(ret, opts...)
+	ret, _ = PutBlackCardInPlay(ret)
 	return ret
 }
 

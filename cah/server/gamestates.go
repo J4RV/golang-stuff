@@ -11,8 +11,16 @@ import (
 
 var states = make(map[string]game.State)
 
-func getPlayer(req *http.Request) (game.Player, error) {
+func getPlayerIndex(req *http.Request) (int, error) {
 	id, err := strconv.Atoi(mux.Vars(req)["playerid"])
+	if err != nil {
+		return -1, err
+	}
+	return id, nil
+}
+
+func getPlayer(req *http.Request) (game.Player, error) {
+	id, err := getPlayerIndex(req)
 	if err != nil {
 		return game.Player{}, err
 	}

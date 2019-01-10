@@ -27,7 +27,8 @@ func stateRouter(r *mux.Router) *mux.Router {
 	s := r.PathPrefix("/{gameid}/{playerid}").Subrouter()
 	s.HandleFunc("/State", handleGetState()).Methods("GET")
 	s.HandleFunc("/PutBlackCardInPlay", simpleCAHActionHandler(game.PutBlackCardInPlay)).Methods("POST")
-	s.HandleFunc("/GiveBlackCardToWinner", giveBlackCardToWinner).Methods("POST")
+	s.Handle("/GiveBlackCardToWinner", appHandler(giveBlackCardToWinner)).Methods("POST")
+	s.Handle("/PlayCards", appHandler(playCards)).Methods("POST")
 	return r
 }
 

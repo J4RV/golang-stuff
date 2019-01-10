@@ -3,8 +3,8 @@ package data
 import "github.com/j4rv/golang-stuff/cah/game"
 
 var users = make(map[string]User)
-var blackCards []Card
-var whiteCards []Card
+var blackCards []BlackCard
+var whiteCards []WhiteCard
 var games []Game
 
 var commonPass = "dev"

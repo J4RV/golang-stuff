@@ -7,8 +7,12 @@ import (
 
 const blankChar = "_"
 
+type DBObject struct {
+	ID int `json:"id"       db:"id"`
+}
+
 type User struct {
-	ID       int       `json:"id"       db:"id"`
+	DBObject
 	Username string    `json:"username" db:"username"`
 	Password string    `json:"password" db:"password"`
 	Creation time.Time `json:"creation" db:"creation"`
@@ -16,17 +20,24 @@ type User struct {
 }
 
 type Player struct {
-	ID     int    `json:"id" db:"id"`
+	DBObject
 	User   User   `json:"user" db:"user"`
 	Hand   []Card `json:"hand" db:"hand"`
 	Points []Card `json:"points" db:"points"`
 }
 
 type Card struct {
-	ID        int    `json:"id" db:"id"`
-	IsBlack   bool   `json:"is_black" db:"is_black"`
+	DBObject
 	Text      string `json:"text" db:"text"`
 	Expansion string `json:"expansion" db:"expansion"`
+}
+
+type BlackCard struct {
+	Card
+}
+
+type WhiteCard struct {
+	Card
 }
 
 func (c Card) GetText() string {
@@ -38,7 +49,7 @@ func (c Card) BlanksAmount() int {
 }
 
 type Game struct {
-	ID        int `json:"id" db:"id"`
+	DBObject
 	State     State
 	Players   []*Player
 	BlackDeck []Card

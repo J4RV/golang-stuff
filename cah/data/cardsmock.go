@@ -7,11 +7,11 @@ import (
 )
 
 func initCards() {
-	blackCards = append(blackCards, Card{IsBlack: true, Text: "How did I lose my virginity?"})
-	blackCards = append(blackCards, Card{IsBlack: true, Text: "Why can't I sleep at night?"})
-	blackCards = append(blackCards, Card{IsBlack: true, Text: "What's that smell?"})
-	blackCards = append(blackCards, Card{IsBlack: true, Text: "I got 99 problems but _ ain't one."})
-	blackCards = append(blackCards, Card{IsBlack: true, Text: "Maybe she's born with it. Maybe it's _."})
+	blackCards = append(blackCards, BlackCard{Card{Text: "How did I lose my virginity?"}})
+	blackCards = append(blackCards, BlackCard{Card{Text: "Why can't I sleep at night?"}})
+	blackCards = append(blackCards, BlackCard{Card{Text: "What's that smell?"}})
+	blackCards = append(blackCards, BlackCard{Card{Text: "I got 99 problems but _ ain't one."}})
+	blackCards = append(blackCards, BlackCard{Card{Text: "Maybe she's born with it. Maybe it's _."}})
 
 	allWhiteCards := `Seeing Granny naked
 Elderly Japanese men.
@@ -61,7 +61,7 @@ Finger painting.`
 	// This can be reutilized to read a file with all black/white cards
 	s := bufio.NewScanner(strings.NewReader(allWhiteCards))
 	for s.Scan() {
-		whiteCards = append(whiteCards, Card{IsBlack: false, Text: s.Text()})
+		whiteCards = append(whiteCards, WhiteCard{Card{Text: s.Text()}})
 	}
 	if err := s.Err(); err != nil {
 		log.Fatal(err)

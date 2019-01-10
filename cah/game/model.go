@@ -14,10 +14,10 @@ type Card interface {
 }
 
 type WhiteCard interface {
-	GetText() string
+	Card
 }
 
 type BlackCard interface {
-	GetText() string
+	Card
 	BlanksAmount() int
 }
