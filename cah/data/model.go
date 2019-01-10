@@ -1,7 +1,6 @@
 package data
 
 import (
-	"strings"
 	"time"
 )
 
@@ -34,6 +33,7 @@ type Card struct {
 
 type BlackCard struct {
 	Card
+	BlanksAmount int `json:"blanks-amount" db:"blanks-amount"`
 }
 
 type WhiteCard struct {
@@ -44,8 +44,8 @@ func (c Card) GetText() string {
 	return c.Text
 }
 
-func (c Card) BlanksAmount() int {
-	return strings.Count(c.Text, blankChar)
+func (c BlackCard) GetBlanksAmount() int {
+	return c.BlanksAmount
 }
 
 type Game struct {

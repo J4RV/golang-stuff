@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
+	"log"
 	"net/http"
 
 	"github.com/j4rv/golang-stuff/cah/game"
@@ -11,6 +13,7 @@ type appHandler func(http.ResponseWriter, *http.Request) error
 
 func (fn appHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err := fn(w, r); err != nil {
+		log.Printf("ServeHTTP error: %s", err)
 		http.Error(w, err.Error(), http.StatusForbidden)
 	}
 }
@@ -33,7 +36,7 @@ func giveBlackCardToWinner(w http.ResponseWriter, req *http.Request) error {
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&payload)
 	if err != nil {
-		return err
+		return errors.New("Misconstructed payload")
 	}
 	newS, err := game.GiveBlackCardToWinner(payload.Winner, getState(req))
 	if err != nil {
@@ -50,7 +53,7 @@ func playCards(w http.ResponseWriter, req *http.Request) error {
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&payload)
 	if err != nil {
-		return err
+		return errors.New("Misconstructed payload")
 	}
 	pid, err := getPlayerIndex(req)
 	if err != nil {

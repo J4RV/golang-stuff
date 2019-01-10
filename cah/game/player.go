@@ -12,15 +12,16 @@ type Player struct {
 	Points           []BlackCard
 }
 
-func (p *Player) removeCardFromHand(i int) error {
+func (p *Player) extractCardFromHand(i int) (WhiteCard, error) {
 	if i < 0 || i >= len(p.Hand) {
 		msg := fmt.Sprintf("Index out of bounds at RemoveCardFromHand. Index: %d, Hand size: %d", i, len(p.Hand))
-		return errors.New(msg)
+		return nil, errors.New(msg)
 	}
+	c := p.Hand[i]
 	p.Hand[i] = p.Hand[len(p.Hand)-1]
 	p.Hand[len(p.Hand)-1] = nil
 	p.Hand = p.Hand[:len(p.Hand)-1]
-	return nil
+	return c, nil
 }
 
 func GetRandomPlayers() []*Player {

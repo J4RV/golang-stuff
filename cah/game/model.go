@@ -19,5 +19,5 @@ type WhiteCard interface {
 
 type BlackCard interface {
 	Card
-	BlanksAmount() int
+	GetBlanksAmount() int
 }

@@ -12,17 +12,17 @@ func TestPlayerRemoveCard(t *testing.T) {
 	c3 := cardMock{Text: "C"}
 	p.Hand = []WhiteCard{c1, c2, c3}
 
-	err := p.removeCardFromHand(-1)
+	err := p.extractCardFromHand(-1)
 	if err == nil {
 		t.Error("Expected error but did not found it, negative index")
 	}
 
-	err = p.removeCardFromHand(9)
+	err = p.extractCardFromHand(9)
 	if err == nil {
 		t.Error("Expected error but did not found it, index over hand size")
 	}
 
-	err = p.removeCardFromHand(1)
+	err = p.extractCardFromHand(1)
 	expectedResultHand := []WhiteCard{c1, c3}
 	if err != nil {
 		t.Error(err)
@@ -43,6 +43,6 @@ type cardMock struct {
 	Text string
 }
 
-func (c cardMock) text() string {
+func (c cardMock) GetText() string {
 	return c.Text
 }

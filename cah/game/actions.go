@@ -44,23 +44,26 @@ func PlayWhiteCards(p int, cs []int, s State) (State, error) {
 	if p < 0 || p >= len(s.Players) {
 		return s, errors.New("Non valid player index")
 	}
-	player := s.Players[p]
+	if len(cs) != s.BlackCardInPlay.GetBlanksAmount() {
+		return s, errors.New("Invalid amount of blank cards")
+	}
+	res := s.Clone()
+	player := res.Players[p]
 	for _, i := range cs {
 		if i < 0 || i >= len(player.Hand) {
 			return s, errors.New("Non valid white card index")
 		}
 		// TODO cs indexes: check not repeated indexes
 	}
-	if len(cs) != s.BlackCardInPlay.BlanksAmount() {
-		return s, errors.New("Invalid amount of blank cards")
-	}
-	for _, i := range cs {
-		err := player.removeCardFromHand(i)
+	player.WhiteCardsInPlay = make([]WhiteCard, len(cs))
+	for i, ci := range cs {
+		c, err := player.extractCardFromHand(ci)
 		if err != nil {
-			return s, err
+			return res, err
 		}
+		player.WhiteCardsInPlay[i] = c
 	}
-	return s, nil //TODO
+	return res, nil //TODO
 }
 
 func NextCzar(s State) (State, error) {

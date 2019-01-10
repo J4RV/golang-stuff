@@ -7,11 +7,11 @@ import (
 )
 
 func initCards() {
-	blackCards = append(blackCards, BlackCard{Card{Text: "How did I lose my virginity?"}})
-	blackCards = append(blackCards, BlackCard{Card{Text: "Why can't I sleep at night?"}})
-	blackCards = append(blackCards, BlackCard{Card{Text: "What's that smell?"}})
-	blackCards = append(blackCards, BlackCard{Card{Text: "I got 99 problems but _ ain't one."}})
-	blackCards = append(blackCards, BlackCard{Card{Text: "Maybe she's born with it. Maybe it's _."}})
+	blackCards = append(blackCards, BlackCard{Card: Card{Text: "How did I lose my virginity?"}, BlanksAmount: 1})
+	blackCards = append(blackCards, BlackCard{Card: Card{Text: "Why can't I sleep at night?"}, BlanksAmount: 1})
+	blackCards = append(blackCards, BlackCard{Card: Card{Text: "What's that smell?"}, BlanksAmount: 1})
+	blackCards = append(blackCards, BlackCard{Card: Card{Text: "I got 99 problems but _ ain't one."}, BlanksAmount: 1})
+	blackCards = append(blackCards, BlackCard{Card: Card{Text: "Maybe she's born with it. Maybe it's _."}, BlanksAmount: 1})
 
 	allWhiteCards := `Seeing Granny naked
 Elderly Japanese men.
