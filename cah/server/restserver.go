@@ -24,15 +24,25 @@ func main() {
 }
 
 func stateRouter(r *mux.Router) *mux.Router {
-	s := r.PathPrefix("/{stateid}").Subrouter()
+	s := r.PathPrefix("/{gameid}/{playerid}").Subrouter()
 	s.HandleFunc("/State", handleGetState()).Methods("GET")
 	s.HandleFunc("/PutBlackCardInPlay", simpleCAHActionHandler(game.PutBlackCardInPlay)).Methods("POST")
 	s.HandleFunc("/GiveBlackCardToWinner", giveBlackCardToWinner).Methods("POST")
 	return r
 }
+
+func cleanStateForPlayer(s *game.State, p game.Player) {
+	//todo: replace cards in other player hands with "Unknown" cards to prevent cheating
+}
+
 func handleGetState() func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 		s := getState(req)
+		p, err := getPlayer(req)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusForbidden)
+		}
+		cleanStateForPlayer(&s, p)
 		writeJSONState(w, s)
 	}
 }

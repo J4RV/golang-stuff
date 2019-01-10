@@ -2,6 +2,14 @@ package game
 
 import "errors"
 
+func playersDraw(s *State) {
+	for _, p := range s.Players {
+		for len(p.Hand) < playerHandSize {
+			p.Hand = append(p.Hand, s.drawWhite())
+		}
+	}
+}
+
 func PutBlackCardInPlay(s State) (State, error) {
 	if s.BlackCardInPlay != nil {
 		return s, errors.New("Tried to put a black card in play but there is already a black card in play")
@@ -36,7 +44,7 @@ func PlayWhiteCards(p int, cs []int, s State) (State, error) {
 	if p < 0 || p >= len(s.Players) {
 		return s, errors.New("Non valid player index")
 	}
-	player := &s.Players[p]
+	player := s.Players[p]
 	for _, i := range cs {
 		if i < 0 || i >= len(player.Hand) {
 			return s, errors.New("Non valid white card index")

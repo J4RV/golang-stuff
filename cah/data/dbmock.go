@@ -24,8 +24,8 @@ func GetBlackCards() []game.BlackCard {
 }
 
 func GetWhiteCards() []game.WhiteCard {
-	models := make([]game.WhiteCard, len(blackCards))
-	for i, c := range blackCards {
+	models := make([]game.WhiteCard, len(whiteCards))
+	for i, c := range whiteCards {
 		models[i] = game.WhiteCard(c)
 	}
 	return models

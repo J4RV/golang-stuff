@@ -1,13 +1,26 @@
 package game
 
-import "math/rand"
+import (
+	"math/rand"
+	"time"
+)
 
-func NewGame(bd []BlackCard, wd []WhiteCard, p []Player, opts ...Option) State {
-	return applyOptions(State{
-		BlackDeck: shuffleB(bd),
-		WhiteDeck: shuffleW(wd),
-		Players:   p,
-	}, opts...)
+const playerHandSize = 10
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
+func NewGame(bd []BlackCard, wd []WhiteCard, p []*Player, opts ...Option) State {
+	ret := State{
+		BlackDeck:   shuffleB(bd),
+		WhiteDeck:   shuffleW(wd),
+		Players:     p,
+		DiscardPile: []WhiteCard{},
+	}
+	playersDraw(&ret)
+	ret = applyOptions(ret, opts...)
+	return ret
 }
 
 func shuffleB(cards []BlackCard) []BlackCard {

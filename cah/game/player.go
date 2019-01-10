@@ -23,10 +23,10 @@ func (p *Player) removeCardFromHand(i int) error {
 	return nil
 }
 
-func GetRandomPlayers() []Player {
-	p := make([]Player, 3)
-	p[0] = Player{Name: "One"}
-	p[0] = Player{Name: "Two"}
-	p[0] = Player{Name: "Three"}
+func GetRandomPlayers() []*Player {
+	p := make([]*Player, 3)
+	p[0] = &Player{Name: "One"}
+	p[1] = &Player{Name: "Two"}
+	p[2] = &Player{Name: "Three"}
 	return p
 }
