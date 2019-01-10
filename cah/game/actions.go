@@ -28,16 +28,29 @@ func PutBlackCardInPlay(s State) (State, error) {
 }
 
 func GiveBlackCardToWinner(w int, s State) (State, error) {
-	if s.Phase != CzarChoosingWinner {
-		return s, errors.New("Tried to choose a winner in a non valid phase")
-	}
-	if w < 0 || w >= len(s.Players) {
-		return s, errors.New("Non valid player index")
+	err := giveBlackCardToWinnerChecks(w, s)
+	if err != nil {
+		return s, err
 	}
 	res := s.Clone()
 	res.Players[w].Points = append(res.Players[w].Points, res.BlackCardInPlay)
 	res.BlackCardInPlay = nil
 	return res, nil
+}
+
+func giveBlackCardToWinnerChecks(w int, s State) error {
+	if s.Phase != CzarChoosingWinner {
+		return errors.New("Tried to choose a winner in a non valid phase")
+	}
+	if w < 0 || w >= len(s.Players) {
+		return errors.New("Non valid player index")
+	}
+	for _, p := range s.Players {
+		if len(p.WhiteCardsInPlay) != s.BlackCardInPlay.GetBlanksAmount() {
+			return errors.New("Not all players have played their cards")
+		}
+	}
+	return nil
 }
 
 func PlayWhiteCards(p int, cs []int, s State) (State, error) {
