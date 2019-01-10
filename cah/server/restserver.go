@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,23 +12,37 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var g game.State
-
 func main() {
 	router := mux.NewRouter()
 	bd := data.GetBlackCards()
 	wd := data.GetWhiteCards()
 	p := game.GetRandomPlayers()
-	g = game.NewGame(bd, wd, p, game.RandomStartingCzar)
-	g, _ = game.PutBlackCardInPlay(g)
-	router.HandleFunc("/blackcard", handleGetBlackCard(g)).Methods("GET")
+	s := game.NewGame(bd, wd, p, game.RandomStartingCzar)
+	states["test"] = s
+	stateRouter(router)
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
 
-func handleGetBlackCard(state game.State) func(w http.ResponseWriter, req *http.Request) {
+func stateRouter(r *mux.Router) *mux.Router {
+	s := r.PathPrefix("/{stateid}").Subrouter()
+	s.HandleFunc("/State", handleGetState()).Methods("GET")
+	s.HandleFunc("/PutBlackCardInPlay", simpleCAHActionHandler(game.PutBlackCardInPlay)).Methods("POST")
+	s.HandleFunc("/GiveBlackCardToWinner", giveBlackCardToWinner).Methods("POST")
+	return r
+}
+func handleGetState() func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
-		bc := state.BlackCardInPlay
-		fmt.Fprintf(w, "%s", bc.GetText())
-		g, _ = game.PutBlackCardInPlay(state)
+		s := getState(req)
+		writeJSONState(w, s)
+	}
+}
+
+func writeJSONState(w http.ResponseWriter, s game.State) {
+	j, err := json.Marshal(s)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusForbidden)
+	} else {
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, "%s", j)
 	}
 }

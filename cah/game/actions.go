@@ -20,7 +20,12 @@ func PutBlackCardInPlay(s State) (State, error) {
 }
 
 func GiveBlackCardToWinner(w int, s State) (State, error) {
-	// TODO w index in range of players check
+	if s.Phase != CzarChoosingWinner {
+		return s, errors.New("Tried to choose a winner in a non valid phase")
+	}
+	if w < 0 || w >= len(s.Players) {
+		return s, errors.New("Non valid player index")
+	}
 	res := s.Clone()
 	res.Players[w].Points = append(res.Players[w].Points, res.BlackCardInPlay)
 	res.BlackCardInPlay = nil
@@ -28,10 +33,19 @@ func GiveBlackCardToWinner(w int, s State) (State, error) {
 }
 
 func PlayWhiteCards(p int, cs []int, s State) (State, error) {
-	// TODO p index in range of players check
-	// TODO cs indexes in range of players hand and not repeated indexes
-	// TODO cs indexes len == current black card blanks
+	if p < 0 || p >= len(s.Players) {
+		return s, errors.New("Non valid player index")
+	}
 	player := &s.Players[p]
+	for _, i := range cs {
+		if i < 0 || i >= len(player.Hand) {
+			return s, errors.New("Non valid white card index")
+		}
+		// TODO cs indexes: check not repeated indexes
+	}
+	if len(cs) != s.BlackCardInPlay.BlanksAmount() {
+		return s, errors.New("Invalid amount of blank cards")
+	}
 	for _, i := range cs {
 		err := player.removeCardFromHand(i)
 		if err != nil {
