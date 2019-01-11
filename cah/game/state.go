@@ -1,13 +1,13 @@
 package game
 
 type State struct {
-	Phase           Phase
-	Players         []*Player
-	BlackDeck       []BlackCard
-	WhiteDeck       []WhiteCard
-	CurrCzarIndex   int
-	BlackCardInPlay BlackCard
-	DiscardPile     []WhiteCard
+	Phase           Phase       `json:"phase"`
+	Players         []*Player   `json:"players"`
+	BlackDeck       []BlackCard `json:"blackDeck"`
+	WhiteDeck       []WhiteCard `json:"whiteDeck"`
+	CurrCzarIndex   int         `json:"currentCzarIndex"`
+	BlackCardInPlay BlackCard   `json:"blackCardInPlay"`
+	DiscardPile     []WhiteCard `json:"discardPile"`
 }
 
 func (s *State) drawWhite() WhiteCard {

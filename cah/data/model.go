@@ -33,7 +33,7 @@ type Card struct {
 
 type BlackCard struct {
 	Card
-	BlanksAmount int `json:"blanks-amount" db:"blanks-amount"`
+	BlanksAmount int `json:"blanks-amount" db:"blanksAmount"`
 }
 
 type WhiteCard struct {

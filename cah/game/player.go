@@ -6,10 +6,10 @@ import (
 )
 
 type Player struct {
-	Name             string
-	Hand             []WhiteCard
-	WhiteCardsInPlay []WhiteCard
-	Points           []BlackCard
+	Name             string      `json:"name"`
+	Hand             []WhiteCard `json:"hand"`
+	WhiteCardsInPlay []WhiteCard `json:"whiteCardsInPlay"`
+	Points           []BlackCard `json:"points"`
 }
 
 func (p *Player) extractCardFromHand(i int) (WhiteCard, error) {
