@@ -12,12 +12,15 @@ const handleOnClick = (playable, handIndex) => {
   }
 }
 
-const Card = ({text, isBlack, playable, handIndex, className}) => (
-  <div 
-    className={className + ` cah-card ${isBlack ? 'cah-card-black' : 'cah-card-white'}`}
-    onClick={() => handleOnClick(playable, handIndex)}>
-    <span>{text}</span>
+const Card = (props) => {
+  const {text, isBlack, playable, handIndex, className, ...rest} = props
+  return <div
+      style={{transform: `rotate(${Math.random()*10 - 5}deg)`}}
+      className={className + ` cah-card ${isBlack ? 'cah-card-black' : 'cah-card-white'}`}
+      {...rest}
+    >
+      <span>{text}</span>
   </div>
-)
+}
 
 export default Card;
