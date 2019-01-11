@@ -16,7 +16,7 @@ import (
 func main() {
 	var dir string
 
-	flag.StringVar(&dir, "dir", "./public", "the directory to serve files from. Defaults to './public'")
+	flag.StringVar(&dir, "dir", "./public/react/build", "the directory to serve files from. Defaults to './public'")
 	flag.Parse()
 
 	router := mux.NewRouter()
