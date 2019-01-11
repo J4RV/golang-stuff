@@ -1,18 +1,28 @@
 import React, { Component } from 'react';
 import Card from './Card'
+import LocalPlayerIndex from './LocalPlayerIndex'
 import './App.css'
 
 const BlackCard = ({card}) => {
   if (card == null) return null
   return <div>
-    <Card text={card.text} isBlack={true} />
+    <Card text={card.text} isBlack={true} className='in-table' />
+    <p>{`Play ${card.blanksAmount} card${card.blanksAmount > 1 ? 's' : ''}`}</p>
   </div>
 }
 
-const Hand = ({hand}) => (
+const CardsInPlay = ({state, owner}) => (
+  <span>
+    {state.players[owner].whiteCardsInPlay.map((c, i) =>
+      <Card text={c.text} isBlack={false} playable={false} handIndex={i} className='in-table' />            
+    )}
+  </span>
+)
+
+const Hand = ({state}) => (
   <div className="cah-hand">
-    {hand.map(c =>
-      <Card text={c.text} isBlack={false} />            
+    {state.players[LocalPlayerIndex()].hand.map((c, i) =>
+      <Card text={c.text} isBlack={false} playable={true} handIndex={i} className='hovering' />            
     )}
   </div>
 )
@@ -24,15 +34,21 @@ class Game extends Component {
     return (
       <div className="Game">
         <BlackCard card={this.state.blackCardInPlay} />
-        <Hand {...this.state.players[0]} />        
+        <CardsInPlay state={this.state} owner={LocalPlayerIndex()} />
+        <Hand state={this.state} />        
       </div>
     );
   } 
   componentWillMount() {
-    fetch("rest/test/0/State")
-      .then(r => console.log(r.json()
+    this.updateState()
+    // this would be much better with websockets
+    window.setInterval(this.updateState, 500)
+  }
+  updateState = () => {
+    fetch("rest/test/"+LocalPlayerIndex()+"/State")
+      .then(r => r.json()
       .then(j => console.log(j) & this.setState(j))
-    ))
+    ) 
   }
 }
 

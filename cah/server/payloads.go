@@ -5,5 +5,5 @@ type chooseWinnerPayload struct {
 }
 
 type playCardsPayload struct {
-	CardIndexes []int `json:"card-indexes"`
+	CardIndexes []int `json:"cardIndexes"`
 }

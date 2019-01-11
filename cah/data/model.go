@@ -33,7 +33,7 @@ type Card struct {
 
 type BlackCard struct {
 	Card
-	BlanksAmount int `json:"blanks-amount" db:"blanksAmount"`
+	BlanksAmount int `json:"blanksAmount" db:"blanksAmount"`
 }
 
 type WhiteCard struct {
@@ -50,10 +50,10 @@ func (c BlackCard) GetBlanksAmount() int {
 
 type Game struct {
 	DBObject
-	State     State
-	Players   []*Player
-	BlackDeck []Card
-	WhiteDeck []Card
+	State     State     `json:"state" db:"state"`
+	Players   []*Player `json:"players" db:"players"`
+	BlackDeck []Card    `json:"blackDeck" db:"blackDeck"`
+	WhiteDeck []Card    `json:"whiteDeck" db:"whiteDeck"`
 	// Chat?
 }
 

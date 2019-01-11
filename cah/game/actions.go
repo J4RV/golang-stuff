@@ -1,6 +1,9 @@
 package game
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 func playersDraw(s *State) {
 	for _, p := range s.Players {
@@ -35,6 +38,9 @@ func GiveBlackCardToWinner(w int, s State) (State, error) {
 	res := s.Clone()
 	res.Players[w].Points = append(res.Players[w].Points, res.BlackCardInPlay)
 	res.BlackCardInPlay = nil
+	for _, p := range s.Players {
+		p.WhiteCardsInPlay = make([]WhiteCard, 2)
+	}
 	return res, nil
 }
 
@@ -57,8 +63,10 @@ func PlayWhiteCards(p int, cs []int, s State) (State, error) {
 	if p < 0 || p >= len(s.Players) {
 		return s, errors.New("Non valid player index")
 	}
-	if len(cs) != s.BlackCardInPlay.GetBlanksAmount() {
-		return s, errors.New("Invalid amount of blank cards")
+	if len(cs)+len(s.Players[p].WhiteCardsInPlay) > s.BlackCardInPlay.GetBlanksAmount() {
+		return s, fmt.Errorf("Invalid amount of white cards to play, expected %d but got %d",
+			s.BlackCardInPlay.GetBlanksAmount(),
+			len(cs)+len(s.Players[p].WhiteCardsInPlay))
 	}
 	res := s.Clone()
 	player := res.Players[p]
@@ -68,14 +76,15 @@ func PlayWhiteCards(p int, cs []int, s State) (State, error) {
 		}
 		// TODO cs indexes: check not repeated indexes
 	}
-	player.WhiteCardsInPlay = make([]WhiteCard, len(cs))
+	newCardsPlayed := make([]WhiteCard, len(cs))
 	for i, ci := range cs {
 		c, err := player.extractCardFromHand(ci)
 		if err != nil {
 			return res, err
 		}
-		player.WhiteCardsInPlay[i] = c
+		newCardsPlayed[i] = c
 	}
+	player.WhiteCardsInPlay = append(player.WhiteCardsInPlay, newCardsPlayed...)
 	return res, nil //TODO
 }
 

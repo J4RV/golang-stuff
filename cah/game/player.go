@@ -26,8 +26,8 @@ func (p *Player) extractCardFromHand(i int) (WhiteCard, error) {
 
 func GetRandomPlayers() []*Player {
 	p := make([]*Player, 3)
-	p[0] = &Player{Name: "One"}
-	p[1] = &Player{Name: "Two"}
-	p[2] = &Player{Name: "Three"}
+	p[0] = &Player{Name: "One", WhiteCardsInPlay: []WhiteCard{}, Points: []BlackCard{}}
+	p[1] = &Player{Name: "Two", WhiteCardsInPlay: []WhiteCard{}, Points: []BlackCard{}}
+	p[2] = &Player{Name: "Three", WhiteCardsInPlay: []WhiteCard{}, Points: []BlackCard{}}
 	return p
 }
