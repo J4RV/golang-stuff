@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -13,6 +14,11 @@ import (
 )
 
 func main() {
+	var dir string
+
+	flag.StringVar(&dir, "dir", "./public", "the directory to serve files from. Defaults to './public'")
+	flag.Parse()
+
 	router := mux.NewRouter()
 	bd := data.GetBlackCards()
 	wd := data.GetWhiteCards()
@@ -20,11 +26,12 @@ func main() {
 	s := game.NewGame(bd, wd, p, game.RandomStartingCzar)
 	states["test"] = s
 	stateRouter(router)
+	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
 
 func stateRouter(r *mux.Router) *mux.Router {
-	s := r.PathPrefix("/{gameid}/{playerid}").Subrouter()
+	s := r.PathPrefix("/rest/{gameid}/{playerid}").Subrouter()
 	s.HandleFunc("/State", handleGetState()).Methods("GET")
 	s.HandleFunc("/PutBlackCardInPlay", simpleCAHActionHandler(game.PutBlackCardInPlay)).Methods("POST")
 	s.Handle("/GiveBlackCardToWinner", appHandler(giveBlackCardToWinner)).Methods("POST")
