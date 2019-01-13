@@ -5,13 +5,33 @@ import Button from '@material-ui/core/Button';
 import axios from 'axios'
 import './App.css'
 
-const BlackCardInPlay = ({state}) => {
+const WhiteCardsPlayed = ({state}) => {
+  const allSinnersPlayed = () => {
+    for(let i = 0; i < state.players.length; i++){
+      if(i == state.currentCzarIndex){
+        continue
+      }
+      if(state.players[i].whiteCardsInPlay.length != state.blackCardInPlay.blanksAmount){
+        return false
+      }
+    }
+    return true
+  }
+  if (allSinnersPlayed()){
+    return <p>ALL SINNERS PLAYED</p>
+  } else {
+    return <p>WAITING FOR SINNERS...</p>
+  }
+}
+
+const Table = ({state}) => {
   const card = state.blackCardInPlay
   if (card == null) return null
-  return <div>
-    <Card text={card.text} isBlack={true} className='in-table' />
-    <p>{`Play ${card.blanksAmount} card${card.blanksAmount > 1 ? 's' : ''}`}</p>
-  </div>
+  return (
+  <div>
+    <Card text={card.text} isBlack={true} className='in-table' />    
+    <WhiteCardsPlayed state={state} />
+  </div>)
 }
 
 const CardsInPlay = ({state, owner}) => (
@@ -44,18 +64,18 @@ class Hand extends Component {
   render() {
     const gamestate = this.props.state
     return (
-      <div className="cah-hand">
+    <div className="cah-hand">
       <div className="cah-hand-cards">
-      {gamestate.players[LocalPlayerIndex()].hand.map((c, i) =>
-        <Card
-          {...c}
-          isBlack={false}
-          playable={gamestate.currentCzarIndex !== LocalPlayerIndex()}
-          handIndex={i}
-          className={`hovering ${this.state.cardIndexes.includes(i) ? 'selected' : ''}`}
-          onClick={() => this.handleCardClick(i)}
-        />            
-      )}
+        {gamestate.players[LocalPlayerIndex()].hand.map((c, i) =>
+          <Card
+            {...c}
+            isBlack={false}
+            playable={this.isCzar() === false}
+            handIndex={i}
+            className={`hovering ${this.state.cardIndexes.includes(i) ? 'selected' : ''}`}
+            onClick={() => this.handleCardClick(i)}
+          />            
+        )}
       </div>
       <Button variant="contained" color="primary" onClick={this.playCards}>
         Play cards
@@ -64,7 +84,14 @@ class Hand extends Component {
     )
   }
 
+  isCzar = () => {
+    return this.props.state.currentCzarIndex == LocalPlayerIndex()
+  }
+
   handleCardClick = (i) => {
+    if(this.isCzar()){
+      return
+    }
     let newList = this.state.cardIndexes.slice()
     if(newList.includes(i)){
       newList.splice(newList.indexOf(i), 1)
@@ -89,7 +116,7 @@ class Game extends Component {
     return (
       <div className="Game">
         <PlayersInfo state={this.state} />
-        <BlackCardInPlay state={this.state} />
+        <Table state={this.state} />
         <CardsInPlay state={this.state} owner={LocalPlayerIndex()} />
         <Hand state={this.state} />        
       </div>
