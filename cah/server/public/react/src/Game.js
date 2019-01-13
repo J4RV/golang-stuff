@@ -5,22 +5,30 @@ import Button from '@material-ui/core/Button';
 import axios from 'axios'
 import './App.css'
 
-const WhiteCardsPlayed = ({state}) => {
-  const allSinnersPlayed = () => {
-    for(let i = 0; i < state.players.length; i++){
-      if(i == state.currentCzarIndex){
-        continue
-      }
-      if(state.players[i].whiteCardsInPlay.length != state.blackCardInPlay.blanksAmount){
-        return false
-      }
+const PlayerWhiteCardsPlayed = ({player}) => {
+  const {whiteCardsInPlay} = player
+  return (<React.Fragment>
+    {whiteCardsInPlay.map(whiteCard => <Card {...whiteCard} className='in-table' />)}
+  </React.Fragment>)
+}
+
+const allSinnersPlayed = (state) => {
+  for(let i = 0; i < state.players.length; i++){
+    if(i == state.currentCzarIndex){
+      continue
     }
-    return true
+    if(state.players[i].whiteCardsInPlay.length != state.blackCardInPlay.blanksAmount){
+      return false
+    }
   }
-  if (allSinnersPlayed()){
-    return <p>ALL SINNERS PLAYED</p>
+  return true
+}
+
+const WhiteCardsPlayed = ({state}) => {
+  if (allSinnersPlayed(state)){
+    return <React.Fragment>{state.players.map(p => <PlayerWhiteCardsPlayed player={p} />)}</React.Fragment>
   } else {
-    return <p>WAITING FOR SINNERS...</p>
+    return <h2>Waiting for players...</h2>
   }
 }
 
@@ -28,19 +36,24 @@ const Table = ({state}) => {
   const card = state.blackCardInPlay
   if (card == null) return null
   return (
-  <div>
+  <div style={{display: "flex"}}>
     <Card text={card.text} isBlack={true} className='in-table' />    
     <WhiteCardsPlayed state={state} />
   </div>)
 }
 
-const CardsInPlay = ({state, owner}) => (
-  <span>
-    {state.players[owner].whiteCardsInPlay.map((c, i) =>
-      <Card text={c.text} isBlack={false} playable={false} handIndex={i} className='in-table' />            
-    )}
+const CardsInPlay = ({state, owner}) => {
+  const cards = state.players[owner].whiteCardsInPlay.map(c =>
+    <Card text={c.text} playable={false} className='in-table' />            
+  )
+  if(cards == null || cards.length === 0){
+    return <h2>Play {state.blackCardInPlay.blanksAmount} cards</h2>
+  }
+  return <span>
+    <h2>Your cards played this round:</h2>
+    {cards}
   </span>
-)
+}
 
 const PlayerInfo = ({player}) => (
   <div className="cah-playerinfo">
@@ -51,7 +64,7 @@ const PlayerInfo = ({player}) => (
 )
 
 const PlayersInfo = ({state}) => (
-  <div style={{display: "flex"}}>
+  <div className="cah-playersinfo">
     {state.players.map(p => 
       <PlayerInfo player={p} />
     )}
@@ -69,7 +82,6 @@ class Hand extends Component {
         {gamestate.players[LocalPlayerIndex()].hand.map((c, i) =>
           <Card
             {...c}
-            isBlack={false}
             playable={this.isCzar() === false}
             handIndex={i}
             className={`hovering ${this.state.cardIndexes.includes(i) ? 'selected' : ''}`}
@@ -106,7 +118,7 @@ class Hand extends Component {
       cardIndexes: this.state.cardIndexes
     }).then(r => {
       this.setState({cardIndexes: []})
-    }).catch(r => console.error(r.response.data));      
+    }).catch(r => window.alert(r.response.data)); // We'll need prettier things
   }
 }
 
