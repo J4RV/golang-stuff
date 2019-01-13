@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Card from './Card'
+import PlayersInfo from './PlayersInfo'
 import LocalPlayerIndex from './LocalPlayerIndex'
 import Button from '@material-ui/core/Button';
 import axios from 'axios'
@@ -54,22 +55,6 @@ const CardsInPlay = ({state, owner}) => {
     {cards}
   </span>
 }
-
-const PlayerInfo = ({player}) => (
-  <div className="cah-playerinfo">
-    <p>{player.name}</p>
-    <p>{player.points.length} points</p>
-    <p>{player.whiteCardsInPlay.length} cards in play</p>
-  </div>
-)
-
-const PlayersInfo = ({state}) => (
-  <div className="cah-playersinfo">
-    {state.players.map(p => 
-      <PlayerInfo player={p} />
-    )}
-  </div>
-)
 
 class Hand extends Component {
   state = {cardIndexes: []}
