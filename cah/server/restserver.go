@@ -48,7 +48,7 @@ func handleGetState() func(w http.ResponseWriter, req *http.Request) {
 		s := getState(req)
 		p, err := getPlayer(req)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusForbidden)
+			http.Error(w, err.Error(), http.StatusPreconditionFailed)
 		}
 		cleanStateForPlayer(&s, p)
 		writeJSONState(w, s)
@@ -58,7 +58,7 @@ func handleGetState() func(w http.ResponseWriter, req *http.Request) {
 func writeJSONState(w http.ResponseWriter, s game.State) {
 	j, err := json.Marshal(s)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusForbidden)
+		http.Error(w, err.Error(), http.StatusPreconditionFailed)
 	} else {
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprintf(w, "%s", j)

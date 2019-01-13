@@ -1,3 +1,3 @@
+import Cookies from "js-cookie"
 // for fast dirty dev
-document.cookie = 0
-export default () => document.cookie;
+export default () => Cookies.get("cah-currplayer-id");
