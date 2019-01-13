@@ -39,8 +39,10 @@ func GiveBlackCardToWinner(w int, s State) (State, error) {
 	res.Players[w].Points = append(res.Players[w].Points, res.BlackCardInPlay)
 	res.BlackCardInPlay = nil
 	for _, p := range s.Players {
-		p.WhiteCardsInPlay = make([]WhiteCard, 2)
+		p.WhiteCardsInPlay = []WhiteCard{}
 	}
+	res, _ = NextCzar(res)
+	res, _ = PutBlackCardInPlay(res)
 	return res, nil
 }
 
@@ -91,7 +93,22 @@ func PlayWhiteCards(p int, cs []int, s State) (State, error) {
 		newCardsPlayed[i] = c
 	}
 	player.WhiteCardsInPlay = append(player.WhiteCardsInPlay, newCardsPlayed...)
+	if allSinnersPlayedTheirCards(res) {
+		res.Phase = CzarChoosingWinner
+	}
 	return res, nil //TODO
+}
+
+func allSinnersPlayedTheirCards(s State) bool {
+	for i, p := range s.Players {
+		if i == s.CurrCzarIndex {
+			continue
+		}
+		if len(p.WhiteCardsInPlay) != s.BlackCardInPlay.GetBlanksAmount() {
+			return false
+		}
+	}
+	return true
 }
 
 func NextCzar(s State) (State, error) {

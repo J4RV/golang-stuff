@@ -1,10 +1,19 @@
 import React from 'react';
 import Card from './Card'
+import axios from 'axios'
+import LocalPlayerIndex from './LocalPlayerIndex'
 
-const PlayerWhiteCardsPlayed = ({player}) => {
+const handleOnClick = ({id}) => {
+  axios.post('rest/test/'+LocalPlayerIndex()+'/GiveBlackCardToWinner', {
+    winner: id
+  }).catch(r => window.alert(r.response.data)); // We'll need prettier things
+}
+
+const PlayerWhiteCardsPlayed = ({player, playerindex}) => {
   const {whiteCardsInPlay} = player
   return (<React.Fragment>
-    {whiteCardsInPlay.map(whiteCard => <Card {...whiteCard} className='in-table' />)}
+    {whiteCardsInPlay.map(whiteCard =>
+      <Card {...whiteCard} className='in-table' onClick={() => handleOnClick(playerindex)} />)}
   </React.Fragment>)
 }
 
@@ -22,7 +31,10 @@ const allSinnersPlayed = (state) => {
 
 const WhiteCardsPlayed = ({state}) => {
   if (allSinnersPlayed(state)){
-    return <React.Fragment>{state.players.map(p => <PlayerWhiteCardsPlayed player={p} />)}</React.Fragment>
+    return <React.Fragment>
+      {state.players.map((p, i) => 
+        <PlayerWhiteCardsPlayed player={p} playerindex={i} />)}      
+    </React.Fragment>
   } else {
     return <h2>Waiting for players...</h2>
   }

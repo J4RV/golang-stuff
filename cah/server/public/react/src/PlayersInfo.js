@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 const PlayerInfo = ({player}) => (
   <div className="cah-playerinfo">
