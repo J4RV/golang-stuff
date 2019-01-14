@@ -15,6 +15,7 @@ import (
 
 func main() {
 	var dir string
+	port := 8000
 
 	flag.StringVar(&dir, "dir", "./public/react/build", "the directory to serve files from. Defaults to './public'")
 	flag.Parse()
@@ -25,9 +26,12 @@ func main() {
 	p := game.GetRandomPlayers()
 	s := game.NewGame(bd, wd, p, game.RandomStartingCzar)
 	states["test"] = s
+
 	stateRouter(router)
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
-	log.Fatal(http.ListenAndServe(":8000", router))
+
+	log.Printf("Starting server in port %d\n", port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), router))
 }
 
 func stateRouter(r *mux.Router) *mux.Router {

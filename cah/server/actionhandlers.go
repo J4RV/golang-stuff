@@ -38,6 +38,13 @@ func giveBlackCardToWinner(w http.ResponseWriter, req *http.Request) error {
 	if err != nil {
 		return errors.New("Misconstructed payload")
 	}
+	pid, err := getPlayerIndex(req)
+	if err != nil {
+		return err
+	}
+	if pid != getState(req).CurrCzarIndex {
+		return errors.New("Only the Czar can choose the winner!")
+	}
 	newS, err := game.GiveBlackCardToWinner(payload.Winner, getState(req))
 	if err != nil {
 		return err
