@@ -10,7 +10,7 @@ class Game extends Component {
   render() {
     if(this.state == null) return null;
     return (
-      <div className="Game">
+      <div className="cah-game">
         <PlayersInfo state={this.state} />
         <Table state={this.state} />
         <YourCardsInPlay state={this.state} owner={LocalPlayerIndex()} />

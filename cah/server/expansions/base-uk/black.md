@@ -4,7 +4,7 @@ What's that smell?
 I got 99 problems but _ ain't one.
 Maybe she's born with it. Maybe it's _.
 What's the next Happy Meal® toy?
-Here is the church\\nHere is the steeple\\nOpen the doors\\nAnd there is _.
+Here is the church\nHere is the steeple\nOpen the doors\nAnd there is _.
 It's a pity that kids these days are all getting involved with _.
 I get by with a little help from _.
 Alternative medicine is now embracing the curative powers of _.
@@ -15,7 +15,7 @@ The Natural History Museum has just opened an interactive exhibit on _.
 I drink to forger _.
 Dear Agony Aunt, I'm having some trouble with _ and would like your advice.
 What's Batman's guilty pleasure?
-This is the way the world ends /\\n This is the way the world ends /\\n Not with a bang but with _.
+This is the way the world ends \n This is the way the world ends \n Not with a bang but with _.
 What's a girl's best friend?
 Daddy, why is mummy crying?
 _. That's how I want to die.
@@ -36,7 +36,7 @@ When I am Prime Minister of the United Kingdom, I will create the Ministry of _.
 Next from J.K. Rowling: Harry Potter and the Chamber of _.
 What kept Margaret Thatcher busy during her waning years?
 In a world ravaged by _, our only solace is _.
-War!\\n\\nWhat is it good for?
+War!\n\nWhat is it good for?
 During sex, I like to think about _.
 What are my parents hiding from me?
 What will always get you laid?

@@ -3,7 +3,8 @@ import Card from './Card'
 import axios from 'axios'
 import LocalPlayerIndex from './LocalPlayerIndex'
 
-const handleOnClick = ({id}) => {
+const handleOnClick = (id) => {
+  console.log("Chose winner: ", id)
   axios.post('rest/test/'+LocalPlayerIndex()+'/GiveBlackCardToWinner', {
     winner: id
   }).catch(r => window.alert(r.response.data)); // We'll need prettier things
@@ -11,10 +12,11 @@ const handleOnClick = ({id}) => {
 
 const PlayerWhiteCardsPlayed = ({player, playerindex}) => {
   const {whiteCardsInPlay} = player
-  return (<React.Fragment>
+  if(whiteCardsInPlay == null || whiteCardsInPlay.length === 0) return null
+  return (<div className="cah-oneplayerwhitecards">
     {whiteCardsInPlay.map(whiteCard =>
       <Card {...whiteCard} className='in-table' onClick={() => handleOnClick(playerindex)} />)}
-  </React.Fragment>)
+  </div>)
 }
 
 const allSinnersPlayed = (state) => {

@@ -18,7 +18,8 @@ func initCards() {
 func doEveryLine(f *os.File, fun func(string)) error {
 	s := bufio.NewScanner(f)
 	for s.Scan() {
-		fun(s.Text())
+		t := strings.Replace(s.Text(), "\\n", "\n", -1)
+		fun(t)
 	}
 	return s.Err()
 }

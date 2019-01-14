@@ -3,6 +3,14 @@ body {
   color: #ccc;
 }
 
+.cah-game {
+  max-width: 1200px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .cah-hand-cards {
   flex-wrap: wrap;
   align-items: center;
@@ -19,6 +27,7 @@ body {
   height: 180px;
   text-align: center;
   font-weight: 800;
+  white-space: pre-wrap;
   transition-timing-function: ease-in-out;
   transition: transform .1s, box-shadow .1s;
 }
@@ -32,10 +41,25 @@ body {
   text-align: center;
 }
 
+.cah-table {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cah-oneplayerwhitecards {
+  display: flex;
+  padding: 8px;
+  margin: 8px;
+  background: #0004;
+  border-radius: 3px;
+}
 
 .cah-playersinfo {
   display: flex;
-  float: right;
+  position: fixed;
+  right: 8px;
+  top: 8px;
 }
 
 .cah-playerinfo {

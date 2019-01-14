@@ -43,6 +43,7 @@ func GiveBlackCardToWinner(w int, s State) (State, error) {
 	}
 	res, _ = NextCzar(res)
 	res, _ = PutBlackCardInPlay(res)
+	playersDraw(&res)
 	return res, nil
 }
 
