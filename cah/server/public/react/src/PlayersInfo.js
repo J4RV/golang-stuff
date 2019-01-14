@@ -1,17 +1,17 @@
 import React from 'react';
 
-const PlayerInfo = ({player}) => (
-  <div className="cah-playerinfo">
-    <p>{player.name}</p>
-    <p>{player.points.length} points</p>
-    <p>{player.whiteCardsInPlay.length} cards in play</p>
+const PlayerInfo = ({player, isCzar}) => (
+  <div className={`cah-playerinfo hovering ${isCzar ? " cah-czarinfo" : ""}`}>
+    <div>{player.name}</div>
+    <div>{player.points.length} points</div>
+    <div>{isCzar ? "Current Czar" : `${player.whiteCardsInPlay.length} card(s) in play`}</div>
   </div>
 )
 
 const PlayersInfo = ({state}) => (
   <div className="cah-playersinfo">
-    {state.players.map(p => 
-      <PlayerInfo player={p} />
+    {state.players.map((p, i) => 
+      <PlayerInfo player={p} isCzar={i == state.currentCzarIndex} />
     )}
   </div>
 )

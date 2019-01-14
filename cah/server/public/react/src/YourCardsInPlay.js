@@ -12,10 +12,12 @@ const YourCardsInPlay = ({state}) => {
   if(cards == null || cards.length === 0){
     return <h2>Play {state.blackCardInPlay.blanksAmount} cards</h2>
   }
-  return <span>
+  return <div>
     <h2>Your card(s) played this round:</h2>
-    {cards}
-  </span>
+    {cards != null && cards.length > 0
+      ?<div className="cah-oneplayerwhitecards">{cards}</div>
+      : null}
+  </div>
 }
 
 export default YourCardsInPlay

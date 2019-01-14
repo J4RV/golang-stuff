@@ -19,6 +19,7 @@ body {
 }
 
 .cah-card {
+  display: inline-block;
   font-family: 'Open Sans', sans-serif;
   margin: 8px;
   padding: 24px;
@@ -68,6 +69,10 @@ body {
   margin: 4px;
   padding: 4px;
   border-radius: 3px;
+}
+
+.cah-czarinfo {
+  font-weight: 700;
 }
 
 .cah-card-white {
