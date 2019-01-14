@@ -45,6 +45,9 @@ func loadCards(expansion string, wd *[]WhiteCard, bd *[]BlackCard) error {
 	}
 	err = doEveryLine(bdat, func(t string) {
 		blanks := strings.Count(t, "_")
+		if blanks == 0 {
+			blanks = 1
+		}
 		*bd = append(*bd, BlackCard{Card: Card{Text: t, Expansion: expansion}, BlanksAmount: blanks})
 	})
 	log.Println("Successfully loaded cards from expansion " + expansion)
