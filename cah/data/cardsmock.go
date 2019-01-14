@@ -3,6 +3,7 @@ package data
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -15,8 +16,8 @@ func initCards() {
 	}
 }
 
-func doEveryLine(f *os.File, fun func(string)) error {
-	s := bufio.NewScanner(f)
+func doEveryLine(r io.Reader, fun func(string)) error {
+	s := bufio.NewScanner(r)
 	for s.Scan() {
 		t := strings.Replace(s.Text(), "\\n", "\n", -1)
 		fun(t)

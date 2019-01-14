@@ -70,7 +70,7 @@ func PlayWhiteCards(p int, cs []int, s State) (State, error) {
 		return s, errors.New("Non valid sinner index")
 	}
 	if p == s.CurrCzarIndex {
-		return s, errors.New("The Czar cannot play white cards!")
+		return s, errors.New("The Czar cannot play white cards")
 	}
 	if len(cs)+len(s.Players[p].WhiteCardsInPlay) > s.BlackCardInPlay.GetBlanksAmount() {
 		return s, fmt.Errorf("Invalid amount of white cards to play, expected %d but got %d",
@@ -79,25 +79,15 @@ func PlayWhiteCards(p int, cs []int, s State) (State, error) {
 	}
 	res := s.Clone()
 	player := res.Players[p]
-	for _, i := range cs {
-		if i < 0 || i >= len(player.Hand) {
-			return s, fmt.Errorf("Non valid white card index: %d", i)
-		}
-		// TODO cs indexes: check not repeated indexes
-	}
-	newCardsPlayed := make([]WhiteCard, len(cs))
-	for i, ci := range cs {
-		c, err := player.extractCardFromHand(ci)
-		if err != nil {
-			return res, err
-		}
-		newCardsPlayed[i] = c
+	newCardsPlayed, err := player.extractCardsFromHand(cs)
+	if err != nil {
+		return res, err
 	}
 	player.WhiteCardsInPlay = append(player.WhiteCardsInPlay, newCardsPlayed...)
 	if allSinnersPlayedTheirCards(res) {
 		res.Phase = CzarChoosingWinner
 	}
-	return res, nil //TODO
+	return res, nil
 }
 
 func allSinnersPlayedTheirCards(s State) bool {

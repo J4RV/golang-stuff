@@ -2,47 +2,59 @@ package game
 
 import (
 	"fmt"
+	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func TestPlayerRemoveCard(t *testing.T) {
+func TestPlayer_extractCardFromHand(t *testing.T) {
 	p := Player{}
-	c1 := cardMock{Text: "A"}
-	c2 := cardMock{Text: "B"}
-	c3 := cardMock{Text: "C"}
+	c1 := card{text: "A"}
+	c2 := card{text: "B"}
+	c3 := card{text: "C"}
 	p.Hand = []WhiteCard{c1, c2, c3}
 
-	err := p.extractCardFromHand(-1)
+	_, err := p.extractCardFromHand(-1)
 	if err == nil {
 		t.Error("Expected error but did not found it, negative index")
 	}
 
-	err = p.extractCardFromHand(9)
+	_, err = p.extractCardFromHand(9)
 	if err == nil {
 		t.Error("Expected error but did not found it, index over hand size")
 	}
 
-	err = p.extractCardFromHand(1)
+	c, err := p.extractCardFromHand(1)
+	assert.Equal(t, c.GetText(), "B", "Unexpected text in extracted hand")
+	assert.Equalf(t, err, nil, "Unexpected error %v", err)
+	assert.Equalf(t, len(p.Hand), 2, "Hand size did not get reduced, hand: %s, len: ", p.Hand)
 	expectedResultHand := []WhiteCard{c1, c3}
-	if err != nil {
-		t.Error(err)
-	}
-	if len(p.Hand) != 2 {
-		msg := fmt.Sprintf("Hand size did not get reduced, hand: %s, len: ", p.Hand)
-		t.Error(msg)
-	}
 
 	for i := range p.Hand {
-		if p.Hand[i] != expectedResultHand[i] {
-			t.Error(fmt.Sprintf("Unexpected hand card at position %d", i))
-		}
+		assert.Equalf(t, p.Hand[i], expectedResultHand[i], "Unexpected hand card at position %d", i)
 	}
 }
 
-type cardMock struct {
-	Text string
-}
+func TestPlayer_extractCardsFromHand(t *testing.T) {
+	assert := assert.New(t)
+	p := Player{}
+	p.Hand = getWhiteCardsFixture(10)
+	indexes := []int{0, 9, 5}
+	cards, err := p.extractCardsFromHand(indexes)
 
-func (c cardMock) GetText() string {
-	return c.Text
+	assert.NoError(err)
+	assert.Equal(7, len(p.Hand), "Unexpected hand size")
+	assert.Equal(3, len(cards), "Unexpected cards size")
+
+	for i, index := range indexes {
+		assert.True(strings.Contains(cards[i].GetText(), fmt.Sprintf("(%d)", index)),
+			"Unexpected card order in cards result", cards[i].GetText())
+	}
+
+	expectedHand := []int{1, 2, 3, 4, 6, 7, 8}
+	for i, index := range expectedHand {
+		assert.True(strings.Contains(p.Hand[i].GetText(), fmt.Sprintf("(%d)", index)),
+			"Unexpected card order in hand", p.Hand[i].GetText())
+	}
 }
