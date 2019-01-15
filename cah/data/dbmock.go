@@ -6,7 +6,7 @@ import (
 	"github.com/j4rv/golang-stuff/cah/game"
 )
 
-var users = make(map[string]User)
+var users = make(map[int]User)
 var blackCards []BlackCard
 var whiteCards []WhiteCard
 var games []Game
@@ -35,20 +35,40 @@ func GetWhiteCards() []game.WhiteCard {
 	return models
 }
 
-func GetUser(n, p string) (User, error) {
-	u := users[n]
-	if correctPass(p, u.Password) {
-		return u, nil
+func GetUserById(id int) (User, error) {
+	u, ok := users[id]
+	if !ok {
+		return User{}, fmt.Errorf("Cannot find user with id %d", id)
 	}
-	return User{}, fmt.Errorf("Incorrect password for user %s", u.Username)
+	return u, nil
+}
+
+func GetUserByLogin(n, p string) (User, error) {
+	u, err := getUserByName(n)
+	if err != nil {
+		return u, err
+	}
+	if !correctPass(p, u.Password) {
+		return User{}, fmt.Errorf("Incorrect password for user %s", u.Username)
+	}
+	return u, nil
+}
+
+func getUserByName(n string) (User, error) {
+	for _, u := range users {
+		if u.Username == n {
+			return u, nil
+		}
+	}
+	return User{}, fmt.Errorf("Cant find user with username '%s'", n)
 }
 
 func initUsers() {
-	users["Red"] = User{Username: "Red"}
-	users["Green"] = User{Username: "Green"}
-	users["Blue"] = User{Username: "Blue"}
-	users["Gold"] = User{Username: "Gold"}
-	users["Silver"] = User{Username: "Silver"}
+	users[0] = User{Username: "Red"}
+	users[1] = User{Username: "Green"}
+	users[2] = User{Username: "Blue"}
+	users[3] = User{Username: "Gold"}
+	users[4] = User{Username: "Silver"}
 	for _, u := range users {
 		u.Password = commonPassHash
 	}

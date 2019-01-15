@@ -1,10 +1,13 @@
 package data
 
 import (
+	"encoding/gob"
 	"time"
 )
 
-const blankChar = "_"
+func init() {
+	gob.Register(User{})
+}
 
 type DBObject struct {
 	ID int `json:"id"       db:"id"`

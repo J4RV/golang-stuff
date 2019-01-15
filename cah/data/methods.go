@@ -1,8 +1,8 @@
 package data
 
 func LoginCorrect(username, pass string) bool {
-	u, ok := users[username]
-	if !ok {
+	u, err := getUserByName(username)
+	if err != nil {
 		return false
 	}
 	return correctPass(pass, u.Password)
