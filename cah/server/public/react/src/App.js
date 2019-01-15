@@ -4,13 +4,13 @@ import Cookies from "js-cookie"
 import './App.css'
 
 class Login extends React.Component {
-  state = {id: ''};
+  state = {nick: ''};
 
   handleChange = (event) => {
     if(isNaN(event.target.value)){
       return
     }
-    this.setState({id: event.target.value});
+    this.setState({nick: event.target.value});
   }
 
   handleSubmit = (event) => {
@@ -22,8 +22,8 @@ class Login extends React.Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <label>
-          Name:
-          <input type="text" value={this.state.id} onChange={this.handleChange} />
+          Nick:
+          <input type="text" value={this.state.nick} onChange={this.handleChange} />
         </label>
         <input type="submit" value="Submit" />
       </form>
@@ -48,8 +48,8 @@ class App extends Component {
   }
 
   onLogin = (s) => {
-    Cookies.set("cah-currplayer-id", s.id) // fast n dirty
-    this.setState({id: s.id})
+    Cookies.set("cah-currplayer-id", s.nick) // fast n dirty
+    this.setState({id: s.nick})
   }
 }
 

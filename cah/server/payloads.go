@@ -7,3 +7,8 @@ type chooseWinnerPayload struct {
 type playCardsPayload struct {
 	CardIndexes []int `json:"cardIndexes"`
 }
+
+type loginPayload struct {
+	Name string `json:"name"`
+	Pass string `json:"pass"`
+}

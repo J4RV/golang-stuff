@@ -2,8 +2,9 @@ package data
 
 import "golang.org/x/crypto/bcrypt"
 
-func getPassHash(p string) ([]byte, error) {
-	return bcrypt.GenerateFromPassword([]byte(p), 10)
+func getPassHash(p string) (string, error) {
+	b, err := bcrypt.GenerateFromPassword([]byte(p), 10)
+	return string(b), err
 }
 
 func correctPass(pass string, storedhash string) bool {
@@ -11,5 +12,5 @@ func correctPass(pass string, storedhash string) bool {
 	if err != nil {
 		return false
 	}
-	return nil != bcrypt.CompareHashAndPassword(hp, []byte(storedhash))
+	return nil != bcrypt.CompareHashAndPassword([]byte(hp), []byte(storedhash))
 }

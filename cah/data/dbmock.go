@@ -1,6 +1,10 @@
 package data
 
-import "github.com/j4rv/golang-stuff/cah/game"
+import (
+	"fmt"
+
+	"github.com/j4rv/golang-stuff/cah/game"
+)
 
 var users = make(map[string]User)
 var blackCards []BlackCard
@@ -31,6 +35,14 @@ func GetWhiteCards() []game.WhiteCard {
 	return models
 }
 
+func GetUser(n, p string) (User, error) {
+	u := users[n]
+	if correctPass(p, u.Password) {
+		return u, nil
+	}
+	return User{}, fmt.Errorf("Incorrect password for user %s", u.Username)
+}
+
 func initUsers() {
 	users["Red"] = User{Username: "Red"}
 	users["Green"] = User{Username: "Green"}
@@ -38,6 +50,6 @@ func initUsers() {
 	users["Gold"] = User{Username: "Gold"}
 	users["Silver"] = User{Username: "Silver"}
 	for _, u := range users {
-		u.Password = string(commonPassHash)
+		u.Password = commonPassHash
 	}
 }

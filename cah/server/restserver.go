@@ -28,6 +28,7 @@ func main() {
 	states["test"] = s
 
 	stateRouter(router)
+	router.PathPrefix("/session").Subrouter().HandleFunc("/test", SessionHandler)
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
 
 	log.Printf("Starting server in port %d\n", port)
@@ -66,5 +67,12 @@ func writeJSONState(w http.ResponseWriter, s game.State) {
 	} else {
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprintf(w, "%s", j)
+	}
+}
+
+func (fn appHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if err := fn(w, r); err != nil {
+		log.Printf("ServeHTTP error: %s", err)
+		http.Error(w, err.Error(), http.StatusPreconditionFailed)
 	}
 }
