@@ -21,18 +21,26 @@ func main() {
 	flag.Parse()
 
 	router := mux.NewRouter()
-	bd := data.GetBlackCards()
-	wd := data.GetWhiteCards()
-	p := game.GetRandomPlayers()
-	s := game.NewGame(bd, wd, p, game.RandomStartingCzar)
-	states["test"] = s
-
+	createTestGame()
 	stateRouter(router)
 	router.HandleFunc("/login", processLogin).Methods("POST")
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
 
 	log.Printf("Starting server in port %d\n", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), router))
+}
+
+func createTestGame() {
+	bd := data.GetBlackCards()
+	wd := data.GetWhiteCards()
+	p := game.GetRandomPlayers()
+	s := game.NewGame(bd, wd, p, game.RandomStartingCzar)
+	game := serverGame{state: s}
+	for i, p := range p {
+		user, _ := data.GetUserById(i)
+		game.userToPlayers[&user] = p
+	}
+	games["test"] = s
 }
 
 func stateRouter(r *mux.Router) *mux.Router {
@@ -44,18 +52,9 @@ func stateRouter(r *mux.Router) *mux.Router {
 	return r
 }
 
-func cleanStateForPlayer(s *game.State, p game.Player) {
-	//todo: replace cards in other player hands with "Unknown" cards to prevent cheating
-}
-
 func handleGetState() func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 		s := getState(req)
-		p, err := getPlayer(req)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusPreconditionFailed)
-		}
-		cleanStateForPlayer(&s, p)
 		writeJSONState(w, s)
 	}
 }

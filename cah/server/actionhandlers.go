@@ -6,12 +6,30 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/j4rv/golang-stuff/cah/data"
 	"github.com/j4rv/golang-stuff/cah/game"
 )
 
 type appHandler func(http.ResponseWriter, *http.Request) error
 
+type gameHandler struct {
+	loggedHandler
+	state  game.State
+	action func(w http.ResponseWriter, r *http.Request, u data.User, s game.State) error
+}
+
+func (gh gameHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	s := getState(r)
+}
+
 func (fn appHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if err := fn(w, r); err != nil {
+		log.Printf("ServeHTTP error: %s", err)
+		http.Error(w, err.Error(), http.StatusPreconditionFailed)
+	}
+}
+
+func (fn gameHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err := fn(w, r); err != nil {
 		log.Printf("ServeHTTP error: %s", err)
 		http.Error(w, err.Error(), http.StatusPreconditionFailed)

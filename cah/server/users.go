@@ -34,14 +34,17 @@ func processLogin(w http.ResponseWriter, req *http.Request) {
 }
 
 // wraps an appHandler to make sure that a valid user is logged in
-type loggedHandler func(http.ResponseWriter, *http.Request, data.User) error
+type loggedHandler struct {
+	user   data.User
+	action func(w http.ResponseWriter, r *http.Request, u data.User) error
+}
 
 func (fn loggedHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	u, err := userFromSession(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusForbidden)
 	}
-	err = fn(w, r, u)
+	err = fn.action(w, r, u)
 	if err != nil {
 		log.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
