@@ -23,7 +23,8 @@ func main() {
 	router := mux.NewRouter()
 	createTestGame()
 	stateRouter(router)
-	router.HandleFunc("/login", processLogin).Methods("POST")
+	router.HandleFunc("/rest/login", processLogin).Methods("POST")
+	router.HandleFunc("/rest/validcookie", validCookie).Methods("GET")
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
 
 	log.Printf("Starting server in port %d\n", port)
@@ -36,18 +37,17 @@ func createTestGame() {
 	p := game.GetRandomPlayers()
 	s := game.NewGame(bd, wd, p, game.RandomStartingCzar)
 	sg := serverGame{state: s}
-	sg.userToPlayers = make(map[*data.User]*game.Player)
+	sg.userToPlayers = make(map[data.User]*game.Player)
 	for i, p := range p {
 		user, _ := data.GetUserById(i)
-		sg.userToPlayers[&user] = p
+		sg.userToPlayers[user] = p
 	}
-	games["test"] = &sg
+	games["test"] = sg
 }
 
 func stateRouter(r *mux.Router) *mux.Router {
-	s := r.PathPrefix("/rest/{gameid}/{playerid}").Subrouter()
+	s := r.PathPrefix("/rest/{gameid}").Subrouter()
 	s.HandleFunc("/State", handleGetState()).Methods("GET")
-	s.HandleFunc("/PutBlackCardInPlay", simpleCAHActionHandler(game.PutBlackCardInPlay)).Methods("POST")
 	s.Handle("/GiveBlackCardToWinner", appHandler(giveBlackCardToWinner)).Methods("POST")
 	s.Handle("/PlayCards", appHandler(playCards)).Methods("POST")
 	return r

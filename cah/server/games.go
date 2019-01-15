@@ -9,18 +9,18 @@ import (
 	"github.com/j4rv/golang-stuff/cah/game"
 )
 
-var games = make(map[string]*serverGame)
+var games = make(map[string]serverGame)
 
 type serverGame struct {
 	state         game.State
-	userToPlayers map[*data.User]*game.Player
+	userToPlayers map[data.User]*game.Player
 }
 
-func getPlayerIndex(g serverGame, u *data.User) (int, error) {
+func getPlayerIndex(g serverGame, u data.User) (int, error) {
 	player, ok := g.userToPlayers[u]
 	if ok {
 		for i, p := range g.state.Players {
-			if p == player {
+			if p.ID == player.ID {
 				return i, nil
 			}
 		}
@@ -28,15 +28,15 @@ func getPlayerIndex(g serverGame, u *data.User) (int, error) {
 	return -1, errors.New("You are not playing this game")
 }
 
-func getPlayer(g serverGame, u *data.User) (game.Player, error) {
+func getPlayer(g serverGame, u data.User) (*game.Player, error) {
 	player, ok := g.userToPlayers[u]
 	if !ok {
-		return *player, errors.New("Could not find player in game")
+		return player, errors.New("Could not find player in game")
 	}
-	return *player, nil
+	return player, nil
 }
 
-func getGame(req *http.Request) (*serverGame, error) {
+func getGame(req *http.Request) (serverGame, error) {
 	id := mux.Vars(req)["gameid"]
 	g, ok := games[id]
 	if !ok {

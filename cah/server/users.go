@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/gorilla/sessions"
 	"github.com/j4rv/golang-stuff/cah/data"
@@ -21,7 +22,7 @@ func processLogin(w http.ResponseWriter, req *http.Request) {
 	}
 	u, err := data.GetUserByLogin(payload.Username, payload.Password)
 	if err != nil {
-		log.Printf("Someone tried to login using user '%s'", u.Username)
+		log.Printf("Someone tried to login using user '%s'", payload.Username)
 		http.Error(w, "Incorrect login", http.StatusForbidden)
 		return
 	}
@@ -33,22 +34,10 @@ func processLogin(w http.ResponseWriter, req *http.Request) {
 	http.Redirect(w, req, "/", http.StatusOK)
 }
 
-// wraps an appHandler to make sure that a valid user is logged in
-type loggedHandler struct {
-	user   data.User
-	action func(w http.ResponseWriter, r *http.Request, u data.User) error
-}
-
-func (fn loggedHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	u, err := userFromSession(r)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusForbidden)
-	}
-	err = fn.action(w, r, u)
-	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+func validCookie(w http.ResponseWriter, req *http.Request) {
+	_, err := userFromSession(req)
+	ok := strconv.FormatBool(err == nil)
+	w.Write([]byte(ok))
 }
 
 /*
@@ -75,11 +64,13 @@ func userFromSession(r *http.Request) (data.User, error) {
 	}
 	val, ok := session.Values[userid]
 	if !ok {
-		return data.User{}, fmt.Errorf("Tried to get user from session without an id: '%s'", session)
+		log.Printf("Tried to get user from session without an id: '%s'", session)
+		return data.User{}, fmt.Errorf("Tried to get user from session without an id")
 	}
 	id, ok := val.(int)
 	if !ok {
-		return data.User{}, fmt.Errorf("Session with non int id value: '%s'", session)
+		log.Printf("Session with non int id value: '%s'", session)
+		return data.User{}, fmt.Errorf("Session with non int id value")
 	}
 	u, err := data.GetUserById(id)
 	if err != nil {

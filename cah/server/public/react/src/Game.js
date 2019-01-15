@@ -17,7 +17,7 @@ class Game extends Component {
         <Hand state={this.state} />        
       </div>
     );
-  } 
+  }
   componentWillMount() {
     this.updateState()
     // this would be much better with websockets
