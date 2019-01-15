@@ -3,6 +3,34 @@ body {
   color: #ccc;
 }
 
+.cah-login-container {
+  max-width: 400px;
+  margin-top: 2em;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 8px;
+  text-align: center;
+}
+
+.cah-login-form {
+  width: 100%;
+  margin-top: 1em;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.cah-form-error {
+  color: #e66;
+  padding: 4px;
+  margin: 8px;
+  border-radius: 3px;
+  background: #1114;
+  min-width: 50%;
+  text-align: center;
+}
+
 .cah-game {
   max-width: 1200px;
   margin-top: 16px;
