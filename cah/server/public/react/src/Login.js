@@ -39,7 +39,7 @@ class LoginForm extends Component {
 
   render() {
     return <div className="cah-login-container">
-      <h2>Cards Against humanity</h2>
+      <h2>Cards Against Humanity</h2>
       <h4>A party game for horrible people.</h4>
       <Card text="I'm _ and my password is _." isBlack={true} className="in-table" />
       <form onSubmit={this.handleSubmit} >
