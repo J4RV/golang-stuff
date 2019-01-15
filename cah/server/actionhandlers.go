@@ -18,12 +18,6 @@ func (fn appHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func simpleErrorHandler(e error, status int) appHandler {
-	return func(w http.ResponseWriter, req *http.Request) error {
-		http.Error(w, err.Error(), status)
-	}
-}
-
 func simpleCAHActionHandler(f func(game.State) (game.State, error)) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 		s := getState(req)
