@@ -35,12 +35,13 @@ func createTestGame() {
 	wd := data.GetWhiteCards()
 	p := game.GetRandomPlayers()
 	s := game.NewGame(bd, wd, p, game.RandomStartingCzar)
-	game := serverGame{state: s}
+	sg := serverGame{state: s}
+	sg.userToPlayers = make(map[*data.User]*game.Player)
 	for i, p := range p {
 		user, _ := data.GetUserById(i)
-		game.userToPlayers[&user] = p
+		sg.userToPlayers[&user] = p
 	}
-	games["test"] = s
+	games["test"] = &sg
 }
 
 func stateRouter(r *mux.Router) *mux.Router {
@@ -54,8 +55,12 @@ func stateRouter(r *mux.Router) *mux.Router {
 
 func handleGetState() func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
-		s := getState(req)
-		writeJSONState(w, s)
+		game, err := getGame(req)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		writeJSONState(w, game.state)
 	}
 }
 

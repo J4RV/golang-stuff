@@ -9,7 +9,7 @@ import (
 	"github.com/j4rv/golang-stuff/cah/game"
 )
 
-var games = make(map[string]serverGame)
+var games = make(map[string]*serverGame)
 
 type serverGame struct {
 	state         game.State
@@ -36,12 +36,21 @@ func getPlayer(g serverGame, u *data.User) (game.Player, error) {
 	return *player, nil
 }
 
-func getGame(req *http.Request) serverGame {
+func getGame(req *http.Request) (*serverGame, error) {
 	id := mux.Vars(req)["gameid"]
-	return games[id]
+	g, ok := games[id]
+	if !ok {
+		return g, errors.New("Cannot get game from request")
+	}
+	return g, nil
 }
 
-func updateGame(req *http.Request, sg serverGame) {
+func updateGameState(req *http.Request, s game.State) error {
 	id := mux.Vars(req)["gameid"]
-	games[id] = sg
+	g, ok := games[id]
+	if !ok {
+		return errors.New("Cannot update game state from request")
+	}
+	g.state = s
+	return nil
 }
