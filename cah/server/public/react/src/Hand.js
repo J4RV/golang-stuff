@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Card from './Card'
 import Button from '@material-ui/core/Button'
+import Fab from '@material-ui/core/Fab';
+import Check from '@material-ui/icons/Check';
 import axios from 'axios'
 
 class Hand extends Component {
@@ -20,9 +22,9 @@ class Hand extends Component {
             />
           )}
         </div>
-        <Button variant="contained" color="primary" onClick={this.playCards}>
-          Play cards
-      </Button>
+        <Fab aria-label="Play selected cards" color="primary" onClick={this.playCards}>
+          <Check />
+        </Fab>
       </div>
     )
   }

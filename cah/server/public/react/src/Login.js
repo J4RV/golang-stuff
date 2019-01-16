@@ -5,6 +5,23 @@ import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import Card from './Card'
 
+/*class ErrorSnackbar extends Component {
+  render() {
+    return <Snackbar
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'left',
+      }}
+      open={this.props.msg != null && this.props.msg !== ""}
+      autoHideDuration={6000}
+      ContentProps={{
+        'aria-describedby': 'message-id',
+      }}
+      message={<span id="message-id">{this.props.msg}</span>}
+    />
+  }
+}*/
+
 class LoginForm extends Component {
   state = { username: "", password: "" };
 
