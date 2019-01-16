@@ -29,7 +29,7 @@ func processLogin(w http.ResponseWriter, req *http.Request) {
 	session, err := store.Get(req, sessionid)
 	session.Values[userid] = u.ID
 	session.Save(req, w)
-	log.Printf("User %s just logged in!", u.Username)
+	log.Printf("User %s with id %d just logged in!", u.Username, u.ID)
 	// everything ok, back to index with your brand new session!
 	http.Redirect(w, req, "/", http.StatusFound)
 }

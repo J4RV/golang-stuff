@@ -64,11 +64,11 @@ func getUserByName(n string) (User, error) {
 }
 
 func initUsers() {
-	users[0] = &User{Username: "Red"}
-	users[1] = &User{Username: "Green"}
-	users[2] = &User{Username: "Blue"}
-	users[3] = &User{Username: "Gold"}
-	users[4] = &User{Username: "Silver"}
+	users[0] = &User{Username: "Red", DBObject: DBObject{0}}
+	users[1] = &User{Username: "Green", DBObject: DBObject{1}}
+	users[2] = &User{Username: "Blue", DBObject: DBObject{2}}
+	users[3] = &User{Username: "Gold", DBObject: DBObject{3}}
+	users[4] = &User{Username: "Silver", DBObject: DBObject{4}}
 	for i := range users {
 		users[i].Password = commonPassHash
 	}

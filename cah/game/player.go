@@ -14,6 +14,14 @@ type Player struct {
 	Points           []BlackCard `json:"points"`
 }
 
+func NewPlayer(id int, name string) *Player {
+	return &Player{
+		ID:               id,
+		Name:             name,
+		WhiteCardsInPlay: []WhiteCard{},
+		Points:           []BlackCard{}}
+}
+
 func (p *Player) removeCardFromHand(i int) error {
 	if i < 0 || i >= len(p.Hand) {
 		msg := fmt.Sprintf("Index out of bounds. Index: %d, Hand size: %d", i, len(p.Hand))
@@ -55,12 +63,4 @@ func (p *Player) extractCardFromHand(i int) (WhiteCard, error) {
 		return nil, err
 	}
 	return ret[0], nil
-}
-
-func GetRandomPlayers() []*Player {
-	p := make([]*Player, 3)
-	p[0] = &Player{Name: "Rojo", WhiteCardsInPlay: []WhiteCard{}, Points: []BlackCard{}}
-	p[1] = &Player{Name: "Jury", WhiteCardsInPlay: []WhiteCard{}, Points: []BlackCard{}}
-	p[2] = &Player{Name: "Paul", WhiteCardsInPlay: []WhiteCard{}, Points: []BlackCard{}}
-	return p
 }
