@@ -5,13 +5,12 @@ import './App.css'
 
 const theme = createMuiTheme({
   palette: {
-    type: 'dark',
-  },
-});
-
+    type: 'dark'
+  }
+})
 
 class App extends Component {
-  render() {
+  render () {
     return <MuiThemeProvider theme={theme}>
       <LoginController>
         <p>Logged in!</p>
@@ -20,4 +19,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default App

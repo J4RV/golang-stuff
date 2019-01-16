@@ -8,13 +8,13 @@ import './App.css'
 
 class Game extends Component {
   render() {
-    if(this.state == null) return null;
+    if (this.state == null) return null;
     return (
       <div className="cah-game">
         <PlayersInfo state={this.state} />
         <Table state={this.state} />
         <YourCardsInPlay state={this.state} owner={LocalPlayerIndex()} />
-        <Hand state={this.state} />        
+        <Hand state={this.state} />
       </div>
     );
   }
@@ -24,10 +24,10 @@ class Game extends Component {
     window.setInterval(this.updateState, 500)
   }
   updateState = () => {
-    fetch("rest/test/"+LocalPlayerIndex()+"/State")
+    fetch("rest/test/" + LocalPlayerIndex() + "/State")
       .then(r => r.json()
-      .then(j => console.log(j) & this.setState(j))
-    ) 
+        .then(j => console.log(j) & this.setState(j))
+      )
   }
 }
 

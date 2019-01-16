@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button'
 import Card from './Card'
 
 class LoginForm extends Component {
-  state = {username: "", password: ""};
+  state = { username: "", password: "" };
 
   setErrorMsg = (msg) => {
     let newState = Object.assign({}, this.state)
@@ -78,7 +78,7 @@ class LoginForm extends Component {
 
 class LoginController extends Component {
   state = {};
-  setValid = (v) => {this.setState({validcookie: v})}
+  setValid = (v) => { this.setState({ validcookie: v }) }
 
   componentWillMount() {
     fetch("rest/validcookie")
@@ -88,7 +88,7 @@ class LoginController extends Component {
 
   render() {
     console.log(this.state)
-    if(this.state.validcookie == null){
+    if (this.state.validcookie == null) {
       return <div>Loading...</div>
     }
     /*if(this.state.validcookie === "true"){

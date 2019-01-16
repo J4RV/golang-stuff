@@ -5,27 +5,27 @@ import axios from 'axios'
 import LocalPlayerIndex from './LocalPlayerIndex'
 
 class Hand extends Component {
-  state = {cardIndexes: []}
+  state = { cardIndexes: [] }
 
   render() {
     const gamestate = this.props.state
     return (
-    <div className="cah-hand">
-      <div className="cah-hand-cards">
-        {gamestate.players[LocalPlayerIndex()].hand.map((c, i) =>
-          <Card
-            {...c}
-            playable={this.isCzar() === false}
-            handIndex={i}
-            className={`hovering ${this.state.cardIndexes.includes(i) ? 'selected' : ''}`}
-            onClick={() => this.handleCardClick(i)}
-          />            
-        )}
-      </div>
-      <Button variant="contained" color="primary" onClick={this.playCards}>
-        Play cards
+      <div className="cah-hand">
+        <div className="cah-hand-cards">
+          {gamestate.players[LocalPlayerIndex()].hand.map((c, i) =>
+            <Card
+              {...c}
+              playable={this.isCzar() === false}
+              handIndex={i}
+              className={`hovering ${this.state.cardIndexes.includes(i) ? 'selected' : ''}`}
+              onClick={() => this.handleCardClick(i)}
+            />
+          )}
+        </div>
+        <Button variant="contained" color="primary" onClick={this.playCards}>
+          Play cards
       </Button>
-    </div>
+      </div>
     )
   }
 
@@ -34,23 +34,23 @@ class Hand extends Component {
   }
 
   handleCardClick = (i) => {
-    if(this.isCzar()){
+    if (this.isCzar()) {
       return
     }
     let newList = this.state.cardIndexes.slice()
-    if(newList.includes(i)){
+    if (newList.includes(i)) {
       newList.splice(newList.indexOf(i), 1)
     } else {
       newList.push(i)
     }
-    this.setState({cardIndexes: newList})
+    this.setState({ cardIndexes: newList })
   }
 
   playCards = () => {
-    axios.post('rest/test/'+LocalPlayerIndex()+'/PlayCards', {
+    axios.post('rest/test/' + LocalPlayerIndex() + '/PlayCards', {
       cardIndexes: this.state.cardIndexes
     }).then(r => {
-      this.setState({cardIndexes: []})
+      this.setState({ cardIndexes: [] })
     }).catch(r => window.alert(r.response.data)); // We'll need prettier things
   }
 }
