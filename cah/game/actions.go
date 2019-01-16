@@ -30,13 +30,22 @@ func PutBlackCardInPlay(s State) (State, error) {
 	return res, nil
 }
 
-func GiveBlackCardToWinner(w int, s State) (State, error) {
-	err := giveBlackCardToWinnerChecks(w, s)
+func GiveBlackCardToWinner(wId int, s State) (State, error) {
+	err := giveBlackCardToWinnerChecks(wId, s)
 	if err != nil {
 		return s, err
 	}
 	res := s.Clone()
-	res.Players[w].Points = append(res.Players[w].Points, res.BlackCardInPlay)
+	var winner *Player
+	for _, p := range res.Players {
+		if p.ID == wId {
+			winner = p
+		}
+	}
+	if winner == nil {
+		return s, fmt.Errorf("Invalid winner id %d", wId)
+	}
+	winner.Points = append(winner.Points, res.BlackCardInPlay)
 	res.BlackCardInPlay = nil
 	for _, p := range s.Players {
 		p.WhiteCardsInPlay = []WhiteCard{}
@@ -50,9 +59,6 @@ func GiveBlackCardToWinner(w int, s State) (State, error) {
 func giveBlackCardToWinnerChecks(w int, s State) error {
 	if s.Phase != CzarChoosingWinner {
 		return fmt.Errorf("Tried to choose a winner in a non valid phase '%d'", s.Phase)
-	}
-	if w < 0 || w >= len(s.Players) {
-		return errors.New("Non valid player index")
 	}
 	for i, p := range s.Players {
 		if i == s.CurrCzarIndex {

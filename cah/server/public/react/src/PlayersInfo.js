@@ -3,7 +3,7 @@ import React from 'react'
 const PlayerInfo = ({ player, isCzar }) => (
   <div className={`cah-playerinfo hovering ${isCzar ? ' cah-czarinfo' : ''}`}>
     <div>{player.name}</div>
-    <div>{player.points} points</div>
+    <div>{player.points.length} points</div>
     <div>{isCzar ? 'Current Czar' : `${player.whiteCardsInPlay} card(s) in play`}</div>
   </div>
 )

@@ -29,7 +29,7 @@ class Game extends Component {
         // this would be much better with websockets
         window.setTimeout(this.updateState, 500)
       })
-      .catch(e => window.alert(e.response.data))
+      .catch(e => console.log(e.response))
   }
 }
 
