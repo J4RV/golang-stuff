@@ -23,9 +23,9 @@ func main() {
 	router := mux.NewRouter()
 	createTestGame()
 	stateRouter(router)
-	router.HandleFunc("/rest/login", processLogin).Methods("POST")
-	router.HandleFunc("/rest/logout", processLogout).Methods("POST", "GET")
-	router.HandleFunc("/rest/validcookie", validCookie).Methods("GET")
+	router.HandleFunc("/user/login", processLogin).Methods("POST")
+	router.HandleFunc("/user/logout", processLogout).Methods("POST", "GET")
+	router.HandleFunc("/user/validcookie", validCookie).Methods("GET")
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
 
 	log.Printf("Starting server in port %d\n", port)

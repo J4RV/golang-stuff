@@ -3,6 +3,7 @@ import axios from 'axios'
 import FormControl from '@material-ui/core/FormControl'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography'
 import Card from './Card'
 
 /*class ErrorSnackbar extends Component {
@@ -49,17 +50,21 @@ class LoginForm extends Component {
       username: this.state.username,
       password: this.state.password
     }
-    axios.post("/rest/login", payload)
+    axios.post("user/login", payload)
       .then(this.props.onValidLogin)
       .catch(r => this.setErrorMsg(r.response.data))
   }
 
   render() {
     return <div className="cah-login-container">
-      <h2>Cards Against Humanity</h2>
-      <h4>A party game for horrible people.</h4>
-      <Card text="I'm _ and my password is _." isBlack={true} className="in-table" />
-      <form onSubmit={this.handleSubmit} >
+      <Typography variant="h2" gutterBottom>
+        Cards Against Humanity
+      </Typography>
+      <Typography variant="h4" gutterBottom>
+        A party game for horrible people.
+      </Typography>
+      <form onSubmit={this.handleSubmit} className="cah-login-form" >
+        <Card text="I'm _ and my password is _." isBlack={true} className="in-table" />
         <FormControl margin="normal" required fullWidth>
           <TextField
             label="Username"
@@ -98,13 +103,14 @@ class LoginController extends Component {
   setValid = (v) => { this.setState({ validcookie: v }) }
 
   componentWillMount() {
-    fetch("rest/validcookie")
-      .then(response => response.text())
-      .then(value => this.setValid(value === "true"))
+    axios.get("user/validcookie")
+      .then(r => {
+        let v = (r.data === true) || (r.data === "true")
+        this.setValid(v)
+      })
   }
 
   render() {
-    console.log(this.state)
     if (this.state.validcookie == null) {
       return <div>Loading...</div>
     }

@@ -1,9 +1,28 @@
 import React, { Component } from 'react';
+import YourCardsInPlay from './YourCardsInPlay'
 import Card from './Card'
 import Button from '@material-ui/core/Button'
 import Fab from '@material-ui/core/Fab';
 import Check from '@material-ui/icons/Check';
 import axios from 'axios'
+import withWidth from '@material-ui/core/withWidth'
+
+let PlayCardsButton = ({width, playCards}) => {
+  if(width === "sm" || width === "xs"){
+    return <Fab 
+      aria-label="Play selected cards"
+      color="primary"
+      onClick={playCards}
+      style={{position: "fixed", right: 8, bottom: 8}}>
+      <Check />
+    </Fab>
+  } else {
+    return <Button variant="contained" color="primary" onClick={playCards}>
+      Play cards
+    </Button>
+  }
+}
+PlayCardsButton = withWidth()(PlayCardsButton)
 
 class Hand extends Component {
   state = { cardIndexes: [] }
@@ -12,6 +31,7 @@ class Hand extends Component {
     const gamestate = this.props.state
     return (
       <div className="cah-hand">
+        <YourCardsInPlay state={gamestate} />
         <div className="cah-hand-cards">
           {gamestate.myPlayer.hand.map((c, i) =>
             <Card
@@ -22,15 +42,13 @@ class Hand extends Component {
             />
           )}
         </div>
-        <Fab aria-label="Play selected cards" color="primary" onClick={this.playCards}>
-          <Check />
-        </Fab>
+        <PlayCardsButton playCards={this.playCards} />
       </div>
     )
   }
 
   isCzar = () => {
-    return this.props.state.currentCzarID === this.props.state.myPlayer.ID
+    return this.props.state.currentCzarID === this.props.state.myPlayer.id
   }
 
   handleCardClick = (i) => {
@@ -55,4 +73,4 @@ class Hand extends Component {
   }
 }
 
-export default Hand
+export default withWidth()(Hand)

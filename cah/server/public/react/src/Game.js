@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import YourCardsInPlay from './YourCardsInPlay'
+import React, { Component } from 'react'
 import PlayersInfo from './PlayersInfo'
 import Hand from './Hand'
 import Table from './Table'
@@ -13,7 +12,6 @@ class Game extends Component {
       <div className="cah-game">
         <PlayersInfo state={this.state} />
         <Table state={this.state} />
-        <YourCardsInPlay state={this.state} />
         <Hand state={this.state} />
       </div>
     );
@@ -29,7 +27,7 @@ class Game extends Component {
         // this would be much better with websockets
         window.setTimeout(this.updateState, 500)
       })
-      .catch(e => console.log(e.response))
+      .catch(e => console.log(e))
   }
 }
 

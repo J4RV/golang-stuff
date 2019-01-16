@@ -19,8 +19,8 @@ type playCardsPayload struct {
 }
 
 type loginPayload struct {
-	Username string `json:username`
-	Password string `json:password`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 /* Server responses */

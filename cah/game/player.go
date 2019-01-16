@@ -7,7 +7,7 @@ import (
 )
 
 type Player struct {
-	ID               int
+	ID               int         `json:"id"`
 	Name             string      `json:"name"`
 	Hand             []WhiteCard `json:"hand"`
 	WhiteCardsInPlay []WhiteCard `json:"whiteCardsInPlay"`

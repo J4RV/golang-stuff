@@ -12,7 +12,9 @@ function ButtonAppBar(props) {
           <Typography variant="h6" color="inherit" style={{ flexGrow: 1 }}>
             {props.title}
           </Typography>
-          <Button color="inherit">Login</Button>
+          <a href="user/logout">
+            <Button color="inherit">Logout</Button>
+          </a>
         </Toolbar>
       </AppBar>
     </div>

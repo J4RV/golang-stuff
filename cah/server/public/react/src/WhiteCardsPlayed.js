@@ -1,6 +1,7 @@
 import React from 'react'
 import Card from './Card'
 import axios from 'axios'
+import Typography from '@material-ui/core/Typography'
 
 const handleOnClick = (id) => {
   console.log('Chose winner: ', id)
@@ -16,7 +17,7 @@ const PlayerWhiteCardsPlayed = ({ play }) => {
   }
   return (<div className='cah-oneplayerwhitecards'>
     {whiteCards.map(whiteCard =>
-      <Card {...whiteCard} className='in-table' onClick={() => handleOnClick(play.ID)} />)}
+      <Card {...whiteCard} className='in-table' onClick={() => handleOnClick(play.id)} />)}
   </div>)
 }
 
@@ -27,7 +28,9 @@ const WhiteCardsPlayed = ({ state }) => {
         <PlayerWhiteCardsPlayed play={sp} />)}
     </React.Fragment>
   } else {
-    return <h2>Waiting for players...</h2>
+    return <Typography variant="h4" gutterBottom>
+      Waiting for players...
+    </Typography>
   }
 }
 

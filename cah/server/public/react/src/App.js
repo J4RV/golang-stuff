@@ -3,6 +3,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import LoginController from './Login'
 import Game from './Game'
 import AppBar from './AppBar'
+import CssBaseline from '@material-ui/core/CssBaseline'
 import red from '@material-ui/core/colors/red';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import './App.css'
@@ -18,8 +19,9 @@ const theme = createMuiTheme({
 class App extends Component {
   render() {
     return <MuiThemeProvider theme={theme}>
-      <AppBar title="Cards Against Humanity" />
+      <CssBaseline />
       <LoginController>
+        <AppBar title="Cards Against Humanity" />
         <Game gameid="test" />
       </LoginController>
     </MuiThemeProvider>

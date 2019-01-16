@@ -7,7 +7,7 @@ const Table = ({ state }) => {
   if (card == null) return null
   return (
     <div className='cah-table'>
-      <Card text={card.text} isBlack className='in-table' />
+      <Card {...card} isBlack className='in-table' />
       <WhiteCardsPlayed state={state} />
     </div>)
 }
