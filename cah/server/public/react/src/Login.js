@@ -83,7 +83,7 @@ class LoginController extends Component {
   componentWillMount() {
     fetch("rest/validcookie")
       .then(response => response.text())
-      .then(value => this.setValid(value))
+      .then(value => this.setValid(value === "true"))
   }
 
   render() {
@@ -91,9 +91,9 @@ class LoginController extends Component {
     if (this.state.validcookie == null) {
       return <div>Loading...</div>
     }
-    /*if(this.state.validcookie === "true"){
+    if (this.state.validcookie) {
       return this.props.children
-    }*/
+    }
     return <LoginForm onValidLogin={() => this.setValid(true)} />
   }
 

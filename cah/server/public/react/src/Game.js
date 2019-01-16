@@ -4,6 +4,7 @@ import PlayersInfo from './PlayersInfo'
 import Hand from './Hand'
 import Table from './Table'
 import LocalPlayerIndex from './LocalPlayerIndex'
+import axios from 'axios'
 import './App.css'
 
 class Game extends Component {
@@ -20,14 +21,16 @@ class Game extends Component {
   }
   componentWillMount() {
     this.updateState()
-    // this would be much better with websockets
-    window.setInterval(this.updateState, 500)
   }
   updateState = () => {
-    fetch("rest/test/" + LocalPlayerIndex() + "/State")
-      .then(r => r.json()
-        .then(j => console.log(j) & this.setState(j))
-      )
+    axios.get(`rest/${this.props.gameid}/State`)
+      .then(r => {
+        console.log(r.data)
+        this.setState(r.data)
+        // this would be much better with websockets
+        window.setTimeout(this.updateState, 500)
+      })
+      .catch(e => window.alert(e.response.data))
   }
 }
 

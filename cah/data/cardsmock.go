@@ -9,13 +9,6 @@ import (
 	"strings"
 )
 
-func initCards() {
-	err := loadCards("base-uk", &whiteCards, &blackCards)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
 func doEveryLine(r io.Reader, fun func(string)) error {
 	s := bufio.NewScanner(r)
 	for s.Scan() {
@@ -25,21 +18,23 @@ func doEveryLine(r io.Reader, fun func(string)) error {
 	return s.Err()
 }
 
-func loadCards(expansion string, wd *[]WhiteCard, bd *[]BlackCard) error {
-	wdat, err := os.Open(fmt.Sprintf("./expansions/%s/white.md", expansion))
+func LoadCards(expansionPath string) error {
+	wd := &whiteCards
+	bd := &blackCards
+	wdat, err := os.Open(fmt.Sprintf("%s/white.md", expansionPath))
 	if err != nil {
 		return err
 	}
 	defer wdat.Close()
 
-	bdat, err := os.Open(fmt.Sprintf("./expansions/%s/black.md", expansion))
+	bdat, err := os.Open(fmt.Sprintf("%s/black.md", expansionPath))
 	if err != nil {
 		return err
 	}
 	defer bdat.Close()
 
 	err = doEveryLine(wdat, func(t string) {
-		*wd = append(*wd, WhiteCard{Card: Card{Text: t, Expansion: expansion}})
+		*wd = append(*wd, WhiteCard{Card: Card{Text: t, Expansion: expansionPath}})
 	})
 	if err != nil {
 		return err
@@ -49,8 +44,8 @@ func loadCards(expansion string, wd *[]WhiteCard, bd *[]BlackCard) error {
 		if blanks == 0 {
 			blanks = 1
 		}
-		*bd = append(*bd, BlackCard{Card: Card{Text: t, Expansion: expansion}, BlanksAmount: blanks})
+		*bd = append(*bd, BlackCard{Card: Card{Text: t, Expansion: expansionPath}, BlanksAmount: blanks})
 	})
-	log.Println("Successfully loaded cards from expansion " + expansion)
+	log.Println("Successfully loaded cards from expansion " + expansionPath)
 	return err
 }

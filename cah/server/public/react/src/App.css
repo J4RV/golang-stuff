@@ -56,8 +56,6 @@ body {
   text-align: center;
   font-weight: 800;
   white-space: pre-wrap;
-  transition-timing-function: ease-in-out;
-  transition: transform .1s, box-shadow .1s;
 }
 
 .cah-hand {  

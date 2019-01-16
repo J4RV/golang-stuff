@@ -2,11 +2,12 @@ package data
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/j4rv/golang-stuff/cah/game"
 )
 
-var users = make(map[int]User)
+var users = make(map[int]*User)
 var blackCards []BlackCard
 var whiteCards []WhiteCard
 var games []Game
@@ -16,7 +17,6 @@ var commonPassHash, _ = getPassHash(commonPass)
 
 func init() {
 	initUsers()
-	initCards()
 }
 
 func GetBlackCards() []game.BlackCard {
@@ -40,7 +40,7 @@ func GetUserById(id int) (User, error) {
 	if !ok {
 		return User{}, fmt.Errorf("Cannot find user with id %d", id)
 	}
-	return u, nil
+	return *u, nil
 }
 
 func GetUserByLogin(n, p string) (User, error) {
@@ -57,19 +57,20 @@ func GetUserByLogin(n, p string) (User, error) {
 func getUserByName(n string) (User, error) {
 	for _, u := range users {
 		if u.Username == n {
-			return u, nil
+			return *u, nil
 		}
 	}
 	return User{}, fmt.Errorf("Cant find user with username '%s'", n)
 }
 
 func initUsers() {
-	users[0] = User{Username: "Red"}
-	users[1] = User{Username: "Green"}
-	users[2] = User{Username: "Blue"}
-	users[3] = User{Username: "Gold"}
-	users[4] = User{Username: "Silver"}
-	for _, u := range users {
-		u.Password = commonPassHash
+	users[0] = &User{Username: "Red"}
+	users[1] = &User{Username: "Green"}
+	users[2] = &User{Username: "Blue"}
+	users[3] = &User{Username: "Gold"}
+	users[4] = &User{Username: "Silver"}
+	for i := range users {
+		users[i].Password = commonPassHash
 	}
+	log.Print("mock users initialized")
 }

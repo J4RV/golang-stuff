@@ -17,6 +17,7 @@ func main() {
 	var dir string
 	port := 8000
 
+	data.LoadCards("./expansions/base-uk")
 	flag.StringVar(&dir, "dir", "./public/react/build", "the directory to serve files from. Defaults to './public'")
 	flag.Parse()
 
@@ -24,6 +25,7 @@ func main() {
 	createTestGame()
 	stateRouter(router)
 	router.HandleFunc("/rest/login", processLogin).Methods("POST")
+	router.HandleFunc("/rest/logout", processLogout).Methods("POST", "GET")
 	router.HandleFunc("/rest/validcookie", validCookie).Methods("GET")
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
 

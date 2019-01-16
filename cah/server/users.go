@@ -31,7 +31,17 @@ func processLogin(w http.ResponseWriter, req *http.Request) {
 	session.Save(req, w)
 	log.Printf("User %s just logged in!", u.Username)
 	// everything ok, back to index with your brand new session!
-	http.Redirect(w, req, "/", http.StatusOK)
+	http.Redirect(w, req, "/", http.StatusFound)
+}
+
+func processLogout(w http.ResponseWriter, req *http.Request) {
+	session, err := store.Get(req, sessionid)
+	if err != nil {
+		http.Error(w, "There was a problem while getting the session cookie", http.StatusInternalServerError)
+	}
+	session.Values = make(map[interface{}]interface{})
+	session.Save(req, w)
+	http.Redirect(w, req, "/", http.StatusFound)
 }
 
 func validCookie(w http.ResponseWriter, req *http.Request) {

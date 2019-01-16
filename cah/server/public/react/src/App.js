@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import LoginController from './Login'
+import Game from './Game'
 import './App.css'
 
 const theme = createMuiTheme({
@@ -10,10 +11,10 @@ const theme = createMuiTheme({
 })
 
 class App extends Component {
-  render () {
+  render() {
     return <MuiThemeProvider theme={theme}>
       <LoginController>
-        <p>Logged in!</p>
+        <Game gameid="test" />
       </LoginController>
     </MuiThemeProvider>
   }
