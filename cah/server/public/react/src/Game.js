@@ -3,7 +3,6 @@ import YourCardsInPlay from './YourCardsInPlay'
 import PlayersInfo from './PlayersInfo'
 import Hand from './Hand'
 import Table from './Table'
-import LocalPlayerIndex from './LocalPlayerIndex'
 import axios from 'axios'
 import './App.css'
 
@@ -14,7 +13,7 @@ class Game extends Component {
       <div className="cah-game">
         <PlayersInfo state={this.state} />
         <Table state={this.state} />
-        <YourCardsInPlay state={this.state} owner={LocalPlayerIndex()} />
+        <YourCardsInPlay state={this.state} />
         <Hand state={this.state} />
       </div>
     );

@@ -90,6 +90,9 @@ func playCards(w http.ResponseWriter, req *http.Request) error {
 	if err != nil {
 		return err
 	} // oneline error handling when
-	updateGameState(req, newS)
+	err = updateGameState(req, newS)
+	if err != nil {
+		return err
+	}
 	return nil
 }

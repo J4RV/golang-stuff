@@ -16,7 +16,7 @@ func main() {
 	var dir string
 	port := 8000
 
-	data.LoadCards("./expansions/base-uk")
+	data.LoadCards("./expansions/base-uk", "Base UK")
 	flag.StringVar(&dir, "dir", "./public/react/build", "the directory to serve files from. Defaults to './public'")
 	flag.Parse()
 
@@ -108,6 +108,7 @@ func getPlayerInfo(sg serverGame) []playerInfo {
 
 func gamePlayerToPlayerInfo(p game.Player) playerInfo {
 	return playerInfo{
+		ID:               p.ID,
 		Name:             p.Name,
 		HandSize:         len(p.Hand),
 		WhiteCardsInPlay: len(p.WhiteCardsInPlay),

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Card from './Card'
 import Button from '@material-ui/core/Button'
 import axios from 'axios'
-import LocalPlayerIndex from './LocalPlayerIndex'
 
 class Hand extends Component {
   state = { cardIndexes: [] }
@@ -12,10 +11,9 @@ class Hand extends Component {
     return (
       <div className="cah-hand">
         <div className="cah-hand-cards">
-          {gamestate.players[LocalPlayerIndex()].hand.map((c, i) =>
+          {gamestate.myPlayer.hand.map((c, i) =>
             <Card
               {...c}
-              playable={this.isCzar() === false}
               handIndex={i}
               className={`hovering ${this.state.cardIndexes.includes(i) ? 'selected' : ''}`}
               onClick={() => this.handleCardClick(i)}
@@ -30,7 +28,7 @@ class Hand extends Component {
   }
 
   isCzar = () => {
-    return this.props.state.currentCzarIndex == LocalPlayerIndex()
+    return this.props.state.currentCzarID === this.props.state.myPlayer.ID
   }
 
   handleCardClick = (i) => {
@@ -47,7 +45,7 @@ class Hand extends Component {
   }
 
   playCards = () => {
-    axios.post('rest/test/' + LocalPlayerIndex() + '/PlayCards', {
+    axios.post('rest/test/PlayCards', {
       cardIndexes: this.state.cardIndexes
     }).then(r => {
       this.setState({ cardIndexes: [] })

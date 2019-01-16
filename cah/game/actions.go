@@ -49,7 +49,7 @@ func GiveBlackCardToWinner(w int, s State) (State, error) {
 
 func giveBlackCardToWinnerChecks(w int, s State) error {
 	if s.Phase != CzarChoosingWinner {
-		return errors.New("Tried to choose a winner in a non valid phase")
+		return fmt.Errorf("Tried to choose a winner in a non valid phase '%d'", s.Phase)
 	}
 	if w < 0 || w >= len(s.Players) {
 		return errors.New("Non valid player index")

@@ -60,5 +60,6 @@ func updateGameState(req *http.Request, s game.State) error {
 		return errors.New("Cannot update game state from request")
 	}
 	g.state = s
+	games[id] = g
 	return nil
 }

@@ -18,23 +18,23 @@ func doEveryLine(r io.Reader, fun func(string)) error {
 	return s.Err()
 }
 
-func LoadCards(expansionPath string) error {
+func LoadCards(expansionPath, expansionName string) error {
 	wd := &whiteCards
 	bd := &blackCards
+	// Open both files
 	wdat, err := os.Open(fmt.Sprintf("%s/white.md", expansionPath))
 	if err != nil {
 		return err
 	}
 	defer wdat.Close()
-
 	bdat, err := os.Open(fmt.Sprintf("%s/black.md", expansionPath))
 	if err != nil {
 		return err
 	}
 	defer bdat.Close()
-
+	// Create cards from files
 	err = doEveryLine(wdat, func(t string) {
-		*wd = append(*wd, WhiteCard{Card: Card{Text: t, Expansion: expansionPath}})
+		*wd = append(*wd, WhiteCard{Card: Card{Text: t, Expansion: expansionName}})
 	})
 	if err != nil {
 		return err
@@ -44,8 +44,8 @@ func LoadCards(expansionPath string) error {
 		if blanks == 0 {
 			blanks = 1
 		}
-		*bd = append(*bd, BlackCard{Card: Card{Text: t, Expansion: expansionPath}, BlanksAmount: blanks})
+		*bd = append(*bd, BlackCard{Card: Card{Text: t, Expansion: expansionName}, BlanksAmount: blanks})
 	})
-	log.Println("Successfully loaded cards from expansion " + expansionPath)
+	log.Println("Successfully loaded cards from expansion " + expansionName)
 	return err
 }

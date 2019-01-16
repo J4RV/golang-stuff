@@ -26,6 +26,7 @@ type loginPayload struct {
 /* Server responses */
 
 type playerInfo struct {
+	ID               int              `json:"id"`
 	Name             string           `json:"name"`
 	HandSize         int              `json:"handSize"`
 	WhiteCardsInPlay int              `json:"whiteCardsInPlay"`
