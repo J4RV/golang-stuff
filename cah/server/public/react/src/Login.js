@@ -64,7 +64,12 @@ class LoginForm extends Component {
         A party game for horrible people.
       </Typography>
       <form onSubmit={this.handleSubmit} className="cah-login-form" >
-        <Card text="I'm _ and my password is _." isBlack={true} className="in-table" />
+        <Card
+          text="I'm _ and my password is _."
+          isBlack
+          expansion="Security questions"
+          className="in-table"
+        />
         <FormControl margin="normal" required fullWidth>
           <TextField
             label="Username"

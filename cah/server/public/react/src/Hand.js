@@ -17,7 +17,11 @@ let PlayCardsButton = ({width, playCards}) => {
       <Check />
     </Fab>
   } else {
-    return <Button variant="contained" color="primary" onClick={playCards}>
+    return <Button
+      variant="contained"
+      color="primary"
+      onClick={playCards}
+    >
       Play cards
     </Button>
   }
@@ -42,7 +46,9 @@ class Hand extends Component {
             />
           )}
         </div>
-        <PlayCardsButton playCards={this.playCards} />
+        <div style={{marginTop: "2rem"}}>
+          <PlayCardsButton playCards={this.playCards} />
+        </div>        
       </div>
     )
   }

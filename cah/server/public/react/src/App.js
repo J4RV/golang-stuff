@@ -1,17 +1,17 @@
 import React, { Component } from 'react'
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import { MuiThemeProvider, createMuiTheme, getContrastText } from '@material-ui/core/styles'
 import LoginController from './Login'
 import Game from './Game'
 import AppBar from './AppBar'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import red from '@material-ui/core/colors/red';
-import blueGrey from '@material-ui/core/colors/blueGrey';
+import brown from '@material-ui/core/colors/brown';
 import './App.css'
 
 const theme = createMuiTheme({
   palette: {
     primary: red,
-    secondary: blueGrey,
+    secondary: brown,
     type: 'dark',
   }
 })
