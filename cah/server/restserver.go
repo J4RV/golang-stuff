@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -66,29 +65,66 @@ func getPlayersForUsers(users ...data.User) []*game.Player {
 
 func stateRouter(r *mux.Router) *mux.Router {
 	s := r.PathPrefix("/rest/{gameid}").Subrouter()
-	s.HandleFunc("/State", handleGetState()).Methods("GET")
+	s.Handle("/State", appHandler(getGameStateForUser)).Methods("GET")
 	s.Handle("/GiveBlackCardToWinner", appHandler(giveBlackCardToWinner)).Methods("POST")
 	s.Handle("/PlayCards", appHandler(playCards)).Methods("POST")
 	return r
 }
 
-func handleGetState() func(w http.ResponseWriter, req *http.Request) {
-	return func(w http.ResponseWriter, req *http.Request) {
-		game, err := getGame(req)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		writeJSONState(w, game.state)
+func getGameStateForUser(w http.ResponseWriter, req *http.Request) error {
+	u, err := userFromSession(req)
+	if err != nil {
+		return err
+	}
+	sg, err := getGame(req)
+	if err != nil {
+		return err
+	}
+	p, err := getPlayer(sg, u)
+	if err != nil {
+		return err
+	}
+	state := sg.state
+	response := gameStateResponse{
+		Phase:           int(state.Phase),
+		Players:         getPlayerInfo(sg),
+		CurrCzarID:      state.Players[state.CurrCzarIndex].ID,
+		BlackCardInPlay: state.BlackCardInPlay,
+		SinnerPlays:     getSinnerPlays(sg),
+		DiscardPile:     state.DiscardPile,
+		MyPlayer:        *p,
+	}
+	writeResponse(w, response)
+	return nil
+}
+
+func getPlayerInfo(sg serverGame) []playerInfo {
+	ret := make([]playerInfo, len(sg.state.Players))
+	for i, p := range sg.state.Players {
+		ret[i] = gamePlayerToPlayerInfo(*p)
+	}
+	return ret
+}
+
+func gamePlayerToPlayerInfo(p game.Player) playerInfo {
+	return playerInfo{
+		Name:             p.Name,
+		HandSize:         len(p.Hand),
+		WhiteCardsInPlay: len(p.WhiteCardsInPlay),
+		Points:           p.Points,
 	}
 }
 
-func writeJSONState(w http.ResponseWriter, s game.State) {
-	j, err := json.Marshal(s)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusPreconditionFailed)
-	} else {
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintf(w, "%s", j)
+func getSinnerPlays(sg serverGame) []sinnerPlay {
+	if !game.AllSinnersPlayedTheirCards(sg.state) {
+		return []sinnerPlay{}
 	}
+	ret := make([]sinnerPlay, len(sg.state.Players))
+	for i, p := range sg.state.Players {
+		ret[i] = sinnerPlay{
+			ID:         p.ID,
+			WhiteCards: p.WhiteCardsInPlay,
+		}
+	}
+	return ret
 }

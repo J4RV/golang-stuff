@@ -84,13 +84,13 @@ func PlayWhiteCards(p int, cs []int, s State) (State, error) {
 		return res, err
 	}
 	player.WhiteCardsInPlay = append(player.WhiteCardsInPlay, newCardsPlayed...)
-	if allSinnersPlayedTheirCards(res) {
+	if AllSinnersPlayedTheirCards(res) {
 		res.Phase = CzarChoosingWinner
 	}
 	return res, nil
 }
 
-func allSinnersPlayedTheirCards(s State) bool {
+func AllSinnersPlayedTheirCards(s State) bool {
 	for i, p := range s.Players {
 		if i == s.CurrCzarIndex {
 			continue

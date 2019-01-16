@@ -29,7 +29,6 @@ func simpleCAHActionHandler(f func(game.State) (game.State, error)) func(w http.
 			http.Error(w, err.Error(), http.StatusPreconditionFailed)
 		} else {
 			updateGameState(req, newState)
-			writeJSONState(w, newState)
 		}
 	}
 }
@@ -63,7 +62,6 @@ func giveBlackCardToWinner(w http.ResponseWriter, req *http.Request) error {
 		return err
 	}
 	updateGameState(req, newS)
-	writeJSONState(w, newS)
 	return nil
 }
 
@@ -93,6 +91,5 @@ func playCards(w http.ResponseWriter, req *http.Request) error {
 		return err
 	} // oneline error handling when
 	updateGameState(req, newS)
-	writeJSONState(w, newS)
 	return nil
 }

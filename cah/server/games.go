@@ -36,6 +36,14 @@ func getPlayer(g serverGame, u data.User) (*game.Player, error) {
 	return player, nil
 }
 
+func getWhiteCardsInPlay(g serverGame) []game.WhiteCard {
+	ret := []game.WhiteCard{}
+	for _, p := range g.state.Players {
+		ret = append(ret, p.WhiteCardsInPlay...)
+	}
+	return ret
+}
+
 func getGame(req *http.Request) (serverGame, error) {
 	id := mux.Vars(req)["gameid"]
 	g, ok := games[id]
