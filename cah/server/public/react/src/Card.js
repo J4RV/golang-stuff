@@ -5,13 +5,15 @@ const styles = theme => ({
   card: {
     position: "relative",
     display: "inline-block",
-    margin: "0 0 -10px 0",
     padding: theme.spacing.unit,
     borderRadius: 10,
     textAlign: "center",
     fontFamily: '"Open Sans", "Roboto", "Helvetica", "Arial", sans-serif',
     fontWeight: "800",
     verticalAlign: "top",
+  },
+  inHand: {
+    margin: "0 0 -10px 0",
   },
   text: {
     width: "8rem",
@@ -47,9 +49,8 @@ const styles = theme => ({
 });
 
 const Card = (props) => {
-  const { text, isBlack, elevated, glowing, expansion, className, classes, style, ...rest } = props
+  const { text, isBlack, elevated, glowing, inHand, expansion, className, classes, style, ...rest } = props
   let shadowClass
-  console.log(glowing)
   if (glowing) {
     shadowClass = classes.glowing
   } else {
@@ -58,7 +59,9 @@ const Card = (props) => {
   const colorClass = isBlack ? classes.black : classes.white
   return <div
     style={{ transform: `rotate(${Math.random() * 5 - 2.5}deg)`, ...style }}
-    className={`${className ? className : null} ${classes.card} ${colorClass} ${shadowClass}`}
+    className={`${classes.card} ${colorClass} ${shadowClass}    
+      ${inHand ? classes.inHand : ""}
+      ${className ? className : ""}`}
     {...rest}
   >
     <div className={classes.text}>{text}</div>

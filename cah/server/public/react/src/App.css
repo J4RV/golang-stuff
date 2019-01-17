@@ -18,15 +18,14 @@
   background: #0006;
   margin: 16px;
   padding: 16px;
+  padding-top: 24px;
   border-radius: 3px;
   max-width: 1200px;
   text-align: center;
 }
 
 .cah-table {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
+  text-align: center;
 }
 
 .cah-oneplayerwhitecards {
@@ -39,9 +38,9 @@
 
 .cah-playersinfo {
   display: flex;
-  position: absolute;
+  position: fixed;
   right: 8px;
-  top: 8px;
+  top: 64px;
 }
 
 .cah-playerinfo {

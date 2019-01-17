@@ -1,4 +1,5 @@
 import React from 'react'
+import Typography from '@material-ui/core/Typography'
 import withWidth from '@material-ui/core/withWidth'
 
 const PlayerInfo = ({ player, itsYou, isCzar }) => (
@@ -14,13 +15,15 @@ let PlayersInfo = ({ width, state }) => {
     return null
   }
   return <div className='cah-playersinfo'>
-    {state.players.map((p) =>
-      <PlayerInfo
-        player={p}
-        itsYou={p.id === state.myPlayer.id}
-        isCzar={p.id === state.currentCzarID}
-      />
-    )}
+    <Typography>
+      {state.players.map((p) =>
+        <PlayerInfo
+          player={p}
+          itsYou={p.id === state.myPlayer.id}
+          isCzar={p.id === state.currentCzarID}
+        />
+      )}
+    </Typography>
   </div>
 }
 PlayersInfo = withWidth()(PlayersInfo)

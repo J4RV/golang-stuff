@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
-import YourCardsInPlay from './YourCardsInPlay'
+import React, { Component } from 'react'
 import Card from './Card'
 import Button from '@material-ui/core/Button'
-import Fab from '@material-ui/core/Fab';
-import Check from '@material-ui/icons/Check';
+import Fab from '@material-ui/core/Fab'
+import Check from '@material-ui/icons/Check'
 import axios from 'axios'
 import withWidth from '@material-ui/core/withWidth'
 
@@ -35,13 +34,13 @@ class Hand extends Component {
     const gamestate = this.props.state
     return (
       <div className="cah-hand">
-        <YourCardsInPlay state={gamestate} />
         <div className="cah-hand-cards">
           {gamestate.myPlayer.hand.map((c, i) =>
             <Card
               {...c}
               handIndex={i}
               elevated
+              inHand
               glowing={this.state.cardIndexes.includes(i)}
               onClick={() => this.handleCardClick(i)}
             />
