@@ -29,7 +29,7 @@ func init() {
 	}
 	var portFlag *int
 	if usingTLS {
-		portFlag = flag.Int("port", 433, "Server port for serving HTTP")
+		portFlag = flag.Int("port", 443, "Server port for serving HTTP")
 	} else {
 		portFlag = flag.Int("port", 8000, "Server port for serving HTTP")
 	}
@@ -52,14 +52,24 @@ func main() {
 	router.HandleFunc("/user/validcookie", validCookie).Methods("GET")
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
 
-	log.Printf("Starting server in port %d\n", port)
+	startServer(router)
+}
+
+func startServer(r *mux.Router) {
 	if usingTLS {
-		log.Fatal(http.ListenAndServeTLS(fmt.Sprintf(":%d", port), serverCert, serverPK, router))
+		go func() {
+			log.Printf("Starting http server in port %d\n", 80)
+			log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", 80), r))
+		}()
+		log.Printf("Starting https server in port %d\n", port)
+		log.Fatal(http.ListenAndServeTLS(fmt.Sprintf(":%d", port), serverCert, serverPK, r))
 	} else {
 		log.Println("Server will listen and serve without TLS")
-		log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), router))
+		log.Printf("Starting http server in port %d\n", port)
+		log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), r))
 	}
 }
+
 func createTestGame() {
 	bd := data.GetBlackCards()
 	wd := data.GetWhiteCards()
