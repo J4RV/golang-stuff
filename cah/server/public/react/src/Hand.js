@@ -3,10 +3,14 @@ import Card from './Card'
 import Button from '@material-ui/core/Button'
 import Fab from '@material-ui/core/Fab'
 import Check from '@material-ui/icons/Check'
-import axios from 'axios'
+import Typography from '@material-ui/core/Typography'
 import withWidth from '@material-ui/core/withWidth'
+import axios from 'axios'
 
-let PlayCardsButton = ({ width, playCards }) => {
+let PlayCardsButton = ({ isCzar, width, playCards }) => {
+  if (isCzar) {
+    return null
+  }
   if (width === "sm" || width === "xs") {
     return <Fab
       aria-label="Play selected cards"
@@ -27,6 +31,20 @@ let PlayCardsButton = ({ width, playCards }) => {
 }
 PlayCardsButton = withWidth()(PlayCardsButton)
 
+const CardsToPlay = ({ state }) => {
+  const isCzar = state.myPlayer.id === state.currentCzarID
+  if (isCzar) {
+    return null
+  }
+  const cardsToPlay = state.blackCardInPlay.blanksAmount - state.myPlayer.whiteCardsInPlay.length
+  if (cardsToPlay === 0) {
+    return null
+  }
+  return <Typography variant='h6' gutterBottom>
+    Play {cardsToPlay} cards
+  </Typography>
+}
+
 class Hand extends Component {
   state = { cardIndexes: [] }
 
@@ -34,6 +52,7 @@ class Hand extends Component {
     const gamestate = this.props.state
     return (
       <div className="cah-hand">
+        <CardsToPlay state={gamestate} />
         <div className="cah-hand-cards">
           {gamestate.myPlayer.hand.map((c, i) =>
             <Card
@@ -47,7 +66,7 @@ class Hand extends Component {
           )}
         </div>
         <div style={{ marginTop: "2rem" }}>
-          <PlayCardsButton playCards={this.playCards} />
+          <PlayCardsButton playCards={this.playCards} isCzar={this.isCzar()} />
         </div>
       </div>
     )
