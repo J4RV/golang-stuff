@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/j4rv/golang-stuff/cah/data"
 	"github.com/j4rv/golang-stuff/cah/game"
@@ -12,9 +13,32 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var port int
+var usingTLS bool
+var serverCert, serverPK string
+
+func init() {
+	serverCert = os.Getenv("SERVER_CERTIFICATE")
+	serverPK = os.Getenv("SERVER_PRIVATE_KEY")
+	usingTLS = serverCert != "" && serverPK != ""
+	if serverCert == "" {
+		log.Println("Server certificate not found. Environment variable: SERVER_CERTIFICATE")
+	}
+	if serverPK == "" {
+		log.Println("Server private key not found. Environment variable: SERVER_PRIVATE_KEY")
+	}
+	var portFlag *int
+	if usingTLS {
+		portFlag = flag.Int("port", 433, "Server port for serving HTTP")
+	} else {
+		portFlag = flag.Int("port", 8000, "Server port for serving HTTP")
+	}
+	flag.Parse()
+	port = *portFlag
+}
+
 func main() {
 	var dir string
-	port := 8000
 
 	data.LoadCards("./expansions/base-uk", "Base UK")
 	flag.StringVar(&dir, "dir", "./public/react/build", "the directory to serve files from. Defaults to './public'")
@@ -29,9 +53,13 @@ func main() {
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
 
 	log.Printf("Starting server in port %d\n", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), router))
+	if usingTLS {
+		log.Fatal(http.ListenAndServeTLS(fmt.Sprintf(":%d", port), serverCert, serverPK, router))
+	} else {
+		log.Println("Server will listen and serve without TLS")
+		log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), router))
+	}
 }
-
 func createTestGame() {
 	bd := data.GetBlackCards()
 	wd := data.GetWhiteCards()
