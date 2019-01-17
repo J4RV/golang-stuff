@@ -3,34 +3,104 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"log"
+	"fmt"
 	"net/http"
 
 	"github.com/j4rv/golang-stuff/cah/game"
 )
 
-type appHandler func(http.ResponseWriter, *http.Request) error
+/*
+GET GAME STATE
+*/
 
-func (fn appHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	if err := fn(w, req); err != nil {
-		log.Printf("ServeHTTP error: %s", err)
-		http.Error(w, err.Error(), http.StatusPreconditionFailed)
+type playerInfo struct {
+	ID               int              `json:"id"`
+	Name             string           `json:"name"`
+	HandSize         int              `json:"handSize"`
+	WhiteCardsInPlay int              `json:"whiteCardsInPlay"`
+	Points           []game.BlackCard `json:"points"`
+}
+
+type sinnerPlay struct {
+	ID         int              `json:"id"`
+	WhiteCards []game.WhiteCard `json:"whiteCards"`
+}
+
+type gameStateResponse struct {
+	Phase           int              `json:"phase"`
+	Players         []playerInfo     `json:"players"`
+	CurrCzarID      int              `json:"currentCzarID"`
+	BlackCardInPlay game.BlackCard   `json:"blackCardInPlay"`
+	SinnerPlays     []sinnerPlay     `json:"sinnerPlays"`
+	DiscardPile     []game.WhiteCard `json:"discardPile"`
+	MyPlayer        game.Player      `json:"myPlayer"`
+}
+
+func getGameStateForUser(w http.ResponseWriter, req *http.Request) error {
+	u, err := userFromSession(req)
+	if err != nil {
+		return err
+	}
+	sg, err := getGame(req)
+	if err != nil {
+		return err
+	}
+	p, err := getPlayer(sg, u)
+	if err != nil {
+		return err
+	}
+	state := sg.state
+	response := gameStateResponse{
+		Phase:           int(state.Phase),
+		Players:         getPlayerInfo(sg),
+		CurrCzarID:      state.Players[state.CurrCzarIndex].ID,
+		BlackCardInPlay: state.BlackCardInPlay,
+		SinnerPlays:     getSinnerPlays(sg),
+		DiscardPile:     state.DiscardPile,
+		MyPlayer:        *p,
+	}
+	writeResponse(w, response)
+	return nil
+}
+
+func getPlayerInfo(sg serverGame) []playerInfo {
+	ret := make([]playerInfo, len(sg.state.Players))
+	for i, p := range sg.state.Players {
+		ret[i] = gamePlayerToPlayerInfo(*p)
+	}
+	return ret
+}
+
+func gamePlayerToPlayerInfo(p game.Player) playerInfo {
+	return playerInfo{
+		ID:               p.ID,
+		Name:             p.Name,
+		HandSize:         len(p.Hand),
+		WhiteCardsInPlay: len(p.WhiteCardsInPlay),
+		Points:           p.Points,
 	}
 }
 
-func simpleCAHActionHandler(f func(game.State) (game.State, error)) func(w http.ResponseWriter, req *http.Request) {
-	return func(w http.ResponseWriter, req *http.Request) {
-		g, err := getGame(req)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-		}
-		newState, err := f(g.state)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusPreconditionFailed)
-		} else {
-			updateGameState(req, newState)
+func getSinnerPlays(sg serverGame) []sinnerPlay {
+	if !game.AllSinnersPlayedTheirCards(sg.state) {
+		return []sinnerPlay{}
+	}
+	ret := make([]sinnerPlay, len(sg.state.Players))
+	for i, p := range sg.state.Players {
+		ret[i] = sinnerPlay{
+			ID:         p.ID,
+			WhiteCards: p.WhiteCardsInPlay,
 		}
 	}
+	return ret
+}
+
+/*
+CHOOSE WINNER
+*/
+
+type chooseWinnerPayload struct {
+	Winner int `json:"winner"`
 }
 
 func giveBlackCardToWinner(w http.ResponseWriter, req *http.Request) error {
@@ -65,6 +135,14 @@ func giveBlackCardToWinner(w http.ResponseWriter, req *http.Request) error {
 	return nil
 }
 
+/*
+PLAY CARDS
+*/
+
+type playCardsPayload struct {
+	CardIndexes []int `json:"cardIndexes"`
+}
+
 func playCards(w http.ResponseWriter, req *http.Request) error {
 	// User is logged
 	u, err := userFromSession(req)
@@ -95,4 +173,16 @@ func playCards(w http.ResponseWriter, req *http.Request) error {
 		return err
 	}
 	return nil
+}
+
+// Utils
+
+func writeResponse(w http.ResponseWriter, obj interface{}) {
+	j, err := json.Marshal(obj)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	} else {
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, "%s", j)
+	}
 }

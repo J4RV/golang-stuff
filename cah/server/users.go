@@ -12,6 +12,11 @@ import (
 	"github.com/j4rv/golang-stuff/cah/data"
 )
 
+type loginPayload struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 func processLogin(w http.ResponseWriter, req *http.Request) {
 	var payload loginPayload
 	decoder := json.NewDecoder(req.Body)

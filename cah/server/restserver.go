@@ -7,17 +7,20 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/j4rv/golang-stuff/cah/data"
-	"github.com/j4rv/golang-stuff/cah/game"
-
 	"github.com/gorilla/mux"
 )
 
 var port, secureport int
 var usingTLS bool
 var serverCert, serverPK string
+var publicDir string
 
 func init() {
+	initCertificateStuff()
+	parseFlags()
+}
+
+func initCertificateStuff() {
 	serverCert = os.Getenv("SERVER_CERTIFICATE")
 	serverPK = os.Getenv("SERVER_PRIVATE_KEY")
 	usingTLS = serverCert != "" && serverPK != ""
@@ -27,34 +30,21 @@ func init() {
 	if serverPK == "" {
 		log.Println("Server private key not found. Environment variable: SERVER_PRIVATE_KEY")
 	}
+}
 
-	var portFlag, secureportFlag *int
-	if usingTLS {
-		portFlag = flag.Int("port", 8000, "Server port for serving HTTP")
-		secureportFlag = flag.Int("secureport", 44343, "Server port for serving HTTP")
-	} else {
-		portFlag = flag.Int("port", 8000, "Server port for serving HTTP")
-	}
+func parseFlags() {
+	flag.IntVar(&port, "port", 80, "Server port for serving HTTP")
+	flag.IntVar(&secureport, "secureport", 443, "Server port for serving HTTPS")
+	flag.StringVar(&publicDir, "dir", "./frontend/build", "the directory to serve files from. Defaults to './frontend/build'")
 	flag.Parse()
-	port = *portFlag
-	secureport = *secureportFlag
 }
 
 func main() {
-	var dir string
-
-	data.LoadCards("./expansions/base-uk", "Base UK")
-	flag.StringVar(&dir, "dir", "./public/react/build", "the directory to serve files from. Defaults to './public'")
-	flag.Parse()
-
-	router := mux.NewRouter()
 	createTestGame()
-	stateRouter(router)
-	router.HandleFunc("/user/login", processLogin).Methods("POST")
-	router.HandleFunc("/user/logout", processLogout).Methods("POST", "GET")
-	router.HandleFunc("/user/validcookie", validCookie).Methods("GET")
-	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
-
+	router := mux.NewRouter()
+	handleUsers(router)
+	handleGames(router)
+	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(publicDir))))
 	startServer(router)
 }
 
@@ -73,100 +63,25 @@ func startServer(r *mux.Router) {
 	}
 }
 
-func createTestGame() {
-	bd := data.GetBlackCards()
-	wd := data.GetWhiteCards()
-	p := getTestPlayers()
-	s := game.NewGame(bd, wd, p, game.RandomStartingCzar)
-	sg := serverGame{state: s}
-	sg.userToPlayers = make(map[data.User]*game.Player)
-	for i, p := range p {
-		user, _ := data.GetUserById(i)
-		sg.userToPlayers[user] = p
+type srvHandler func(http.ResponseWriter, *http.Request) error
+
+func (fn srvHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	if err := fn(w, req); err != nil {
+		log.Printf("ServeHTTP error: %s", err)
+		http.Error(w, err.Error(), http.StatusPreconditionFailed)
 	}
-	games["test"] = sg
 }
 
-func getTestPlayers() []*game.Player {
-	users := make([]data.User, 3)
-	for i := 0; i < 3; i++ {
-		u, _ := data.GetUserById(i)
-		users[i] = u
-	}
-	return getPlayersForUsers(users...)
+func handleUsers(r *mux.Router) {
+	s := r.PathPrefix("/user").Subrouter()
+	s.HandleFunc("/login", processLogin).Methods("POST")
+	s.HandleFunc("/logout", processLogout).Methods("POST", "GET")
+	s.HandleFunc("/validcookie", validCookie).Methods("GET")
 }
 
-func getPlayersForUsers(users ...data.User) []*game.Player {
-	ret := make([]*game.Player, len(users))
-	for i, u := range users {
-		ret[i] = game.NewPlayer(u.ID, u.Username)
-	}
-	return ret
-}
-
-func stateRouter(r *mux.Router) *mux.Router {
+func handleGames(r *mux.Router) {
 	s := r.PathPrefix("/rest/{gameid}").Subrouter()
-	s.Handle("/State", appHandler(getGameStateForUser)).Methods("GET")
-	s.Handle("/GiveBlackCardToWinner", appHandler(giveBlackCardToWinner)).Methods("POST")
-	s.Handle("/PlayCards", appHandler(playCards)).Methods("POST")
-	return r
-}
-
-func getGameStateForUser(w http.ResponseWriter, req *http.Request) error {
-	u, err := userFromSession(req)
-	if err != nil {
-		return err
-	}
-	sg, err := getGame(req)
-	if err != nil {
-		return err
-	}
-	p, err := getPlayer(sg, u)
-	if err != nil {
-		return err
-	}
-	state := sg.state
-	response := gameStateResponse{
-		Phase:           int(state.Phase),
-		Players:         getPlayerInfo(sg),
-		CurrCzarID:      state.Players[state.CurrCzarIndex].ID,
-		BlackCardInPlay: state.BlackCardInPlay,
-		SinnerPlays:     getSinnerPlays(sg),
-		DiscardPile:     state.DiscardPile,
-		MyPlayer:        *p,
-	}
-	writeResponse(w, response)
-	return nil
-}
-
-func getPlayerInfo(sg serverGame) []playerInfo {
-	ret := make([]playerInfo, len(sg.state.Players))
-	for i, p := range sg.state.Players {
-		ret[i] = gamePlayerToPlayerInfo(*p)
-	}
-	return ret
-}
-
-func gamePlayerToPlayerInfo(p game.Player) playerInfo {
-	return playerInfo{
-		ID:               p.ID,
-		Name:             p.Name,
-		HandSize:         len(p.Hand),
-		WhiteCardsInPlay: len(p.WhiteCardsInPlay),
-		Points:           p.Points,
-	}
-}
-
-func getSinnerPlays(sg serverGame) []sinnerPlay {
-	if !game.AllSinnersPlayedTheirCards(sg.state) {
-		return []sinnerPlay{}
-	}
-	ret := make([]sinnerPlay, len(sg.state.Players))
-	for i, p := range sg.state.Players {
-		ret[i] = sinnerPlay{
-			ID:         p.ID,
-			WhiteCards: p.WhiteCardsInPlay,
-		}
-	}
-	return ret
+	s.Handle("/State", srvHandler(getGameStateForUser)).Methods("GET")
+	s.Handle("/GiveBlackCardToWinner", srvHandler(giveBlackCardToWinner)).Methods("POST")
+	s.Handle("/PlayCards", srvHandler(playCards)).Methods("POST")
 }

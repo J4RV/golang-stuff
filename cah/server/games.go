@@ -11,6 +11,10 @@ import (
 
 var games = make(map[string]serverGame)
 
+func init() {
+	data.LoadCards("./expansions/base-uk", "Base UK")
+}
+
 type serverGame struct {
 	state         game.State
 	userToPlayers map[data.User]*game.Player
@@ -62,4 +66,37 @@ func updateGameState(req *http.Request, s game.State) error {
 	g.state = s
 	games[id] = g
 	return nil
+}
+
+func getPlayersForUsers(users ...data.User) []*game.Player {
+	ret := make([]*game.Player, len(users))
+	for i, u := range users {
+		ret[i] = game.NewPlayer(u.ID, u.Username)
+	}
+	return ret
+}
+
+// For quick prototyping
+
+func createTestGame() {
+	bd := data.GetBlackCards()
+	wd := data.GetWhiteCards()
+	p := getTestPlayers()
+	s := game.NewGame(bd, wd, p, game.RandomStartingCzar)
+	sg := serverGame{state: s}
+	sg.userToPlayers = make(map[data.User]*game.Player)
+	for i, p := range p {
+		user, _ := data.GetUserById(i)
+		sg.userToPlayers[user] = p
+	}
+	games["test"] = sg
+}
+
+func getTestPlayers() []*game.Player {
+	users := make([]data.User, 3)
+	for i := 0; i < 3; i++ {
+		u, _ := data.GetUserById(i)
+		users[i] = u
+	}
+	return getPlayersForUsers(users...)
 }
