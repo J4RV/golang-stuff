@@ -30,10 +30,10 @@ func init() {
 
 	var portFlag, secureportFlag *int
 	if usingTLS {
-		portFlag = flag.Int("port", 8080, "Server port for serving HTTP")
-		secureportFlag = flag.Int("port", 44343, "Server port for serving HTTP")
+		portFlag = flag.Int("port", 8000, "Server port for serving HTTP")
+		secureportFlag = flag.Int("secureport", 44343, "Server port for serving HTTP")
 	} else {
-		portFlag = flag.Int("port", 8080, "Server port for serving HTTP")
+		portFlag = flag.Int("port", 8000, "Server port for serving HTTP")
 	}
 	flag.Parse()
 	port = *portFlag
