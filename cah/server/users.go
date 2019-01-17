@@ -52,7 +52,6 @@ func processLogout(w http.ResponseWriter, req *http.Request) {
 func validCookie(w http.ResponseWriter, req *http.Request) {
 	_, err := userFromSession(req)
 	ok := strconv.FormatBool(err == nil)
-	log.Println("Valid cookie request", ok)
 	w.Write([]byte(ok))
 }
 
@@ -80,7 +79,6 @@ func userFromSession(r *http.Request) (data.User, error) {
 	}
 	val, ok := session.Values[userid]
 	if !ok {
-		log.Printf("Tried to get user from session without an id: '%v'", session.Values)
 		return data.User{}, fmt.Errorf("Tried to get user from session without an id")
 	}
 	id, ok := val.(int)
