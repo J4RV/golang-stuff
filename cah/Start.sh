@@ -1,8 +1,8 @@
 #!/bin/sh
-cd server/public/react
+cd server/frontend
 yarn
 yarn build
-cd ../..
+cd ..
 go get
 nohup go run . > log.log &
 tail log.log

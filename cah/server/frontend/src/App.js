@@ -3,16 +3,17 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import LoginController from './Login'
 import Game from './Game'
 import AppBar from './AppBar'
+import Footer from './Footer'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import red from '@material-ui/core/colors/red'
-import brown from '@material-ui/core/colors/brown'
+import grey from '@material-ui/core/colors/grey'
 import cyan from '@material-ui/core/colors/cyan'
 import './App.css'
 
 const theme = createMuiTheme({
   palette: {
     primary: red,
-    secondary: brown,
+    secondary: grey,
     whitecard: { text: "#161616", background: "#FAFAFA" },
     blackcard: { text: "#FAFAFA", background: "#161616" },
     expansion: "#888888",
@@ -28,7 +29,7 @@ class App extends Component {
     return <MuiThemeProvider theme={theme}>
       <CssBaseline />
       <LoginController>
-        <AppBar title='Cards Against Humanity' />
+        <AppBar title='Cards Against Humanity' shortTitle="CAH" />
         <Game gameid='test' />
       </LoginController>
     </MuiThemeProvider>

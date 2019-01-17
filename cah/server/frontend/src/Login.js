@@ -7,9 +7,9 @@ import Typography from '@material-ui/core/Typography'
 import ErrorIcon from '@material-ui/icons/Error'
 import Snackbar from '@material-ui/core/Snackbar'
 import SnackbarContent from '@material-ui/core/SnackbarContent'
-import Link from '@material-ui/core/Link'
 import { withStyles } from '@material-ui/core/styles'
 import Card from './Card'
+import Footer from './Footer'
 
 const styles = theme => ({
   container: {
@@ -17,7 +17,7 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 2,
   },
   form: {
-    maxWidth: 400,
+    maxWidth: 260,
     marginTop: theme.spacing.unit * 2,
     padding: theme.spacing.unit * 2,
     display: "inline-block",
@@ -133,12 +133,8 @@ class LoginForm extends Component {
           >Sign in</Button>
         </FormControl>
         <ErrorSnackbar msg={this.state.errormsg} classes={classes} />
+        <Footer />
       </form>
-      <Typography>
-        <Link href="https://github.com/J4RV">
-          A J4RV production.
-        </Link>
-      </Typography>
     </div>
   }
 }

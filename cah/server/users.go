@@ -70,7 +70,7 @@ func init() {
 	if skey == "" {
 		panic("Please set SESSION_KEY environment variable; it is needed to have secure cookies")
 	}
-	store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
+	store = sessions.NewCookieStore([]byte(skey))
 }
 
 func userFromSession(r *http.Request) (data.User, error) {
