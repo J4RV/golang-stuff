@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography'
 
 const YourCardsInPlay = ({ state }) => {
   if (state.currentCzarID === state.myPlayer.id) {
-    return <Typography variant="h4" gutterBottom>
+    return <Typography variant='h4' gutterBottom>
       You are the Czar!
     </Typography>
   }
@@ -12,7 +12,7 @@ const YourCardsInPlay = ({ state }) => {
     <Card text={c.text} playable={false} className='in-table' />
   )
   if (cards == null || cards.length === 0) {
-    return <Typography variant="h4" gutterBottom>
+    return <Typography variant='h4' gutterBottom>
       Play {state.blackCardInPlay.blanksAmount} cards
     </Typography>
   }

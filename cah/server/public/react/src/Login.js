@@ -4,24 +4,62 @@ import FormControl from '@material-ui/core/FormControl'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
+import ErrorIcon from '@material-ui/icons/Error'
+import Snackbar from '@material-ui/core/Snackbar'
+import SnackbarContent from '@material-ui/core/SnackbarContent'
+import Link from '@material-ui/core/Link'
+import { withStyles } from '@material-ui/core/styles'
 import Card from './Card'
 
-/*class ErrorSnackbar extends Component {
+const styles = theme => ({
+  container: {
+    textAlign: "center",
+    marginTop: theme.spacing.unit * 2,
+  },
+  form: {
+    maxWidth: 400,
+    marginTop: theme.spacing.unit * 2,
+    padding: theme.spacing.unit * 2,
+    display: "inline-block",
+  },
+  error: {
+    color: theme.palette.getContrastText(theme.palette.error.dark),
+    background: theme.palette.error.dark,
+    display: 'flex',
+    alignItems: 'center',
+  },
+  icon: {
+    marginRight: theme.spacing.unit,
+  },
+  message: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+});
+
+class ErrorSnackbar extends Component {
   render() {
+    const classes = this.props.classes
     return <Snackbar
       anchorOrigin={{
         vertical: 'bottom',
         horizontal: 'left',
       }}
       open={this.props.msg != null && this.props.msg !== ""}
-      autoHideDuration={6000}
-      ContentProps={{
-        'aria-describedby': 'message-id',
-      }}
-      message={<span id="message-id">{this.props.msg}</span>}
-    />
+    >
+      <SnackbarContent
+        className={classes.error}
+        aria-describedby="message-id"
+        message={
+          <span id="message-id" className={classes.message}>
+            <ErrorIcon className={classes.icon} />
+            {this.props.msg}
+          </span>
+        }
+      />
+    </Snackbar>
   }
-}*/
+}
 
 class LoginForm extends Component {
   state = { username: "", password: "" };
@@ -56,14 +94,15 @@ class LoginForm extends Component {
   }
 
   render() {
-    return <div className="cah-login-container">
+    const classes = this.props.classes
+    return <div className={classes.container}>
       <Typography variant="h2" gutterBottom>
         Cards Against Humanity
       </Typography>
       <Typography variant="h4" gutterBottom>
         A party game for horrible people.
       </Typography>
-      <form onSubmit={this.handleSubmit} className="cah-login-form" >
+      <form onSubmit={this.handleSubmit} className={classes.form} >
         <Card
           text="I'm _ and my password is _."
           isBlack
@@ -94,11 +133,13 @@ class LoginForm extends Component {
             color="primary"
           >Sign in</Button>
         </FormControl>
-        {this.state.errormsg ?
-          <div className="cah-form-error">{this.state.errormsg}</div>
-          : null}
+        <ErrorSnackbar msg={this.state.errormsg} classes={classes} />
       </form>
-      <a href="https://github.com/J4RV"><h6>A J4RV production</h6></a>
+      <Typography>
+        <Link href="https://github.com/J4RV">
+          A J4RV production.
+        </Link>
+      </Typography>
     </div>
   }
 }
@@ -122,9 +163,9 @@ class LoginController extends Component {
     if (this.state.validcookie) {
       return this.props.children
     }
-    return <LoginForm onValidLogin={() => this.setValid(true)} />
+    return <LoginForm onValidLogin={() => this.setValid(true)} classes={this.props.classes} />
   }
 
 }
 
-export default LoginController
+export default withStyles(styles)(LoginController)

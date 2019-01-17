@@ -28,7 +28,7 @@ const WhiteCardsPlayed = ({ state }) => {
         <PlayerWhiteCardsPlayed play={sp} />)}
     </React.Fragment>
   } else {
-    return <Typography variant="h4" gutterBottom>
+    return <Typography variant='h4' gutterBottom>
       Waiting for players...
     </Typography>
   }

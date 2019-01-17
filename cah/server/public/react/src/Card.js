@@ -8,7 +8,7 @@ const Card = (props) => {
     {...rest}
   >
     <span>{text}</span>
-    <div className="cah-card-expansion">{expansion}</div>
+    <div className='cah-card-expansion'>{expansion}</div>
   </div>
 }
 
