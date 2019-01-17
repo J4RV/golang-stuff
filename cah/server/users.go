@@ -80,12 +80,12 @@ func userFromSession(r *http.Request) (data.User, error) {
 	}
 	val, ok := session.Values[userid]
 	if !ok {
-		log.Printf("Tried to get user from session without an id: '%s'", session)
+		log.Printf("Tried to get user from session without an id: '%v'", session.Values)
 		return data.User{}, fmt.Errorf("Tried to get user from session without an id")
 	}
 	id, ok := val.(int)
 	if !ok {
-		log.Printf("Session with non int id value: '%s'", session)
+		log.Printf("Session with non int id value: '%v'", session.Values)
 		return data.User{}, fmt.Errorf("Session with non int id value")
 	}
 	u, err := data.GetUserById(id)
