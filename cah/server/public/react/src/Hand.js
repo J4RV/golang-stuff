@@ -7,13 +7,13 @@ import Check from '@material-ui/icons/Check';
 import axios from 'axios'
 import withWidth from '@material-ui/core/withWidth'
 
-let PlayCardsButton = ({width, playCards}) => {
-  if(width === "sm" || width === "xs"){
-    return <Fab 
+let PlayCardsButton = ({ width, playCards }) => {
+  if (width === "sm" || width === "xs") {
+    return <Fab
       aria-label="Play selected cards"
       color="primary"
       onClick={playCards}
-      style={{position: "fixed", right: 8, bottom: 8}}>
+      style={{ position: "fixed", right: 8, bottom: 8 }}>
       <Check />
     </Fab>
   } else {
@@ -41,14 +41,15 @@ class Hand extends Component {
             <Card
               {...c}
               handIndex={i}
-              className={`hovering ${this.state.cardIndexes.includes(i) ? 'selected' : ''}`}
+              elevated
+              glowing={this.state.cardIndexes.includes(i)}
               onClick={() => this.handleCardClick(i)}
             />
           )}
         </div>
-        <div style={{marginTop: "2rem"}}>
+        <div style={{ marginTop: "2rem" }}>
           <PlayCardsButton playCards={this.playCards} />
-        </div>        
+        </div>
       </div>
     )
   }

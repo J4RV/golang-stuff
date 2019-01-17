@@ -14,30 +14,6 @@
   display: flex;
 }
 
-.cah-card {
-  display: inline-block;
-  font-family: Open Sans,sans-serif;
-  margin: 0 0 -10px 0;
-  padding: 0.5rem;
-  border-radius: 10px;
-  width: 8rem;
-  height: 10rem;
-  text-align: center;
-  font-size: 0.8rem;
-  font-weight: 800;
-  white-space: pre-wrap;
-  position: relative;
-}
-
-.cah-card-expansion {
-  position: absolute;
-  font-size: 0.6em;
-  bottom: 8px;
-  right: 16px;
-  margin-left: 4px;
-  color: #888888;
-}
-
 .cah-hand {  
   background: #0006;
   margin: 16px;
@@ -78,26 +54,4 @@
 
 .cah-czarinfo {
   font-weight: 700;
-}
-
-.cah-card-white {
-  background: #eee;
-  color: #111;
-}
-
-.cah-card-black {
-  background: #111;
-  color: #eee;
-}
-
-.in-table {
-  box-shadow: 0px 1px 2px 1px #1119;
-}
-
-.hovering {
-  box-shadow: 0px 6px 12px 2px #1119;
-}
-
-.selected {
-  box-shadow: 0 0 16px 0px #00bcd4, 0 0 2px 2px #80deea;
 }

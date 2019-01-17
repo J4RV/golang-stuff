@@ -17,7 +17,7 @@ const PlayerWhiteCardsPlayed = ({ play }) => {
   }
   return (<div className='cah-oneplayerwhitecards'>
     {whiteCards.map(whiteCard =>
-      <Card {...whiteCard} className='in-table' onClick={() => handleOnClick(play.id)} />)}
+      <Card {...whiteCard} onClick={() => handleOnClick(play.id)} />)}
   </div>)
 }
 

@@ -9,7 +9,7 @@ const YourCardsInPlay = ({ state }) => {
     </Typography>
   }
   const cards = state.myPlayer.whiteCardsInPlay.map(c =>
-    <Card text={c.text} playable={false} className='in-table' />
+    <Card {...c} />
   )
   if (cards == null || cards.length === 0) {
     return <Typography variant='h4' gutterBottom>

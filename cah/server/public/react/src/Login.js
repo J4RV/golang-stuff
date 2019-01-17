@@ -104,10 +104,9 @@ class LoginForm extends Component {
       </Typography>
       <form onSubmit={this.handleSubmit} className={classes.form} >
         <Card
-          text="I'm _ and my password is _."
           isBlack
+          text="I'm _ and my password is _."
           expansion="Security questions"
-          className="in-table"
         />
         <FormControl margin="normal" required fullWidth>
           <TextField

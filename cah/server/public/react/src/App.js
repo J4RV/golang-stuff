@@ -6,18 +6,25 @@ import AppBar from './AppBar'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import red from '@material-ui/core/colors/red'
 import brown from '@material-ui/core/colors/brown'
+import cyan from '@material-ui/core/colors/cyan'
 import './App.css'
 
 const theme = createMuiTheme({
   palette: {
     primary: red,
     secondary: brown,
-    type: 'dark'
-  }
+    whitecard: { text: "#161616", background: "#FAFAFA" },
+    blackcard: { text: "#FAFAFA", background: "#161616" },
+    expansion: "#888888",
+    type: 'dark',
+  },
+  lights: {
+    glow: `0 0 4px 2px ${cyan[100]}, 0 0 24px 2px ${cyan[500]}`,
+  },
 })
 
 class App extends Component {
-  render () {
+  render() {
     return <MuiThemeProvider theme={theme}>
       <CssBaseline />
       <LoginController>
