@@ -13,7 +13,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var port int
+var port, secureport int
 var usingTLS bool
 var serverCert, serverPK string
 
@@ -27,14 +27,17 @@ func init() {
 	if serverPK == "" {
 		log.Println("Server private key not found. Environment variable: SERVER_PRIVATE_KEY")
 	}
-	var portFlag *int
+
+	var portFlag, secureportFlag *int
 	if usingTLS {
-		portFlag = flag.Int("port", 443, "Server port for serving HTTP")
+		portFlag = flag.Int("port", 8080, "Server port for serving HTTP")
+		secureportFlag = flag.Int("port", 44343, "Server port for serving HTTP")
 	} else {
-		portFlag = flag.Int("port", 8000, "Server port for serving HTTP")
+		portFlag = flag.Int("port", 8080, "Server port for serving HTTP")
 	}
 	flag.Parse()
 	port = *portFlag
+	secureport = *secureportFlag
 }
 
 func main() {
@@ -58,11 +61,11 @@ func main() {
 func startServer(r *mux.Router) {
 	if usingTLS {
 		go func() {
-			log.Printf("Starting http server in port %d\n", 80)
-			log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", 80), r))
+			log.Printf("Starting http server in port %d\n", port)
+			log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), r))
 		}()
-		log.Printf("Starting https server in port %d\n", port)
-		log.Fatal(http.ListenAndServeTLS(fmt.Sprintf(":%d", port), serverCert, serverPK, r))
+		log.Printf("Starting https server in port %d\n", secureport)
+		log.Fatal(http.ListenAndServeTLS(fmt.Sprintf(":%d", secureport), serverCert, serverPK, r))
 	} else {
 		log.Println("Server will listen and serve without TLS")
 		log.Printf("Starting http server in port %d\n", port)
