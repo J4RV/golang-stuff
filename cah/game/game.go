@@ -19,9 +19,9 @@ func NewGame(p []*model.Player, opts ...Option) model.State {
 		DiscardPile: []model.WhiteCard{},
 	}
 	applyOptions(&ret, opts...)
+	shuffleB(&ret.BlackDeck)
+	shuffleW(&ret.WhiteDeck)
 	ret, _ = PutBlackCardInPlay(ret)
-	ret.BlackDeck = shuffleB(ret.BlackDeck)
-	ret.WhiteDeck = shuffleW(ret.WhiteDeck)
 	playersDraw(&ret)
 	return ret
 }
@@ -42,26 +42,22 @@ func WhiteDeck(wd []model.WhiteCard) Option {
 	}
 }
 
-func shuffleB(cards []model.BlackCard) []model.BlackCard {
+func shuffleB(cards *[]model.BlackCard) {
 	if cards == nil {
-		return cards
+		return
 	}
-	res := make([]model.BlackCard, len(cards))
-	for i, j := range rand.Perm(len(cards)) {
-		res[i] = cards[j]
+	for i, j := range rand.Perm(len(*cards)) {
+		(*cards)[i] = (*cards)[j]
 	}
-	return res
 }
 
-func shuffleW(cards []model.WhiteCard) []model.WhiteCard {
+func shuffleW(cards *[]model.WhiteCard) {
 	if cards == nil {
-		return cards
+		return
 	}
-	res := make([]model.WhiteCard, len(cards))
-	for i, j := range rand.Perm(len(cards)) {
-		res[i] = cards[j]
+	for i, j := range rand.Perm(len(*cards)) {
+		(*cards)[i] = (*cards)[j]
 	}
-	return res
 }
 
 type Option func(*model.State)

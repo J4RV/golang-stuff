@@ -16,7 +16,9 @@ var cardRepo data.CardRepository
 
 func init() {
 	cardRepo = data.NewCardStore()
-	data.CreateCardsFromFolder(cardRepo, "./expansions/base-uk", "Base UK")
+	data.CreateCardsFromFolder(cardRepo, "./expansions/base-uk", "Base-UK")
+	data.CreateCardsFromFolder(cardRepo, "./expansions/anime", "Anime")
+	data.CreateCardsFromFolder(cardRepo, "./expansions/kikis", "Kikis")
 }
 
 type serverGame struct {
