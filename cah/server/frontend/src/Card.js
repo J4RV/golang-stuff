@@ -59,7 +59,7 @@ class Card extends React.Component {
     }
     const colorClass = isBlack ? classes.black : classes.white
     return <div
-      style={{ transform: `rotate(${this.rotation}deg)`, ...style }}
+      style={{ transform: `rotate(${this.state.rotation}deg)`, ...style }}
       className={`${classes.card} ${colorClass} ${shadowClass}    
         ${inHand ? classes.inHand : ""}
         ${className ? className : ""}`}
@@ -70,14 +70,11 @@ class Card extends React.Component {
     </div>
   }
   randomRotate = () => {
-    this.rotation = Math.random() * 5 - 2.5
+    this.setState({rotation: Math.random() * 5 - 2.5})
+    window.setTimeout(this.randomRotate, Math.random() * 2000 + 500)    
   }
   componentWillMount() {
     this.randomRotate()
-    this.rotationAsyncId = setInterval(this.randomRotate, Math.random() * 500 + 500)
-  }
-  componentWillUnmount(){
-    clearInterval(this.rotationAsyncId)
   }
 }
 

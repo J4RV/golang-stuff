@@ -25,9 +25,10 @@ class Game extends Component {
         console.log(r.data)
         this.setState(r.data)
         // this would be much better with websockets
-        window.setTimeout(this.updateState, 500)
+        window.setTimeout(this.updateState, 1000)
       })
-      .catch(e => console.log(e))
+      .catch(e => console.log(e)
+    )
   }
 }
 
