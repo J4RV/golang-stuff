@@ -19,6 +19,8 @@ func init() {
 	data.CreateCardsFromFolder(cardRepo, "./expansions/base-uk", "Base-UK")
 	data.CreateCardsFromFolder(cardRepo, "./expansions/anime", "Anime")
 	data.CreateCardsFromFolder(cardRepo, "./expansions/kikis", "Kikis")
+	data.CreateCardsFromFolder(cardRepo, "./expansions/expansion-1", "The First Expansion")
+	data.CreateCardsFromFolder(cardRepo, "./expansions/expansion-2", "The Second Expansion")
 }
 
 type serverGame struct {

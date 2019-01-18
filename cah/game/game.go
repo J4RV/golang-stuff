@@ -7,7 +7,7 @@ import (
 	"github.com/j4rv/golang-stuff/cah/model"
 )
 
-const playerHandSize = 10
+const playerHandSize = 15
 
 func init() {
 	rand.Seed(time.Now().UnixNano())

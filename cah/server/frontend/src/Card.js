@@ -48,25 +48,37 @@ const styles = theme => ({
   },
 });
 
-const Card = (props) => {
-  const { text, isBlack, elevated, glowing, inHand, expansion, className, classes, style, ...rest } = props
-  let shadowClass
-  if (glowing) {
-    shadowClass = classes.glowing
-  } else {
-    shadowClass = elevated ? classes.floating : classes.inTable
+class Card extends React.Component {
+  render(){
+    const { text, isBlack, elevated, glowing, inHand, expansion, className, classes, style, ...rest } = this.props
+    let shadowClass
+    if (glowing) {
+      shadowClass = classes.glowing
+    } else {
+      shadowClass = elevated ? classes.floating : classes.inTable
+    }
+    const colorClass = isBlack ? classes.black : classes.white
+    return <div
+      style={{ transform: `rotate(${this.rotation}deg)`, ...style }}
+      className={`${classes.card} ${colorClass} ${shadowClass}    
+        ${inHand ? classes.inHand : ""}
+        ${className ? className : ""}`}
+      {...rest}
+    >
+      <div className={classes.text}>{text}</div>
+      <div className={classes.expansion}>{expansion}</div>
+    </div>
   }
-  const colorClass = isBlack ? classes.black : classes.white
-  return <div
-    style={{ transform: `rotate(${Math.random() * 5 - 2.5}deg)`, ...style }}
-    className={`${classes.card} ${colorClass} ${shadowClass}    
-      ${inHand ? classes.inHand : ""}
-      ${className ? className : ""}`}
-    {...rest}
-  >
-    <div className={classes.text}>{text}</div>
-    <div className={classes.expansion}>{expansion}</div>
-  </div>
+  randomRotate = () => {
+    this.rotation = Math.random() * 5 - 2.5
+  }
+  componentWillMount() {
+    this.randomRotate()
+    this.rotationAsyncId = setInterval(this.randomRotate, Math.random() * 500 + 500)
+  }
+  componentWillUnmount(){
+    clearInterval(this.rotationAsyncId)
+  }
 }
 
 export default withStyles(styles)(Card)
