@@ -2,56 +2,41 @@ package game
 
 import (
 	"fmt"
+
+	"github.com/j4rv/golang-stuff/cah/model"
 )
 
-type card struct {
-	text string
-}
-
-type blackCard struct {
-	card
-	blanks int
-}
-
-func (c card) GetText() string {
-	return c.text
-}
-
-func (c blackCard) GetBlanksAmount() int {
-	return c.blanks
-}
-
-func getWhiteCardsFixture(amount int) []WhiteCard {
-	ret := make([]WhiteCard, amount)
+func getWhiteCardsFixture(amount int) []model.WhiteCard {
+	ret := make([]model.WhiteCard, amount)
 	for i := 0; i < amount; i++ {
-		ret[i] = card{text: fmt.Sprintf("White card fixture (%d)", i)}
+		ret[i] = model.WhiteCard{model.Card{Text: fmt.Sprintf("White card fixture (%d)", i)}}
 	}
 	return ret
 }
 
-func getBlackCardsFixture(amount int) []BlackCard {
-	ret := make([]BlackCard, amount)
+func getBlackCardsFixture(amount int) []model.BlackCard {
+	ret := make([]model.BlackCard, amount)
 	for i := 0; i < amount; i++ {
-		ret[i] = blackCard{card{text: fmt.Sprintf("Black card fixture (%d)", i)}, 1}
+		ret[i] = model.BlackCard{model.Card{Text: fmt.Sprintf("Black card fixture (%d)", i)}, 1}
 	}
 	return ret
 }
 
-func getPlayerFixture(name string) *Player {
-	return &Player{
-		Name:             name,
-		Hand:             []WhiteCard{},
-		WhiteCardsInPlay: []WhiteCard{},
-		Points:           []BlackCard{},
+func getPlayerFixture(name string) *model.Player {
+	return &model.Player{
+		User:             model.User{Username: name},
+		Hand:             []model.WhiteCard{},
+		WhiteCardsInPlay: []model.WhiteCard{},
+		Points:           []model.BlackCard{},
 	}
 }
 
-func getStateFixture() State {
-	return State{
+func getStateFixture() model.State {
+	return model.State{
 		BlackDeck:   getBlackCardsFixture(20),
 		WhiteDeck:   getWhiteCardsFixture(40),
-		DiscardPile: []WhiteCard{},
-		Players: []*Player{
+		DiscardPile: []model.WhiteCard{},
+		Players: []*model.Player{
 			getPlayerFixture("Player1"),
 			getPlayerFixture("Player2"),
 			getPlayerFixture("Player3"),

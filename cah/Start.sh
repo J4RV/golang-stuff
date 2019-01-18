@@ -1,4 +1,5 @@
 #!/bin/sh
+git pull
 cd server/frontend
 yarn
 yarn build

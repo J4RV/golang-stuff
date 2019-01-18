@@ -1,4 +1,4 @@
-package game
+package model
 
 type State struct {
 	Phase           Phase       `json:"phase"`
@@ -10,7 +10,7 @@ type State struct {
 	DiscardPile     []WhiteCard `json:"discardPile"`
 }
 
-func (s *State) drawWhite() WhiteCard {
+func (s *State) DrawWhite() WhiteCard {
 	ret := s.WhiteDeck[0]
 	s.WhiteDeck = s.WhiteDeck[1:]
 	return ret

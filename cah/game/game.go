@@ -3,6 +3,8 @@ package game
 import (
 	"math/rand"
 	"time"
+
+	"github.com/j4rv/golang-stuff/cah/model"
 )
 
 const playerHandSize = 10
@@ -11,53 +13,61 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func NewGame(bd []BlackCard, wd []WhiteCard, p []*Player, opts ...Option) State {
-	ret := State{
-		BlackDeck:   shuffleB(bd),
-		WhiteDeck:   shuffleW(wd),
+func NewGame(p []*model.Player, opts ...Option) model.State {
+	ret := model.State{
 		Players:     p,
-		DiscardPile: []WhiteCard{},
+		DiscardPile: []model.WhiteCard{},
 	}
-	playersDraw(&ret)
-	ret = applyOptions(ret, opts...)
+	applyOptions(&ret, opts...)
 	ret, _ = PutBlackCardInPlay(ret)
+	ret.BlackDeck = shuffleB(ret.BlackDeck)
+	ret.WhiteDeck = shuffleW(ret.WhiteDeck)
+	playersDraw(&ret)
 	return ret
 }
 
-func shuffleB(cards []BlackCard) []BlackCard {
+func RandomStartingCzar(s *model.State) {
+	s.CurrCzarIndex = rand.Intn(len(s.Players))
+}
+
+func BlackDeck(bd []model.BlackCard) Option {
+	return func(s *model.State) {
+		s.BlackDeck = bd
+	}
+}
+
+func WhiteDeck(wd []model.WhiteCard) Option {
+	return func(s *model.State) {
+		s.WhiteDeck = wd
+	}
+}
+
+func shuffleB(cards []model.BlackCard) []model.BlackCard {
 	if cards == nil {
 		return cards
 	}
-	res := make([]BlackCard, len(cards))
+	res := make([]model.BlackCard, len(cards))
 	for i, j := range rand.Perm(len(cards)) {
 		res[i] = cards[j]
 	}
 	return res
 }
 
-func shuffleW(cards []WhiteCard) []WhiteCard {
+func shuffleW(cards []model.WhiteCard) []model.WhiteCard {
 	if cards == nil {
 		return cards
 	}
-	res := make([]WhiteCard, len(cards))
+	res := make([]model.WhiteCard, len(cards))
 	for i, j := range rand.Perm(len(cards)) {
 		res[i] = cards[j]
 	}
 	return res
 }
 
-func RandomStartingCzar(s State) State {
-	res := s
-	res.CurrCzarIndex = rand.Intn(len(s.Players))
-	return res
-}
+type Option func(*model.State)
 
-type Option func(State) State
-
-func applyOptions(s State, opts ...Option) State {
-	res := s
+func applyOptions(s *model.State, opts ...Option) {
 	for _, opt := range opts {
-		res = opt(res)
+		opt(s)
 	}
-	return res
 }

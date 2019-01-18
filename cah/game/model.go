@@ -1,23 +1,5 @@
 package game
 
-type Phase uint8
+import "github.com/j4rv/golang-stuff/cah/model"
 
-const (
-	Starting Phase = iota
-	SinnersPlaying
-	CzarChoosingWinner
-	Finished
-)
-
-type Card interface {
-	GetText() string
-}
-
-type WhiteCard interface {
-	Card
-}
-
-type BlackCard interface {
-	Card
-	GetBlanksAmount() int
-}
+var nilBlackCard = model.BlackCard{}

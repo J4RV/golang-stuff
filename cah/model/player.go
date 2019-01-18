@@ -1,4 +1,4 @@
-package game
+package model
 
 import (
 	"errors"
@@ -7,22 +7,14 @@ import (
 )
 
 type Player struct {
-	ID               int         `json:"id"`
-	Name             string      `json:"name"`
-	Hand             []WhiteCard `json:"hand"`
+	ID               int         `json:"id" db:"id"`
+	User             User        `json:"user" db:"user"`
+	Hand             []WhiteCard `json:"hand" db:"hand"`
 	WhiteCardsInPlay []WhiteCard `json:"whiteCardsInPlay"`
-	Points           []BlackCard `json:"points"`
+	Points           []BlackCard `json:"points" db:"points"`
 }
 
-func NewPlayer(id int, name string) *Player {
-	return &Player{
-		ID:               id,
-		Name:             name,
-		WhiteCardsInPlay: []WhiteCard{},
-		Points:           []BlackCard{}}
-}
-
-func (p *Player) removeCardFromHand(i int) error {
+func (p *Player) RemoveCardFromHand(i int) error {
 	if i < 0 || i >= len(p.Hand) {
 		msg := fmt.Sprintf("Index out of bounds. Index: %d, Hand size: %d", i, len(p.Hand))
 		return errors.New(msg)
@@ -31,7 +23,7 @@ func (p *Player) removeCardFromHand(i int) error {
 	return nil
 }
 
-func (p *Player) extractCardsFromHand(indexes []int) ([]WhiteCard, error) {
+func (p *Player) ExtractCardsFromHand(indexes []int) ([]WhiteCard, error) {
 	ret := make([]WhiteCard, len(indexes))
 
 	for iter, index := range indexes {
@@ -48,7 +40,7 @@ func (p *Player) extractCardsFromHand(indexes []int) ([]WhiteCard, error) {
 	copy(iOrdered, indexes)
 	sort.Sort(sort.Reverse(sort.IntSlice(iOrdered)))
 	for _, index := range iOrdered {
-		err := p.removeCardFromHand(index)
+		err := p.RemoveCardFromHand(index)
 		if err != nil {
 			return nil, err
 		}
@@ -57,10 +49,18 @@ func (p *Player) extractCardsFromHand(indexes []int) ([]WhiteCard, error) {
 	return ret, nil
 }
 
-func (p *Player) extractCardFromHand(i int) (WhiteCard, error) {
-	ret, err := p.extractCardsFromHand([]int{i})
+func (p *Player) ExtractCardFromHand(i int) (WhiteCard, error) {
+	ret, err := p.ExtractCardsFromHand([]int{i})
 	if err != nil {
-		return nil, err
+		return WhiteCard{}, err
 	}
 	return ret[0], nil
+}
+
+func NewPlayer(u User) *Player {
+	return &Player{
+		ID:               u.ID,
+		User:             u,
+		WhiteCardsInPlay: []WhiteCard{},
+		Points:           []BlackCard{}}
 }

@@ -4,13 +4,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/j4rv/golang-stuff/cah/game"
+	"github.com/j4rv/golang-stuff/cah/model"
 )
 
-var users = make(map[int]*User)
-var blackCards []BlackCard
-var whiteCards []WhiteCard
-var games []Game
+var users = make(map[int]*model.User)
 
 var commonPass = "dev"
 var commonPassHash, _ = getPassHash(commonPass)
@@ -19,56 +16,40 @@ func init() {
 	initUsers()
 }
 
-func GetBlackCards() []game.BlackCard {
-	models := make([]game.BlackCard, len(blackCards))
-	for i, c := range blackCards {
-		models[i] = game.BlackCard(c)
-	}
-	return models
-}
-
-func GetWhiteCards() []game.WhiteCard {
-	models := make([]game.WhiteCard, len(whiteCards))
-	for i, c := range whiteCards {
-		models[i] = game.WhiteCard(c)
-	}
-	return models
-}
-
-func GetUserById(id int) (User, error) {
+func GetUserById(id int) (model.User, error) {
 	u, ok := users[id]
 	if !ok {
-		return User{}, fmt.Errorf("Cannot find user with id %d", id)
+		return model.User{}, fmt.Errorf("Cannot find user with id %d", id)
 	}
 	return *u, nil
 }
 
-func GetUserByLogin(n, p string) (User, error) {
+func GetUserByLogin(n, p string) (model.User, error) {
 	u, err := getUserByName(n)
 	if err != nil {
 		return u, err
 	}
 	if !correctPass(p, u.Password) {
-		return User{}, fmt.Errorf("Incorrect password for user %s", u.Username)
+		return model.User{}, fmt.Errorf("Incorrect password for user %s", u.Username)
 	}
 	return u, nil
 }
 
-func getUserByName(n string) (User, error) {
+func getUserByName(n string) (model.User, error) {
 	for _, u := range users {
 		if u.Username == n {
 			return *u, nil
 		}
 	}
-	return User{}, fmt.Errorf("Cant find user with username '%s'", n)
+	return model.User{}, fmt.Errorf("Cant find user with username '%s'", n)
 }
 
 func initUsers() {
-	users[0] = &User{Username: "Red", DBObject: DBObject{0}}
-	users[1] = &User{Username: "Green", DBObject: DBObject{1}}
-	users[2] = &User{Username: "Blue", DBObject: DBObject{2}}
-	users[3] = &User{Username: "Gold", DBObject: DBObject{3}}
-	users[4] = &User{Username: "Silver", DBObject: DBObject{4}}
+	users[0] = &model.User{Username: "Red", ID: 0}
+	users[1] = &model.User{Username: "Green", ID: 1}
+	users[2] = &model.User{Username: "Blue", ID: 2}
+	users[3] = &model.User{Username: "Gold", ID: 3}
+	users[4] = &model.User{Username: "Silver", ID: 4}
 	for i := range users {
 		users[i].Password = commonPassHash
 	}

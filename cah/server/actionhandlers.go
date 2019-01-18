@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/j4rv/golang-stuff/cah/game"
+	"github.com/j4rv/golang-stuff/cah/model"
 )
 
 /*
@@ -14,26 +15,26 @@ GET GAME STATE
 */
 
 type playerInfo struct {
-	ID               int              `json:"id"`
-	Name             string           `json:"name"`
-	HandSize         int              `json:"handSize"`
-	WhiteCardsInPlay int              `json:"whiteCardsInPlay"`
-	Points           []game.BlackCard `json:"points"`
+	ID               int               `json:"id"`
+	Name             string            `json:"name"`
+	HandSize         int               `json:"handSize"`
+	WhiteCardsInPlay int               `json:"whiteCardsInPlay"`
+	Points           []model.BlackCard `json:"points"`
 }
 
 type sinnerPlay struct {
-	ID         int              `json:"id"`
-	WhiteCards []game.WhiteCard `json:"whiteCards"`
+	ID         int               `json:"id"`
+	WhiteCards []model.WhiteCard `json:"whiteCards"`
 }
 
 type gameStateResponse struct {
-	Phase           int              `json:"phase"`
-	Players         []playerInfo     `json:"players"`
-	CurrCzarID      int              `json:"currentCzarID"`
-	BlackCardInPlay game.BlackCard   `json:"blackCardInPlay"`
-	SinnerPlays     []sinnerPlay     `json:"sinnerPlays"`
-	DiscardPile     []game.WhiteCard `json:"discardPile"`
-	MyPlayer        game.Player      `json:"myPlayer"`
+	Phase           int               `json:"phase"`
+	Players         []playerInfo      `json:"players"`
+	CurrCzarID      int               `json:"currentCzarID"`
+	BlackCardInPlay model.BlackCard   `json:"blackCardInPlay"`
+	SinnerPlays     []sinnerPlay      `json:"sinnerPlays"`
+	DiscardPile     []model.WhiteCard `json:"discardPile"`
+	MyPlayer        model.Player      `json:"myPlayer"`
 }
 
 func getGameStateForUser(w http.ResponseWriter, req *http.Request) error {
@@ -71,10 +72,10 @@ func getPlayerInfo(sg serverGame) []playerInfo {
 	return ret
 }
 
-func gamePlayerToPlayerInfo(p game.Player) playerInfo {
+func gamePlayerToPlayerInfo(p model.Player) playerInfo {
 	return playerInfo{
 		ID:               p.ID,
-		Name:             p.Name,
+		Name:             p.User.Username,
 		HandSize:         len(p.Hand),
 		WhiteCardsInPlay: len(p.WhiteCardsInPlay),
 		Points:           p.Points,
