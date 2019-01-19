@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/j4rv/golang-stuff/cah/model"
+	"github.com/j4rv/golang-stuff/cah"
 )
 
-var users = make(map[int]*model.User)
+var users = make(map[int]*cah.User)
 
 var commonPass = "dev"
 var commonPassHash, _ = getPassHash(commonPass)
@@ -16,40 +16,40 @@ func init() {
 	initUsers()
 }
 
-func GetUserById(id int) (model.User, error) {
+func GetUserById(id int) (cah.User, error) {
 	u, ok := users[id]
 	if !ok {
-		return model.User{}, fmt.Errorf("Cannot find user with id %d", id)
+		return cah.User{}, fmt.Errorf("Cannot find user with id %d", id)
 	}
 	return *u, nil
 }
 
-func GetUserByLogin(n, p string) (model.User, error) {
+func GetUserByLogin(n, p string) (cah.User, error) {
 	u, err := getUserByName(n)
 	if err != nil {
 		return u, err
 	}
 	if !correctPass(p, u.Password) {
-		return model.User{}, fmt.Errorf("Incorrect password for user %s", u.Username)
+		return cah.User{}, fmt.Errorf("Incorrect password for user %s", u.Username)
 	}
 	return u, nil
 }
 
-func getUserByName(n string) (model.User, error) {
+func getUserByName(n string) (cah.User, error) {
 	for _, u := range users {
 		if u.Username == n {
 			return *u, nil
 		}
 	}
-	return model.User{}, fmt.Errorf("Cant find user with username '%s'", n)
+	return cah.User{}, fmt.Errorf("Cant find user with username '%s'", n)
 }
 
 func initUsers() {
-	users[0] = &model.User{Username: "Red", ID: 0}
-	users[1] = &model.User{Username: "Green", ID: 1}
-	users[2] = &model.User{Username: "Blue", ID: 2}
-	users[3] = &model.User{Username: "Gold", ID: 3}
-	users[4] = &model.User{Username: "Silver", ID: 4}
+	users[0] = &cah.User{Username: "Red", ID: 0}
+	users[1] = &cah.User{Username: "Green", ID: 1}
+	users[2] = &cah.User{Username: "Blue", ID: 2}
+	users[3] = &cah.User{Username: "Gold", ID: 3}
+	users[4] = &cah.User{Username: "Silver", ID: 4}
 	for i := range users {
 		users[i].Password = commonPassHash
 	}

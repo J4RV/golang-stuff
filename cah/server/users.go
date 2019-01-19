@@ -9,8 +9,8 @@ import (
 	"strconv"
 
 	"github.com/gorilla/sessions"
+	"github.com/j4rv/golang-stuff/cah"
 	"github.com/j4rv/golang-stuff/cah/data"
-	"github.com/j4rv/golang-stuff/cah/model"
 )
 
 type loginPayload struct {
@@ -73,19 +73,19 @@ func init() {
 	store = sessions.NewCookieStore([]byte(skey))
 }
 
-func userFromSession(r *http.Request) (model.User, error) {
+func userFromSession(r *http.Request) (cah.User, error) {
 	session, err := store.Get(r, sessionid)
 	if err != nil {
-		return model.User{}, err
+		return cah.User{}, err
 	}
 	val, ok := session.Values[userid]
 	if !ok {
-		return model.User{}, fmt.Errorf("Tried to get user from session without an id")
+		return cah.User{}, fmt.Errorf("Tried to get user from session without an id")
 	}
 	id, ok := val.(int)
 	if !ok {
 		log.Printf("Session with non int id value: '%v'", session.Values)
-		return model.User{}, fmt.Errorf("Session with non int id value")
+		return cah.User{}, fmt.Errorf("Session with non int id value")
 	}
 	u, err := data.GetUserById(id)
 	if err != nil {

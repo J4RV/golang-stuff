@@ -1,32 +1,31 @@
-package model
+package cah
 
 import (
 	"fmt"
 	"strings"
 	"testing"
 
-	"github.com/j4rv/golang-stuff/cah/game"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPlayer_extractCardFromHand(t *testing.T) {
+func TestPlayer_ExtractCardFromHand(t *testing.T) {
 	p := Player{}
 	c1 := WhiteCard{Card{Text: "A"}}
 	c2 := WhiteCard{Card{Text: "B"}}
 	c3 := WhiteCard{Card{Text: "C"}}
 	p.Hand = []WhiteCard{c1, c2, c3}
 
-	_, err := p.extractCardFromHand(-1)
+	_, err := p.ExtractCardFromHand(-1)
 	if err == nil {
 		t.Error("Expected error but did not found it, negative index")
 	}
 
-	_, err = p.extractCardFromHand(9)
+	_, err = p.ExtractCardFromHand(9)
 	if err == nil {
 		t.Error("Expected error but did not found it, index over hand size")
 	}
 
-	c, err := p.extractCardFromHand(1)
+	c, err := p.ExtractCardFromHand(1)
 	assert.Equal(t, c.Text, "B", "Unexpected text in extracted hand")
 	assert.Equalf(t, err, nil, "Unexpected error %v", err)
 	assert.Equalf(t, len(p.Hand), 2, "Hand size did not get reduced, hand: %s, len: ", p.Hand)
@@ -37,12 +36,12 @@ func TestPlayer_extractCardFromHand(t *testing.T) {
 	}
 }
 
-func TestPlayer_extractCardsFromHand(t *testing.T) {
+func TestPlayer_ExtractCardsFromHand(t *testing.T) {
 	assert := assert.New(t)
 	p := Player{}
-	p.Hand = game.getWhiteCardsFixture(10)
+	p.Hand = getWhiteCardsFixture(10)
 	indexes := []int{0, 9, 5}
-	cards, err := p.extractCardsFromHand(indexes)
+	cards, err := p.ExtractCardsFromHand(indexes)
 
 	assert.NoError(err)
 	assert.Equal(7, len(p.Hand), "Unexpected hand size")
@@ -58,4 +57,12 @@ func TestPlayer_extractCardsFromHand(t *testing.T) {
 		assert.True(strings.Contains(p.Hand[i].Text, fmt.Sprintf("(%d)", index)),
 			"Unexpected card order in hand", p.Hand[i].Text)
 	}
+}
+
+func getWhiteCardsFixture(amount int) []WhiteCard {
+	ret := make([]WhiteCard, amount)
+	for i := 0; i < amount; i++ {
+		ret[i] = WhiteCard{Card{Text: fmt.Sprintf("White card fixture (%d)", i)}}
+	}
+	return ret
 }

@@ -1,9 +1,8 @@
 #!/bin/sh
-git pull
 cd server/frontend
 yarn
 yarn build
 cd ..
-go get
+go get -t
 nohup go run . > log.log &
 tail log.log

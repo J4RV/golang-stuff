@@ -11,6 +11,7 @@ const styles = theme => ({
     fontFamily: '"Open Sans", "Roboto", "Helvetica", "Arial", sans-serif',
     fontWeight: "800",
     verticalAlign: "top",
+    transition: "transform ease-in-out .6s",
   },
   inHand: {
     margin: "0 0 -10px 0",
@@ -71,7 +72,7 @@ class Card extends React.Component {
   }
   randomRotate = () => {
     this.setState({rotation: Math.random() * 5 - 2.5})
-    window.setTimeout(this.randomRotate, Math.random() * 2000 + 500)    
+    window.setTimeout(this.randomRotate, Math.random() * 2000 + 1000)    
   }
   componentWillMount() {
     this.randomRotate()

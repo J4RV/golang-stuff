@@ -4,65 +4,68 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/j4rv/golang-stuff/cah/model"
+	"github.com/j4rv/golang-stuff/cah"
 )
-
-const playerHandSize = 15
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func NewGame(p []*model.Player, opts ...Option) model.State {
-	ret := model.State{
+func NewGame(p []*cah.Player, opts ...Option) cah.Game {
+	ret := cah.Game{
 		Players:     p,
-		DiscardPile: []model.WhiteCard{},
+		HandSize:    10,
+		DiscardPile: []cah.WhiteCard{},
 	}
 	applyOptions(&ret, opts...)
 	shuffleB(&ret.BlackDeck)
 	shuffleW(&ret.WhiteDeck)
-	ret, _ = PutBlackCardInPlay(ret)
-	playersDraw(&ret)
 	return ret
 }
 
-func RandomStartingCzar(s *model.State) {
+func RandomStartingCzar(s *cah.Game) {
 	s.CurrCzarIndex = rand.Intn(len(s.Players))
 }
 
-func BlackDeck(bd []model.BlackCard) Option {
-	return func(s *model.State) {
+func HandSize(size int) Option {
+	return func(s *cah.Game) {
+		s.HandSize = size
+	}
+}
+
+func BlackDeck(bd []cah.BlackCard) Option {
+	return func(s *cah.Game) {
 		s.BlackDeck = bd
 	}
 }
 
-func WhiteDeck(wd []model.WhiteCard) Option {
-	return func(s *model.State) {
+func WhiteDeck(wd []cah.WhiteCard) Option {
+	return func(s *cah.Game) {
 		s.WhiteDeck = wd
 	}
 }
 
-func shuffleB(cards *[]model.BlackCard) {
+func shuffleB(cards *[]cah.BlackCard) {
 	if cards == nil {
 		return
 	}
 	for i, j := range rand.Perm(len(*cards)) {
-		(*cards)[i] = (*cards)[j]
+		(*cards)[i], (*cards)[j] = (*cards)[j], (*cards)[i]
 	}
 }
 
-func shuffleW(cards *[]model.WhiteCard) {
+func shuffleW(cards *[]cah.WhiteCard) {
 	if cards == nil {
 		return
 	}
 	for i, j := range rand.Perm(len(*cards)) {
-		(*cards)[i] = (*cards)[j]
+		(*cards)[i], (*cards)[j] = (*cards)[j], (*cards)[i]
 	}
 }
 
-type Option func(*model.State)
+type Option func(*cah.Game)
 
-func applyOptions(s *model.State, opts ...Option) {
+func applyOptions(s *cah.Game, opts ...Option) {
 	for _, opt := range opts {
 		opt(s)
 	}

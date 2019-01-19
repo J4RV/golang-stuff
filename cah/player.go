@@ -1,4 +1,4 @@
-package model
+package cah
 
 import (
 	"errors"
@@ -61,6 +61,8 @@ func NewPlayer(u User) *Player {
 	return &Player{
 		ID:               u.ID,
 		User:             u,
+		Hand:             []WhiteCard{},
 		WhiteCardsInPlay: []WhiteCard{},
-		Points:           []BlackCard{}}
+		Points:           []BlackCard{},
+	}
 }

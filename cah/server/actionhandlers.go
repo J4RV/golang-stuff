@@ -6,35 +6,42 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/j4rv/golang-stuff/cah"
 	"github.com/j4rv/golang-stuff/cah/game"
-	"github.com/j4rv/golang-stuff/cah/model"
 )
+
+var gameControl cah.GameController
+
+func init() {
+	// should be injected
+	gameControl = game.GameController{}
+}
 
 /*
 GET GAME STATE
 */
 
 type playerInfo struct {
-	ID               int               `json:"id"`
-	Name             string            `json:"name"`
-	HandSize         int               `json:"handSize"`
-	WhiteCardsInPlay int               `json:"whiteCardsInPlay"`
-	Points           []model.BlackCard `json:"points"`
+	ID               int             `json:"id"`
+	Name             string          `json:"name"`
+	HandSize         int             `json:"handSize"`
+	WhiteCardsInPlay int             `json:"whiteCardsInPlay"`
+	Points           []cah.BlackCard `json:"points"`
 }
 
 type sinnerPlay struct {
-	ID         int               `json:"id"`
-	WhiteCards []model.WhiteCard `json:"whiteCards"`
+	ID         int             `json:"id"`
+	WhiteCards []cah.WhiteCard `json:"whiteCards"`
 }
 
 type gameStateResponse struct {
-	Phase           int               `json:"phase"`
-	Players         []playerInfo      `json:"players"`
-	CurrCzarID      int               `json:"currentCzarID"`
-	BlackCardInPlay model.BlackCard   `json:"blackCardInPlay"`
-	SinnerPlays     []sinnerPlay      `json:"sinnerPlays"`
-	DiscardPile     []model.WhiteCard `json:"discardPile"`
-	MyPlayer        model.Player      `json:"myPlayer"`
+	Phase           int             `json:"phase"`
+	Players         []playerInfo    `json:"players"`
+	CurrCzarID      int             `json:"currentCzarID"`
+	BlackCardInPlay cah.BlackCard   `json:"blackCardInPlay"`
+	SinnerPlays     []sinnerPlay    `json:"sinnerPlays"`
+	DiscardPile     []cah.WhiteCard `json:"discardPile"`
+	MyPlayer        cah.Player      `json:"myPlayer"`
 }
 
 func getGameStateForUser(w http.ResponseWriter, req *http.Request) error {
@@ -42,37 +49,36 @@ func getGameStateForUser(w http.ResponseWriter, req *http.Request) error {
 	if err != nil {
 		return err
 	}
-	sg, err := getGame(req)
+	game, err := getGame(req)
 	if err != nil {
 		return err
 	}
-	p, err := getPlayer(sg, u)
+	p, err := getPlayer(game, u)
 	if err != nil {
 		return err
 	}
-	state := sg.state
 	response := gameStateResponse{
-		Phase:           int(state.Phase),
-		Players:         getPlayerInfo(sg),
-		CurrCzarID:      state.Players[state.CurrCzarIndex].ID,
-		BlackCardInPlay: state.BlackCardInPlay,
-		SinnerPlays:     getSinnerPlays(sg),
-		DiscardPile:     state.DiscardPile,
+		Phase:           int(game.Phase),
+		Players:         getPlayerInfo(game),
+		CurrCzarID:      game.Players[game.CurrCzarIndex].ID,
+		BlackCardInPlay: game.BlackCardInPlay,
+		SinnerPlays:     getSinnerPlays(game),
+		DiscardPile:     game.DiscardPile,
 		MyPlayer:        *p,
 	}
 	writeResponse(w, response)
 	return nil
 }
 
-func getPlayerInfo(sg serverGame) []playerInfo {
-	ret := make([]playerInfo, len(sg.state.Players))
-	for i, p := range sg.state.Players {
+func getPlayerInfo(game cah.Game) []playerInfo {
+	ret := make([]playerInfo, len(game.Players))
+	for i, p := range game.Players {
 		ret[i] = gamePlayerToPlayerInfo(*p)
 	}
 	return ret
 }
 
-func gamePlayerToPlayerInfo(p model.Player) playerInfo {
+func gamePlayerToPlayerInfo(p cah.Player) playerInfo {
 	return playerInfo{
 		ID:               p.ID,
 		Name:             p.User.Username,
@@ -82,12 +88,12 @@ func gamePlayerToPlayerInfo(p model.Player) playerInfo {
 	}
 }
 
-func getSinnerPlays(sg serverGame) []sinnerPlay {
-	if !game.AllSinnersPlayedTheirCards(sg.state) {
+func getSinnerPlays(game cah.Game) []sinnerPlay {
+	if !gameControl.AllSinnersPlayedTheirCards(game) {
 		return []sinnerPlay{}
 	}
-	ret := make([]sinnerPlay, len(sg.state.Players))
-	for i, p := range sg.state.Players {
+	ret := make([]sinnerPlay, len(game.Players))
+	for i, p := range game.Players {
 		ret[i] = sinnerPlay{
 			ID:         p.ID,
 			WhiteCards: p.WhiteCardsInPlay,
@@ -117,18 +123,18 @@ func giveBlackCardToWinner(w http.ResponseWriter, req *http.Request) error {
 	if err != nil {
 		return errors.New("Misconstructed payload")
 	}
-	sg, err := getGame(req)
+	game, err := getGame(req)
 	if err != nil {
 		return err
 	}
-	pid, err := getPlayerIndex(sg, u)
+	pid, err := getPlayerIndex(game, u)
 	if err != nil {
 		return err
 	}
-	if pid != sg.state.CurrCzarIndex {
+	if pid != game.CurrCzarIndex {
 		return errors.New("Only the Czar can choose the winner")
 	}
-	newS, err := game.GiveBlackCardToWinner(payload.Winner, sg.state)
+	newS, err := gameControl.GiveBlackCardToWinner(payload.Winner, game)
 	if err != nil {
 		return err
 	}
@@ -157,15 +163,15 @@ func playCards(w http.ResponseWriter, req *http.Request) error {
 	if err != nil {
 		return errors.New("Misconstructed payload")
 	}
-	sg, err := getGame(req)
+	game, err := getGame(req)
 	if err != nil {
 		return err
 	}
-	pid, err := getPlayerIndex(sg, u)
+	pid, err := getPlayerIndex(game, u)
 	if err != nil {
 		return err
 	}
-	newS, err := game.PlayWhiteCards(pid, payload.CardIndexes, sg.state)
+	newS, err := gameControl.PlayWhiteCards(pid, payload.CardIndexes, game)
 	if err != nil {
 		return err
 	} // oneline error handling when

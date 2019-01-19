@@ -1,4 +1,4 @@
-package model
+package cah
 
 import (
 	"encoding/gob"
