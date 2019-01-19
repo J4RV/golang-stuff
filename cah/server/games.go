@@ -7,19 +7,9 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/j4rv/golang-stuff/cah"
-	"github.com/j4rv/golang-stuff/cah/data"
-	"github.com/j4rv/golang-stuff/cah/game"
 )
 
 var games = make(map[string]cah.Game)
-
-func loadExpansions() {
-	repository.Card.CreateFromFolder("./expansions/base-uk", "Base-UK")
-	repository.Card.CreateFromFolder("./expansions/anime", "Anime")
-	repository.Card.CreateFromFolder("./expansions/kikis", "Kikis")
-	repository.Card.CreateFromFolder("./expansions/expansion-1", "The First Expansion")
-	repository.Card.CreateFromFolder("./expansions/expansion-2", "The Second Expansion")
-}
 
 func getPlayerIndex(g cah.Game, u cah.User) (int, error) {
 	for i, p := range g.Players {
@@ -70,8 +60,8 @@ func createGame(users []cah.User, gameid string) error {
 	if ok {
 		return fmt.Errorf("There already exists a game with id '%s'", gameid)
 	}
-	bd := repository.Card.AllBlacks()
-	wd := repository.Card.AllWhites()
+	bd := usecase.Card.AllBlacks()
+	wd := usecase.Card.AllWhites()
 	var wGameCards = make([]cah.WhiteCard, len(wd))
 	for i, c := range wd {
 		wGameCards[i] = c
@@ -81,13 +71,12 @@ func createGame(users []cah.User, gameid string) error {
 		bGameCards[i] = c
 	}
 	p := getPlayersForUsers(users...)
-	s := game.NewGame(p,
-		game.RandomStartingCzar,
-		game.BlackDeck(bGameCards),
-		game.WhiteDeck(wGameCards),
-		game.HandSize(15),
+	s := usecase.Game.NewGame(
+		usecase.Game.Options().BlackDeck(bGameCards),
+		usecase.Game.Options().WhiteDeck(wGameCards),
+		usecase.Game.Options().HandSize(15),
 	)
-	s, err := usecase.Game.Start(s)
+	s, err := usecase.Game.Start(p, s, usecase.Game.Options().RandomStartingCzar())
 	if err != nil {
 		panic(err)
 	}
@@ -113,7 +102,7 @@ func createTestGame() {
 func getTestUsers() []cah.User {
 	users := make([]cah.User, 4)
 	for i := 0; i < 4; i++ {
-		u, _ := data.GetUserById(i)
+		u, _ := usecase.User.ByID(i)
 		users[i] = u
 	}
 	return users

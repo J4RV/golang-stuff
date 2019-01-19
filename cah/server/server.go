@@ -17,8 +17,7 @@ var usingTLS bool
 var serverCert, serverPK string
 var publicDir string
 
-var repository cah.DataServices
-var usecase cah.Controllers
+var usecase cah.Usecases
 
 func init() {
 	initCertificateStuff()
@@ -44,10 +43,8 @@ func parseFlags() {
 	flag.Parse()
 }
 
-func Start(dt cah.DataServices, ctrl cah.Controllers) {
-	repository = dt
-	usecase = ctrl
-	loadExpansions()
+func Start(uc cah.Usecases) {
+	usecase = uc
 	createTestGame()
 	router := mux.NewRouter()
 	handleUsers(router)

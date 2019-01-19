@@ -1,5 +1,5 @@
 #!/bin/sh
-cd server/frontend
+cd app/frontend
 yarn
 yarn build
 cd ..

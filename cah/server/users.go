@@ -10,7 +10,6 @@ import (
 
 	"github.com/gorilla/sessions"
 	"github.com/j4rv/golang-stuff/cah"
-	"github.com/j4rv/golang-stuff/cah/data"
 )
 
 type loginPayload struct {
@@ -26,7 +25,7 @@ func processLogin(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Misconstructed payload", http.StatusBadRequest)
 		return
 	}
-	u, err := data.GetUserByLogin(payload.Username, payload.Password)
+	u, err := usecase.User.Login(payload.Username, payload.Password)
 	if err != nil {
 		log.Printf("Someone tried to login using user '%s'", payload.Username)
 		http.Error(w, "Incorrect login", http.StatusForbidden)
@@ -87,7 +86,7 @@ func userFromSession(r *http.Request) (cah.User, error) {
 		log.Printf("Session with non int id value: '%v'", session.Values)
 		return cah.User{}, fmt.Errorf("Session with non int id value")
 	}
-	u, err := data.GetUserById(id)
+	u, err := usecase.User.ByID(id)
 	if err != nil {
 		return u, err
 	}

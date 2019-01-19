@@ -4,6 +4,12 @@ import (
 	"testing"
 )
 
+var store = userMemStore{}
+
+func init() {
+
+}
+
 func TestPassHashNotFailing(t *testing.T) {
 	hash, err := getPassHash(commonPass)
 	if err != nil {
@@ -25,7 +31,7 @@ func TestCorrectPass(t *testing.T) {
 }
 
 func TestGetUserByLogin(t *testing.T) {
-	u, err := GetUserByLogin("Green", commonPass)
+	u, err := store.ByCredentials("Green", commonPass)
 	if err != nil {
 		t.Error(err)
 	} else {
@@ -33,7 +39,7 @@ func TestGetUserByLogin(t *testing.T) {
 			t.Fatal("GetUserByLogin is horribly broken")
 		}
 	}
-	u, err = GetUserByLogin("Green", "not green's password")
+	u, err = store.ByCredentials("Green", "not green's password")
 	if err == nil {
 		t.Error("Error should not be nil")
 	}

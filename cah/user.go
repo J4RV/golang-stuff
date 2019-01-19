@@ -4,7 +4,14 @@ import (
 	"time"
 )
 
-type UserService interface {
+type UserStore interface {
+	ByID(id int) (User, error)
+	ByCredentials(name, pass string) (User, error)
+}
+
+type UserUsecases interface {
+	ByID(id int) (User, error)
+	Login(name, pass string) (User, error)
 }
 
 type User struct {

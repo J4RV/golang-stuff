@@ -2,16 +2,20 @@ package cah
 
 import "io"
 
-type CardService interface {
+type CardStore interface {
 	CreateWhite(text, expansion string) error
 	CreateBlack(text, expansion string, blanks int) error
 	AllWhites() []WhiteCard
 	AllBlacks() []BlackCard
-	CreateFromReaders(wdat, bdat io.Reader, expansionName string) error
-	CreateFromFolder(folderPath, expansionName string) error
+	//TODO AvailableExpansions() []string
 }
 
-type CardController interface {
+type CardUsecases interface {
+	CreateFromReaders(wdat, bdat io.Reader, expansionName string) error
+	CreateFromFolder(folderPath, expansionName string) error
+	AllWhites() []WhiteCard
+	AllBlacks() []BlackCard
+	//TODO AvailableExpansions() []string
 }
 
 type Card struct {

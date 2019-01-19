@@ -1,72 +1,150 @@
 package game
 
 import (
-	"math/rand"
-	"time"
+	"errors"
+	"fmt"
 
 	"github.com/j4rv/golang-stuff/cah"
 )
 
-func init() {
-	rand.Seed(time.Now().UnixNano())
+var nilBlackCard = cah.BlackCard{}
+
+type GameController struct {
+	options Options
 }
 
-func NewGame(p []*cah.Player, opts ...Option) cah.Game {
-	ret := cah.Game{
-		Players:     p,
-		HandSize:    10,
-		DiscardPile: []cah.WhiteCard{},
+func playersDraw(s *cah.Game) {
+	for _, p := range s.Players {
+		for len(p.Hand) < s.HandSize {
+			p.Hand = append(p.Hand, s.DrawWhite())
+		}
 	}
+}
+
+func (control GameController) Start(p []*cah.Player, g cah.Game, opts ...cah.Option) (cah.Game, error) {
+	if g.Phase != cah.Starting {
+		return g, fmt.Errorf("Tried to start the game but it has already started; current phase: '%s'", g.Phase)
+	}
+	if p == nil || len(p) < 3 {
+		return g, fmt.Errorf("Wrong players argument: '%v'. Cannot be nil and the minimum amount of players is 3", p)
+	}
+	ret := g.Clone()
+	ret, err := control.putBlackCardInPlay(g)
+	if err != nil {
+		return g, err
+	}
+	ret.Players = p
+	playersDraw(&ret)
 	applyOptions(&ret, opts...)
-	shuffleB(&ret.BlackDeck)
-	shuffleW(&ret.WhiteDeck)
-	return ret
+	return ret, nil
 }
 
-func RandomStartingCzar(s *cah.Game) {
-	s.CurrCzarIndex = rand.Intn(len(s.Players))
+func (_ GameController) putBlackCardInPlay(s cah.Game) (cah.Game, error) {
+	if s.BlackCardInPlay != nilBlackCard {
+		return s, errors.New("Tried to put a black card in play but there is already a black card in play")
+	}
+	if s.Phase == cah.Finished {
+		return s, errors.New("Tried to put a black card in play but the game has already finished")
+	}
+	if len(s.BlackDeck) == 0 {
+		return s, errors.New("Tried to put a black card in play but the black deck is empty")
+	}
+	res := s.Clone()
+	res.BlackCardInPlay = res.BlackDeck[0]
+	res.BlackDeck = res.BlackDeck[1:]
+	res.Phase = cah.SinnersPlaying
+	return res, nil
 }
 
-func HandSize(size int) Option {
-	return func(s *cah.Game) {
-		s.HandSize = size
+func (control GameController) GiveBlackCardToWinner(wID int, s cah.Game) (cah.Game, error) {
+	err := giveBlackCardToWinnerChecks(wID, s)
+	if err != nil {
+		return s, err
 	}
+	res := s.Clone()
+	var winner *cah.Player
+	for _, p := range res.Players {
+		if p.ID == wID {
+			winner = p
+		}
+	}
+	if winner == nil {
+		return s, fmt.Errorf("Invalid winner id %d", wID)
+	}
+	winner.Points = append(winner.Points, res.BlackCardInPlay)
+	res.BlackCardInPlay = nilBlackCard
+	for _, p := range s.Players {
+		p.WhiteCardsInPlay = []cah.WhiteCard{}
+	}
+	res, _ = control.NextCzar(res)
+	res, _ = control.putBlackCardInPlay(res)
+	playersDraw(&res)
+	return res, nil
 }
 
-func BlackDeck(bd []cah.BlackCard) Option {
-	return func(s *cah.Game) {
-		s.BlackDeck = bd
+func giveBlackCardToWinnerChecks(w int, s cah.Game) error {
+	if s.Phase != cah.CzarChoosingWinner {
+		return fmt.Errorf("Tried to choose a winner in a non valid phase '%d'", s.Phase)
 	}
+	for i, p := range s.Players {
+		if i == s.CurrCzarIndex {
+			continue
+		}
+		if len(p.WhiteCardsInPlay) != s.BlackCardInPlay.BlanksAmount {
+			return errors.New("Not all sinners have played their cards")
+		}
+	}
+	return nil
 }
 
-func WhiteDeck(wd []cah.WhiteCard) Option {
-	return func(s *cah.Game) {
-		s.WhiteDeck = wd
+func (control GameController) PlayWhiteCards(p int, cs []int, s cah.Game) (cah.Game, error) {
+	if p < 0 || p >= len(s.Players) {
+		return s, errors.New("Non valid sinner index")
 	}
+	if p == s.CurrCzarIndex {
+		return s, errors.New("The Czar cannot play white cards")
+	}
+	if len(cs)+len(s.Players[p].WhiteCardsInPlay) > s.BlackCardInPlay.BlanksAmount {
+		return s, fmt.Errorf("Invalid amount of white cards to play, expected %d but got %d",
+			s.BlackCardInPlay.BlanksAmount,
+			len(cs)+len(s.Players[p].WhiteCardsInPlay))
+	}
+	res := s.Clone()
+	player := res.Players[p]
+	newCardsPlayed, err := player.ExtractCardsFromHand(cs)
+	if err != nil {
+		return res, err
+	}
+	player.WhiteCardsInPlay = append(player.WhiteCardsInPlay, newCardsPlayed...)
+	if control.AllSinnersPlayedTheirCards(res) {
+		res.Phase = cah.CzarChoosingWinner
+	}
+	return res, nil
 }
 
-func shuffleB(cards *[]cah.BlackCard) {
-	if cards == nil {
-		return
+func (_ GameController) AllSinnersPlayedTheirCards(s cah.Game) bool {
+	for i, p := range s.Players {
+		if i == s.CurrCzarIndex {
+			continue
+		}
+		if len(p.WhiteCardsInPlay) != s.BlackCardInPlay.BlanksAmount {
+			return false
+		}
 	}
-	for i, j := range rand.Perm(len(*cards)) {
-		(*cards)[i], (*cards)[j] = (*cards)[j], (*cards)[i]
-	}
+	return true
 }
 
-func shuffleW(cards *[]cah.WhiteCard) {
-	if cards == nil {
-		return
+func (_ GameController) NextCzar(s cah.Game) (cah.Game, error) {
+	if s.BlackCardInPlay != nilBlackCard {
+		return s, errors.New("Tried to rotate to the next Czar but there is still a black card in play")
 	}
-	for i, j := range rand.Perm(len(*cards)) {
-		(*cards)[i], (*cards)[j] = (*cards)[j], (*cards)[i]
+	if s.Phase == cah.Finished {
+		return s, errors.New("Tried to rotate to the next Czar but the game has already finished")
 	}
-}
-
-type Option func(*cah.Game)
-
-func applyOptions(s *cah.Game, opts ...Option) {
-	for _, opt := range opts {
-		opt(s)
+	res := s.Clone()
+	res.CurrCzarIndex++
+	if res.CurrCzarIndex == len(s.Players) {
+		res.CurrCzarIndex = 0
 	}
+	return res, nil
 }

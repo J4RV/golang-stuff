@@ -1,12 +1,23 @@
 package cah
 
-type GameController interface {
-	Start(g Game) (Game, error)
-	PutBlackCardInPlay(g Game) (Game, error)
+type GameUsecases interface {
+	NewGame(opts ...Option) Game
+	Options() GameOptions
+	Start(p []*Player, g Game, opts ...Option) (Game, error)
 	GiveBlackCardToWinner(wId int, g Game) (Game, error)
 	PlayWhiteCards(p int, cs []int, g Game) (Game, error)
 	AllSinnersPlayedTheirCards(g Game) bool
 	NextCzar(g Game) (Game, error)
+	//End(g Game) (Game, error)
+}
+
+type GameOptions interface {
+	// Options for new games
+	WhiteDeck(wd []WhiteCard) Option
+	BlackDeck(bd []BlackCard) Option
+	HandSize(size int) Option
+	// Options for starting games
+	RandomStartingCzar() Option
 }
 
 type Game struct {
@@ -19,6 +30,8 @@ type Game struct {
 	DiscardPile     []WhiteCard `json:"discardPile"`
 	HandSize        int         `json:"handSize"`
 }
+
+type Option func(s *Game)
 
 func (s *Game) DrawWhite() WhiteCard {
 	ret := s.WhiteDeck[0]

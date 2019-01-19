@@ -11,7 +11,8 @@ const styles = theme => ({
     fontFamily: '"Open Sans", "Roboto", "Helvetica", "Arial", sans-serif',
     fontWeight: "800",
     verticalAlign: "top",
-    transition: "transform ease-in-out .6s",
+    transition: "transform ease-in-out .5s",
+    transformOrigin: "50% 80%",
   },
   inHand: {
     margin: "0 0 -10px 0",

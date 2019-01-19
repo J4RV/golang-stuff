@@ -1,6 +1,6 @@
 package cah
 
-type DataServices struct {
-	Card CardService
-	//User UserService
+type DataStore struct {
+	Card CardStore
+	User UserStore
 }
