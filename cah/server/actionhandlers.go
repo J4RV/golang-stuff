@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"encoding/json"
@@ -7,15 +7,7 @@ import (
 	"net/http"
 
 	"github.com/j4rv/golang-stuff/cah"
-	"github.com/j4rv/golang-stuff/cah/game"
 )
-
-var gameControl cah.GameController
-
-func init() {
-	// should be injected
-	gameControl = game.GameController{}
-}
 
 /*
 GET GAME STATE
@@ -89,7 +81,7 @@ func gamePlayerToPlayerInfo(p cah.Player) playerInfo {
 }
 
 func getSinnerPlays(game cah.Game) []sinnerPlay {
-	if !gameControl.AllSinnersPlayedTheirCards(game) {
+	if !usecase.Game.AllSinnersPlayedTheirCards(game) {
 		return []sinnerPlay{}
 	}
 	ret := make([]sinnerPlay, len(game.Players))
@@ -134,7 +126,7 @@ func giveBlackCardToWinner(w http.ResponseWriter, req *http.Request) error {
 	if pid != game.CurrCzarIndex {
 		return errors.New("Only the Czar can choose the winner")
 	}
-	newS, err := gameControl.GiveBlackCardToWinner(payload.Winner, game)
+	newS, err := usecase.Game.GiveBlackCardToWinner(payload.Winner, game)
 	if err != nil {
 		return err
 	}
@@ -171,7 +163,7 @@ func playCards(w http.ResponseWriter, req *http.Request) error {
 	if err != nil {
 		return err
 	}
-	newS, err := gameControl.PlayWhiteCards(pid, payload.CardIndexes, game)
+	newS, err := usecase.Game.PlayWhiteCards(pid, payload.CardIndexes, game)
 	if err != nil {
 		return err
 	} // oneline error handling when

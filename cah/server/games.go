@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"errors"
@@ -12,15 +12,13 @@ import (
 )
 
 var games = make(map[string]cah.Game)
-var cardServ cah.CardService
 
-func init() {
-	cardServ = data.NewCardStore() // should be injected
-	cardServ.CreateCardsFromFolder("./expansions/base-uk", "Base-UK")
-	cardServ.CreateCardsFromFolder("./expansions/anime", "Anime")
-	cardServ.CreateCardsFromFolder("./expansions/kikis", "Kikis")
-	cardServ.CreateCardsFromFolder("./expansions/expansion-1", "The First Expansion")
-	cardServ.CreateCardsFromFolder("./expansions/expansion-2", "The Second Expansion")
+func loadExpansions() {
+	repository.Card.CreateFromFolder("./expansions/base-uk", "Base-UK")
+	repository.Card.CreateFromFolder("./expansions/anime", "Anime")
+	repository.Card.CreateFromFolder("./expansions/kikis", "Kikis")
+	repository.Card.CreateFromFolder("./expansions/expansion-1", "The First Expansion")
+	repository.Card.CreateFromFolder("./expansions/expansion-2", "The Second Expansion")
 }
 
 func getPlayerIndex(g cah.Game, u cah.User) (int, error) {
@@ -72,8 +70,8 @@ func createGame(users []cah.User, gameid string) error {
 	if ok {
 		return fmt.Errorf("There already exists a game with id '%s'", gameid)
 	}
-	bd := cardServ.GetBlacks()
-	wd := cardServ.GetWhites()
+	bd := repository.Card.AllBlacks()
+	wd := repository.Card.AllWhites()
 	var wGameCards = make([]cah.WhiteCard, len(wd))
 	for i, c := range wd {
 		wGameCards[i] = c
@@ -89,7 +87,7 @@ func createGame(users []cah.User, gameid string) error {
 		game.WhiteDeck(wGameCards),
 		game.HandSize(15),
 	)
-	s, err := gameControl.Start(s)
+	s, err := usecase.Game.Start(s)
 	if err != nil {
 		panic(err)
 	}

@@ -48,20 +48,20 @@ func (_ GameController) PutBlackCardInPlay(s cah.Game) (cah.Game, error) {
 	return res, nil
 }
 
-func (control GameController) GiveBlackCardToWinner(wId int, s cah.Game) (cah.Game, error) {
-	err := giveBlackCardToWinnerChecks(wId, s)
+func (control GameController) GiveBlackCardToWinner(wID int, s cah.Game) (cah.Game, error) {
+	err := giveBlackCardToWinnerChecks(wID, s)
 	if err != nil {
 		return s, err
 	}
 	res := s.Clone()
 	var winner *cah.Player
 	for _, p := range res.Players {
-		if p.ID == wId {
+		if p.ID == wID {
 			winner = p
 		}
 	}
 	if winner == nil {
-		return s, fmt.Errorf("Invalid winner id %d", wId)
+		return s, fmt.Errorf("Invalid winner id %d", wID)
 	}
 	winner.Points = append(winner.Points, res.BlackCardInPlay)
 	res.BlackCardInPlay = nilBlackCard

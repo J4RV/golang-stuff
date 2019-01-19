@@ -5,10 +5,10 @@ import "io"
 type CardService interface {
 	CreateWhite(text, expansion string) error
 	CreateBlack(text, expansion string, blanks int) error
-	GetWhites() []WhiteCard
-	GetBlacks() []BlackCard
-	CreateCards(wdat, bdat io.Reader, expansionName string) error
-	CreateCardsFromFolder(folderPath, expansionName string) error
+	AllWhites() []WhiteCard
+	AllBlacks() []BlackCard
+	CreateFromReaders(wdat, bdat io.Reader, expansionName string) error
+	CreateFromFolder(folderPath, expansionName string) error
 }
 
 type CardController interface {

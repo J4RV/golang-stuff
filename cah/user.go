@@ -1,13 +1,10 @@
 package cah
 
 import (
-	"encoding/gob"
 	"time"
 )
 
-// todo check if necessary
-func init() {
-	gob.Register(User{})
+type UserService interface {
 }
 
 type User struct {

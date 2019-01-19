@@ -52,11 +52,11 @@ func (s *CardMemStore) CreateBlack(t, e string, blanks int) error {
 	return err
 }
 
-func (s *CardMemStore) GetWhites() []cah.WhiteCard {
+func (s *CardMemStore) AllWhites() []cah.WhiteCard {
 	return s.whiteCards
 }
 
-func (s *CardMemStore) GetBlacks() []cah.BlackCard {
+func (s *CardMemStore) AllBlacks() []cah.BlackCard {
 	return s.blackCards
 }
 
@@ -70,10 +70,10 @@ func validateCard(c cah.Card) error {
 	return nil
 }
 
-// CreateCards creates and stores cards from two readers.
+// CreateFromReaders creates and stores cards from two readers.
 // The reader should provide a card per line. A line can contain "\n"s for card line breaks.
 // Lines containing only whitespace are ignored
-func (rep *CardMemStore) CreateCards(wdat, bdat io.Reader, expansionName string) error {
+func (rep *CardMemStore) CreateFromReaders(wdat, bdat io.Reader, expansionName string) error {
 	// Create cards from files
 	var err error
 	err = doEveryLine(wdat, func(t string) {
@@ -99,10 +99,10 @@ func (rep *CardMemStore) CreateCards(wdat, bdat io.Reader, expansionName string)
 	return err
 }
 
-// CreateCardsFromFolder creates and stores cards from an expansion folder
+// CreateFromFolder creates and stores cards from an expansion folder
 // That folder should contain two files called 'white.md' and 'black.md'
 // The files content is treated as explained for the CreateCards function
-func (rep *CardMemStore) CreateCardsFromFolder(folderPath, expansionName string) error {
+func (rep *CardMemStore) CreateFromFolder(folderPath, expansionName string) error {
 	wdat, err := os.Open(fmt.Sprintf("%s/white.md", folderPath))
 	defer wdat.Close()
 	if err != nil {
@@ -113,5 +113,5 @@ func (rep *CardMemStore) CreateCardsFromFolder(folderPath, expansionName string)
 	if err != nil {
 		return err
 	}
-	return rep.CreateCards(wdat, bdat, expansionName)
+	return rep.CreateFromReaders(wdat, bdat, expansionName)
 }

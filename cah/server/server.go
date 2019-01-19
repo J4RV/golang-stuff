@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"flag"
@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/j4rv/golang-stuff/cah"
+
 	"github.com/gorilla/mux"
 )
 
@@ -14,6 +16,9 @@ var port, secureport int
 var usingTLS bool
 var serverCert, serverPK string
 var publicDir string
+
+var repository cah.DataServices
+var usecase cah.Controllers
 
 func init() {
 	initCertificateStuff()
@@ -39,16 +44,19 @@ func parseFlags() {
 	flag.Parse()
 }
 
-func main() {
+func Start(dt cah.DataServices, ctrl cah.Controllers) {
+	repository = dt
+	usecase = ctrl
+	loadExpansions()
 	createTestGame()
 	router := mux.NewRouter()
 	handleUsers(router)
 	handleGames(router)
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(publicDir))))
-	startServer(router)
+	StartServer(router)
 }
 
-func startServer(r *mux.Router) {
+func StartServer(r *mux.Router) {
 	if usingTLS {
 		go func() {
 			log.Printf("Starting http server in port %d\n", port)
