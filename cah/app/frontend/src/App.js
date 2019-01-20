@@ -9,7 +9,8 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import Game from './pages/Game'
 import GameCreate from './pages/GameCreate'
 import GameList from './pages/GameList'
-import Login from './pages/Login'
+import LoggedIn from './pages/LoggedIn'
+import { Redirect } from 'react-router'
 import cyan from '@material-ui/core/colors/cyan'
 import grey from '@material-ui/core/colors/grey'
 import red from '@material-ui/core/colors/red'
@@ -33,13 +34,15 @@ class App extends Component {
     return <Router>
       <MuiThemeProvider theme={theme}>
         <CssBaseline />
-        <Switch>
-          <Route path="/" component={Login} exact />
-          <Route path="/" component={AppBar} />
-        </Switch>
-        <Route exact path="/game/new" component={GameCreate} />
-        <Route exact path="/game/open" component={GameList} />
-        <Route path="/ingame/:stateID" component={Game} />
+        <LoggedIn>
+          <Switch>
+            <Route path="/" render={() => <Redirect to="/game/open" />} exact />
+            <Route path="/" component={AppBar} />
+          </Switch>
+          <Route exact path="/game/new" component={GameCreate} />
+          <Route exact path="/game/open" component={GameList} />
+          <Route path="/ingame/:stateID" component={Game} />
+        </LoggedIn>        
       </MuiThemeProvider>
     </Router>
   }

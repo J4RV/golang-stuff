@@ -6,7 +6,6 @@ import Card from '../gamestate/Card'
 import ErrorSnackbar from '../components/ErrorSnackbar'
 import Footer from '../Footer'
 import FormControl from '@material-ui/core/FormControl'
-import { Redirect } from 'react-router'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import axios from 'axios'
@@ -97,8 +96,7 @@ class LoginForm extends Component {
         <FormControl margin="normal" fullWidth>
           <Button
             type="button"
-            variant="outlined"
-            color="primary"
+            variant="contained"
             onClick={() => this.handleSubmit(registerUrl)}
             disabled={this.state.disabled}
           >Register</Button>
@@ -113,7 +111,7 @@ class LoginForm extends Component {
   }
 }
 
-class LoginController extends Component {
+class LoggedInControl extends Component {
   state = {};
   setValid = (v) => { this.setState({ validcookie: v }) }
 
@@ -130,12 +128,11 @@ class LoginController extends Component {
       return <div>Loading...</div>
     }
     if (this.state.validcookie) {
-      //return <Redirect to="/game/list" />
-      return <Redirect to="/game/open" />
+      return this.props.children
     }
     return <LoginForm onValidSubmit={() => this.setValid(true)} classes={this.props.classes} />
   }
 
 }
 
-export default withStyles(styles)(LoginController)
+export default withStyles(styles)(LoggedInControl)

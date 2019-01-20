@@ -25,8 +25,12 @@ const styles = theme => ({
       padding: theme.spacing.unit,
     },
   },
+  tableContainer: {
+    minWidth: 800,
+  },
   title: {
     textAlign: "center",
+    marginBottom: theme.spacing.unit * 2,
   },
   createBtn: {
     float: "right",
@@ -46,50 +50,51 @@ class GamesTable extends Component {
 
   render() {
     const {classes} = this.props
-    return <Paper className={classes.root}>
+    return <div className={classes.root}>
       <Typography variant="h5" className={classes.title}>
         Open games
       </Typography>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell align="right">Name</TableCell>
-            <TableCell align="right">Owner</TableCell>
-            <TableCell align="right">Has password</TableCell>
-            <TableCell align="right">Expansions</TableCell>
-            <TableCell align="right">Join</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {this.state.games.map(game => (
-            <TableRow key={game.id}>
-              <TableCell align="right">{game.name}</TableCell>
-              <TableCell align="right">{game.owner}</TableCell>
-              <TableCell align="right">{game.hasPassword ? "Yes" : "No"}</TableCell>
-              <TableCell align="right">{game.expansions.join(", ")}</TableCell>
-              <TableCell align="right">
-                <Button
-                  color="primary"
-                  variant="raised"
-                >
-                  Join
-                </Button>
-              </TableCell>
+      <Paper className={classes.tableContainer}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell align="right">Name</TableCell>
+              <TableCell align="right">Owner</TableCell>
+              <TableCell align="right" >Has password</TableCell>
+              <TableCell align="right">Expansions</TableCell>
+              <TableCell align="right">Join</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody>
+            {this.state.games.map(game => (
+              <TableRow key={game.id}>
+                <TableCell align="right">{game.name}</TableCell>
+                <TableCell align="right">{game.owner}</TableCell>
+                <TableCell align="right">{game.hasPassword ? "Yes" : "No"}</TableCell>
+                <TableCell align="right">{game.expansions.join(", ")}</TableCell>
+                <TableCell align="right">
+                  <Button
+                    color="primary"
+                    variant="contained"
+                  >
+                    Join
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Paper>
       <Link to="/game/create">
         <Button
           type="button"
-          variant="outlined"
-          color="primary"
+          //variant="contained"
           className={classes.createBtn}
         >
           Create new game
         </Button>
       </Link>
-    </Paper>
+    </div>
   }
 }
 
