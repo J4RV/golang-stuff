@@ -17,6 +17,11 @@ type loginPayload struct {
 	Password string `json:"password"`
 }
 
+type registerPayload struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 func processLogin(w http.ResponseWriter, req *http.Request) {
 	var payload loginPayload
 	decoder := json.NewDecoder(req.Body)
@@ -25,16 +30,38 @@ func processLogin(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Misconstructed payload", http.StatusBadRequest)
 		return
 	}
-	u, err := usecase.User.Login(payload.Username, payload.Password)
-	if err != nil {
-		log.Printf("Someone tried to login using user '%s'", payload.Username)
-		http.Error(w, "Incorrect login", http.StatusForbidden)
+	u, ok := usecase.User.Login(payload.Username, payload.Password)
+	if !ok {
+		log.Printf("%s tried to login using user '%s'", req.RemoteAddr, payload.Username)
+		http.Error(w, "The username and password you entered did not match our records.", http.StatusForbidden)
 		return
 	}
 	session, err := store.Get(req, sessionid)
 	session.Values[userid] = u.ID
 	session.Save(req, w)
 	log.Printf("User %s with id %d just logged in!", u.Username, u.ID)
+	// everything ok, back to index with your brand new session!
+	http.Redirect(w, req, "/", http.StatusFound)
+}
+
+func processRegister(w http.ResponseWriter, req *http.Request) {
+	var payload registerPayload
+	decoder := json.NewDecoder(req.Body)
+	err := decoder.Decode(&payload)
+	if err != nil {
+		http.Error(w, "Misconstructed payload", http.StatusBadRequest)
+		return
+	}
+	u, err := usecase.User.Register(payload.Username, payload.Password)
+	if err != nil {
+		log.Printf("%s tried to register using user '%s'", req.RemoteAddr, payload.Username)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	session, err := store.Get(req, sessionid)
+	session.Values[userid] = u.ID
+	session.Save(req, w)
+	log.Printf("User %s with id %d just registered!", u.Username, u.ID)
 	// everything ok, back to index with your brand new session!
 	http.Redirect(w, req, "/", http.StatusFound)
 }
@@ -86,9 +113,9 @@ func userFromSession(r *http.Request) (cah.User, error) {
 		log.Printf("Session with non int id value: '%v'", session.Values)
 		return cah.User{}, fmt.Errorf("Session with non int id value")
 	}
-	u, err := usecase.User.ByID(id)
-	if err != nil {
-		return u, err
+	u, ok := usecase.User.ByID(id)
+	if !ok {
+		return u, fmt.Errorf("No user found with ID %d", id)
 	}
 	return u, nil
 }

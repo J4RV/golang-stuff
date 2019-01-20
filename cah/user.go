@@ -5,13 +5,16 @@ import (
 )
 
 type UserStore interface {
-	ByID(id int) (User, error)
+	Create(username, password string) (User, error)
 	ByCredentials(name, pass string) (User, error)
+	ByName(name string) (u User, ok bool)
+	ByID(id int) (u User, ok bool)
 }
 
 type UserUsecases interface {
-	ByID(id int) (User, error)
-	Login(name, pass string) (User, error)
+	Register(username, password string) (User, error)
+	Login(name, pass string) (u User, ok bool)
+	ByID(id int) (u User, ok bool)
 }
 
 type User struct {

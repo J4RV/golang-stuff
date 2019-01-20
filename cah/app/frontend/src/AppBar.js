@@ -42,7 +42,7 @@ function TopAppBar ({title, shortTitle, width, classes}) {
             </Link>
           </Typography>
           <a href='user/logout'>
-            <Button color='inherit'>Sign off</Button>
+            <Button color='inherit'>Log out</Button>
           </a>
         </Toolbar>
       </AppBar>

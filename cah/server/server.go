@@ -80,6 +80,7 @@ func (fn srvHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 func handleUsers(r *mux.Router) {
 	s := r.PathPrefix("/user").Subrouter()
 	s.HandleFunc("/login", processLogin).Methods("POST")
+	s.HandleFunc("/register", processRegister).Methods("POST")
 	s.HandleFunc("/logout", processLogout).Methods("POST", "GET")
 	s.HandleFunc("/validcookie", validCookie).Methods("GET")
 }

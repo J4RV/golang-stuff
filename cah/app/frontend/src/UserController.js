@@ -61,8 +61,8 @@ class ErrorSnackbar extends Component {
   }
 }
 
-class LoginForm extends Component {
-  state = { username: "", password: "" };
+class SignInForm extends Component {
+  state = { username: "", password: "", disabled: false };
 
   setErrorMsg = (msg) => {
     let newState = Object.assign({}, this.state)
@@ -82,15 +82,16 @@ class LoginForm extends Component {
     this.setState(newState)
   }
 
-  handleSubmit = (event) => {
-    event.preventDefault();
+  handleSubmit = (action) => {
+    this.setState({...this.state, disabled: true})
     let payload = {
       username: this.state.username,
-      password: this.state.password
+      password: this.state.password,
     }
-    axios.post("user/login", payload)
-      .then(this.props.onValidLogin)
+    axios.post("user/" + action, payload)
+      .then(this.props.onValidSubmit)
       .catch(r => this.setErrorMsg(r.response.data))
+      .finally(this.setState({...this.state, disabled: false}))
   }
 
   render() {
@@ -102,7 +103,7 @@ class LoginForm extends Component {
       <Typography variant="h4" gutterBottom>
         A party game for horrible people.
       </Typography>
-      <form onSubmit={this.handleSubmit} className={classes.form} >
+      <div className={classes.form} >
         <Card
           isBlack
           text="I'm _ and my password is _."
@@ -130,11 +131,22 @@ class LoginForm extends Component {
             type="submit"
             variant="contained"
             color="primary"
-          >Sign in</Button>
+            onClick={() => this.handleSubmit("login")}
+            disabled={this.state.disabled}
+          >Log in</Button>
+        </FormControl>
+        <FormControl margin="normal" required fullWidth>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            onClick={() => this.handleSubmit("register")}
+            disabled={this.state.disabled}
+          >Register</Button>
         </FormControl>
         <ErrorSnackbar msg={this.state.errormsg} classes={classes} />
         <Footer />
-      </form>
+      </div>
     </div>
   }
 }
@@ -158,7 +170,7 @@ class LoginController extends Component {
     if (this.state.validcookie) {
       return this.props.children
     }
-    return <LoginForm onValidLogin={() => this.setValid(true)} classes={this.props.classes} />
+    return <SignInForm onValidSubmit={() => this.setValid(true)} classes={this.props.classes} />
   }
 
 }

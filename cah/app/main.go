@@ -6,8 +6,8 @@ import (
 
 	"github.com/j4rv/golang-stuff/cah"
 	"github.com/j4rv/golang-stuff/cah/data"
-	"github.com/j4rv/golang-stuff/cah/game"
 	"github.com/j4rv/golang-stuff/cah/server"
+	"github.com/j4rv/golang-stuff/cah/usecase"
 )
 
 func init() {
@@ -21,15 +21,15 @@ func main() {
 func run() {
 	cardStore := data.NewCardStore()
 	userStore := data.NewUserStore()
-	data.PopulateUsers(&userStore)
+	data.PopulateUsers(userStore)
 	usecases := cah.Usecases{
-		game.GameController{
+		Game: usecase.GameController{
 			//Store: gameStore,
 		},
-		game.CardController{
+		Card: usecase.CardController{
 			Store: cardStore,
 		},
-		game.UserController{
+		User: usecase.UserController{
 			Store: userStore,
 		},
 	}

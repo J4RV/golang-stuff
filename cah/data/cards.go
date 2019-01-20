@@ -7,19 +7,19 @@ import (
 	"github.com/j4rv/golang-stuff/cah"
 )
 
-type CardMemStore struct {
+type cardMemStore struct {
 	whiteCards []cah.WhiteCard
 	blackCards []cah.BlackCard
 }
 
-func NewCardStore() *CardMemStore {
-	return &CardMemStore{
+func NewCardStore() *cardMemStore {
+	return &cardMemStore{
 		whiteCards: []cah.WhiteCard{},
 		blackCards: []cah.BlackCard{},
 	}
 }
 
-func (s *CardMemStore) CreateWhite(t, e string) error {
+func (s *cardMemStore) CreateWhite(t, e string) error {
 	c := cah.WhiteCard{}
 	c.Text = t
 	c.Expansion = e
@@ -30,7 +30,7 @@ func (s *CardMemStore) CreateWhite(t, e string) error {
 	return err
 }
 
-func (s *CardMemStore) CreateBlack(t, e string, blanks int) error {
+func (s *cardMemStore) CreateBlack(t, e string, blanks int) error {
 	if blanks < 1 {
 		return errors.New("Black cards need to have at least 1 blank")
 	}
@@ -48,11 +48,11 @@ func (s *CardMemStore) CreateBlack(t, e string, blanks int) error {
 	return err
 }
 
-func (s *CardMemStore) AllWhites() []cah.WhiteCard {
+func (s *cardMemStore) AllWhites() []cah.WhiteCard {
 	return s.whiteCards
 }
 
-func (s *CardMemStore) AllBlacks() []cah.BlackCard {
+func (s *cardMemStore) AllBlacks() []cah.BlackCard {
 	return s.blackCards
 }
 

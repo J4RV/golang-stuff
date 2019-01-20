@@ -4,10 +4,11 @@ import (
 	"testing"
 )
 
-var store = userMemStore{}
+var store = NewUserStore()
+var commonPassHash, _ = getPassHash(commonPass)
 
 func init() {
-
+	PopulateUsers(store)
 }
 
 func TestPassHashNotFailing(t *testing.T) {
@@ -30,6 +31,22 @@ func TestCorrectPass(t *testing.T) {
 	}
 }
 
+func TestGetUserByID(t *testing.T) {
+	u, ok := store.ByID(1)
+	if !ok {
+		t.Error("Did not find user with id 1")
+	} else {
+		if u.Username != "Green" && u.ID == 1 {
+			t.Fatal("GetUserByID is horribly broken")
+		}
+	}
+	u, ok = store.ByID(999)
+	if ok {
+		t.Error("Found an user with id 999 but expected none")
+	}
+}
+
+// this one also testes the ByName method
 func TestGetUserByLogin(t *testing.T) {
 	u, err := store.ByCredentials("Green", commonPass)
 	if err != nil {
