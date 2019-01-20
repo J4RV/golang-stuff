@@ -46,10 +46,15 @@ func parseFlags() {
 func Start(uc cah.Usecases) {
 	usecase = uc
 	createTestGame()
+
 	router := mux.NewRouter()
-	handleUsers(router)
-	handleGameStates(router)
+	restRouter := router.PathPrefix("/rest").Subrouter()
+	handleUsers(restRouter)
+	handleGameStates(restRouter)
+
+	//Wildcard for React Router, IT HAS TO BE THE LAST HANDLER TO BE ADDED TO THE ROUTER
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(publicDir))))
+
 	StartServer(router)
 }
 
@@ -96,7 +101,7 @@ func handleGames(r *mux.Router) {
 
 func handleGameStates(r *mux.Router) {
 	s := r.PathPrefix("/gamestate/{id}").Subrouter()
-	s.Handle("", srvHandler(getGameStateForUser)).Methods("GET")
+	s.Handle("/State", srvHandler(getGameStateForUser)).Methods("GET")
 	s.Handle("/ChooseWinner", srvHandler(chooseWinner)).Methods("POST")
 	s.Handle("/PlayCards", srvHandler(playCards)).Methods("POST")
 }

@@ -3,7 +3,7 @@ import Card from './Card'
 import axios from 'axios'
 import Typography from '@material-ui/core/Typography'
 import { withStyles } from '@material-ui/core/styles'
-import {chooseWinnerUrl} from '../ServerUrls'
+import {chooseWinnerUrl} from '../restUrls'
 
 const styles = theme => ({
   playerPlay: {

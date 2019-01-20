@@ -8,6 +8,7 @@ import ShoppingCart from '@material-ui/icons/ShoppingCart'
 import GitHubIcon from './icons/GitHub'
 import { withStyles } from '@material-ui/core/styles'
 import withWidth from '@material-ui/core/withWidth'
+import {logoutUrl} from './restUrls'
 
 const styles = theme => ({
   appbar: {
@@ -41,7 +42,7 @@ function TopAppBar ({title, shortTitle, width, classes}) {
               <ShoppingCart className={classes.icon} />
             </Link>
           </Typography>
-          <a href='user/logout'>
+          <a href={logoutUrl}>
             <Button color='inherit'>Log out</Button>
           </a>
         </Toolbar>

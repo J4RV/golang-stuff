@@ -3,7 +3,7 @@ import PlayersInfo from './PlayersInfo'
 import Hand from './Hand'
 import Table from './Table'
 import axios from 'axios'
-import {getGamestateUrl} from '../ServerUrls'
+import {getGamestateUrl} from '../restUrls'
 
 class Game extends Component {
   render() {

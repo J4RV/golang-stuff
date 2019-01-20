@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography'
 import withWidth from '@material-ui/core/withWidth'
 import axios from 'axios'
 import ErrorSnackbar from '../components/ErrorSnackbar'
-import {playCardsUrl} from '../ServerUrls'
+import {playCardsUrl} from '../restUrls'
 
 let PlayCardsButton = ({ isCzar, width, playCards }) => {
   if (isCzar) {

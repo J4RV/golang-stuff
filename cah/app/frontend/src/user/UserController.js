@@ -8,7 +8,7 @@ import { withStyles } from '@material-ui/core/styles'
 import Card from '../gamestate/Card'
 import Footer from '../Footer'
 import ErrorSnackbar from '../components/ErrorSnackbar'
-import {loginUrl, registerUrl, validCookieUrl} from '../ServerUrls'
+import {loginUrl, registerUrl, validCookieUrl} from '../restUrls'
 
 const styles = theme => ({
   container: {
