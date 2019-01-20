@@ -7,11 +7,19 @@ import (
 )
 
 type Player struct {
-	ID               int         `json:"id" db:"id"`
 	User             User        `json:"user" db:"user"`
 	Hand             []WhiteCard `json:"hand" db:"hand"`
 	WhiteCardsInPlay []WhiteCard `json:"whiteCardsInPlay"`
 	Points           []BlackCard `json:"points" db:"points"`
+}
+
+func NewPlayer(u User) *Player {
+	return &Player{
+		User:             u,
+		Hand:             []WhiteCard{},
+		WhiteCardsInPlay: []WhiteCard{},
+		Points:           []BlackCard{},
+	}
 }
 
 func (p *Player) RemoveCardFromHand(i int) error {
@@ -55,14 +63,4 @@ func (p *Player) ExtractCardFromHand(i int) (WhiteCard, error) {
 		return WhiteCard{}, err
 	}
 	return ret[0], nil
-}
-
-func NewPlayer(u User) *Player {
-	return &Player{
-		ID:               u.ID,
-		User:             u,
-		Hand:             []WhiteCard{},
-		WhiteCardsInPlay: []WhiteCard{},
-		Points:           []BlackCard{},
-	}
 }

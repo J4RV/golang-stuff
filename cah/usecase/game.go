@@ -96,7 +96,7 @@ func (control gameController) GiveBlackCardToWinner(wID int, g cah.Game) (cah.Ga
 	ret := g.Clone()
 	var winner *cah.Player
 	for _, p := range ret.Players {
-		if p.ID == wID {
+		if p.User.ID == wID {
 			winner = p
 		}
 	}

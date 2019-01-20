@@ -21,6 +21,14 @@ type playerInfo struct {
 	Points           []cah.BlackCard `json:"points"`
 }
 
+type fullPlayerInfo struct {
+	ID               int             `json:"id"`
+	Name             string          `json:"name"`
+	Hand             []cah.WhiteCard `json:"hand" db:"hand"`
+	WhiteCardsInPlay []cah.WhiteCard `json:"whiteCardsInPlay"`
+	Points           []cah.BlackCard `json:"points"`
+}
+
 type sinnerPlay struct {
 	ID         int             `json:"id"`
 	WhiteCards []cah.WhiteCard `json:"whiteCards"`
@@ -34,7 +42,7 @@ type gameStateResponse struct {
 	BlackCardInPlay cah.BlackCard   `json:"blackCardInPlay"`
 	SinnerPlays     []sinnerPlay    `json:"sinnerPlays"`
 	DiscardPile     []cah.WhiteCard `json:"discardPile"`
-	MyPlayer        cah.Player      `json:"myPlayer"`
+	MyPlayer        fullPlayerInfo  `json:"myPlayer"`
 }
 
 func getGameStateForUser(w http.ResponseWriter, req *http.Request) error {
@@ -53,28 +61,28 @@ func getGameStateForUser(w http.ResponseWriter, req *http.Request) error {
 	response := gameStateResponse{
 		GameID:          game.ID,
 		Phase:           int(game.Phase),
-		Players:         getPlayerInfo(game),
-		CurrCzarID:      game.Players[game.CurrCzarIndex].ID,
+		Players:         playersInfoFromGame(game),
+		CurrCzarID:      game.Players[game.CurrCzarIndex].User.ID,
 		BlackCardInPlay: game.BlackCardInPlay,
-		SinnerPlays:     getSinnerPlays(game),
+		SinnerPlays:     sinnerPlaysFromGame(game),
 		DiscardPile:     game.DiscardPile,
-		MyPlayer:        *p,
+		MyPlayer:        newFullPlayerInfo(*p),
 	}
 	writeResponse(w, response)
 	return nil
 }
 
-func getPlayerInfo(game cah.Game) []playerInfo {
+func playersInfoFromGame(game cah.Game) []playerInfo {
 	ret := make([]playerInfo, len(game.Players))
 	for i, p := range game.Players {
-		ret[i] = gamePlayerToPlayerInfo(*p)
+		ret[i] = newPlayerInfo(*p)
 	}
 	return ret
 }
 
-func gamePlayerToPlayerInfo(p cah.Player) playerInfo {
+func newPlayerInfo(p cah.Player) playerInfo {
 	return playerInfo{
-		ID:               p.ID,
+		ID:               p.User.ID,
 		Name:             p.User.Username,
 		HandSize:         len(p.Hand),
 		WhiteCardsInPlay: len(p.WhiteCardsInPlay),
@@ -82,14 +90,23 @@ func gamePlayerToPlayerInfo(p cah.Player) playerInfo {
 	}
 }
 
-func getSinnerPlays(game cah.Game) []sinnerPlay {
+func newFullPlayerInfo(player cah.Player) fullPlayerInfo {
+	return fullPlayerInfo{
+		ID:               player.User.ID,
+		Name:             player.User.Username,
+		Hand:             player.Hand,
+		WhiteCardsInPlay: player.WhiteCardsInPlay,
+	}
+}
+
+func sinnerPlaysFromGame(game cah.Game) []sinnerPlay {
 	if !usecase.Game.AllSinnersPlayedTheirCards(game) {
 		return []sinnerPlay{}
 	}
 	ret := make([]sinnerPlay, len(game.Players))
 	for i, p := range game.Players {
 		ret[i] = sinnerPlay{
-			ID:         p.ID,
+			ID:         p.User.ID,
 			WhiteCards: p.WhiteCardsInPlay,
 		}
 	}
