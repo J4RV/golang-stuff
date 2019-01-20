@@ -7,6 +7,7 @@ import {Route, BrowserRouter as Router} from 'react-router-dom'
 import AppBar from './AppBar'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Game from './pages/Game'
+import GameList from './pages/GameList'
 import Login from './pages/Login'
 import cyan from '@material-ui/core/colors/cyan'
 import grey from '@material-ui/core/colors/grey'
@@ -32,6 +33,7 @@ class App extends Component {
       <MuiThemeProvider theme={theme}>
         <CssBaseline />
         <Route exact path="/" component={Login} />
+        <Route exact path="/game/list" component={GameList} />
         <Route path="/ingame/:stateID" render={({ match }) => (
           console.log(match) ||
           <React.Fragment>

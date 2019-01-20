@@ -1,7 +1,13 @@
 package cah
 
-type GameStore interface{}
-type GameUsecases interface{}
+type GameStore interface {
+	Create(Game) error
+	ByStatePhase(Phase) []Game
+}
+type GameUsecases interface {
+	Create(Name, Pass string, state GameState) error
+	AllOpen() []Game
+}
 
 type Game struct {
 	ID       int       `json:"id" db:"id"`

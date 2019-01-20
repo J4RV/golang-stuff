@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var control = gameController{}
+var control = stateController{}
 
 func TestNextCzar(t *testing.T) {
 	assert := assert.New(t)

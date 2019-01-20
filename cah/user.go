@@ -6,7 +6,6 @@ import (
 
 type UserStore interface {
 	Create(username, password string) (User, error)
-	ByCredentials(name, pass string) (User, error)
 	ByName(name string) (u User, ok bool)
 	ByID(id int) (u User, ok bool)
 }

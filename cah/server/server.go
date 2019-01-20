@@ -99,14 +99,12 @@ func handleUsers(r *mux.Router) {
 	s.HandleFunc("/validcookie", validCookie).Methods("GET")
 }
 
-/*
 func handleGames(r *mux.Router) {
 	s := r.PathPrefix("/game/{id}").Subrouter()
-	s.Handle("/ListOpen", srvHandler(getGameStateForUser)).Methods("GET")
-	s.Handle("/Join", srvHandler(playCards)).Methods("POST")
-	s.Handle("/Leave", srvHandler(playCards)).Methods("POST")
+	s.Handle("/ListOpen", srvHandler(getOpenGames)).Methods("GET")
+	/*s.Handle("/Join", srvHandler(playCards)).Methods("POST")
+	s.Handle("/Leave", srvHandler(playCards)).Methods("POST")*/
 }
-*/
 
 func handleGameStates(r *mux.Router) {
 	s := r.PathPrefix("/gamestate/{id}").Subrouter()

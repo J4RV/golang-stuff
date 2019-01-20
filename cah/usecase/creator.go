@@ -6,7 +6,7 @@ import (
 	"github.com/j4rv/golang-stuff/cah"
 )
 
-func (control gameController) NewGame(opts ...cah.Option) cah.GameState {
+func (control stateController) NewGame(opts ...cah.Option) cah.GameState {
 	ret := cah.GameState{
 		Players:     []*cah.Player{},
 		HandSize:    10,

@@ -3,14 +3,14 @@ package cah
 type Phase uint8
 
 const (
-	Starting Phase = iota
+	NotStarted Phase = iota
 	SinnersPlaying
 	CzarChoosingWinner
 	Finished
 )
 
 var phases = [...]string{
-	"Starting",
+	"NotStarted",
 	"SinnersPlaying",
 	"CzarChoosingWinner",
 	"Finished",

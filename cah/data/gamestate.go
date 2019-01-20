@@ -6,24 +6,24 @@ import (
 	"github.com/j4rv/golang-stuff/cah"
 )
 
-type gameMemStore struct {
+type stateMemStore struct {
 	abstractMemStore
 	games map[int]*cah.GameState
 }
 
-func NewGameStore() *gameMemStore {
-	return &gameMemStore{
+func NewGameStateStore() *stateMemStore {
+	return &stateMemStore{
 		games: make(map[int]*cah.GameState),
 	}
 }
 
-func (store *gameMemStore) Create(g cah.GameState) (cah.GameState, error) {
+func (store *stateMemStore) Create(g cah.GameState) (cah.GameState, error) {
 	g.ID = store.nextID()
 	store.games[g.ID] = &g
 	return g, nil
 }
 
-func (store *gameMemStore) ByID(id int) (cah.GameState, error) {
+func (store *stateMemStore) ByID(id int) (cah.GameState, error) {
 	g, ok := store.games[id]
 	if !ok {
 		return *g, fmt.Errorf("No game found with ID %d", id)
@@ -31,7 +31,7 @@ func (store *gameMemStore) ByID(id int) (cah.GameState, error) {
 	return *g, nil
 }
 
-func (store *gameMemStore) Update(g cah.GameState) error {
+func (store *stateMemStore) Update(g cah.GameState) error {
 	_, err := store.ByID(g.ID)
 	if err != nil {
 		return err
@@ -40,7 +40,7 @@ func (store *gameMemStore) Update(g cah.GameState) error {
 	return nil
 }
 
-func (store *gameMemStore) Delete(id int) error {
+func (store *stateMemStore) Delete(id int) error {
 	_, err := store.ByID(id)
 	if err != nil {
 		return err
