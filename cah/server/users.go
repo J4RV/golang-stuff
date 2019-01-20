@@ -8,16 +8,20 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/j4rv/golang-stuff/cah"
 )
 
-type loginPayload struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+func handleUsers(r *mux.Router) {
+	s := r.PathPrefix("/user").Subrouter()
+	s.HandleFunc("/login", processLogin).Methods("POST")
+	s.HandleFunc("/register", processRegister).Methods("POST")
+	s.HandleFunc("/logout", processLogout).Methods("POST", "GET")
+	s.HandleFunc("/validcookie", validCookie).Methods("GET")
 }
 
-type registerPayload struct {
+type loginPayload struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
@@ -42,6 +46,11 @@ func processLogin(w http.ResponseWriter, req *http.Request) {
 	log.Printf("User %s with id %d just logged in!", u.Username, u.ID)
 	// everything ok, back to index with your brand new session!
 	http.Redirect(w, req, "/", http.StatusFound)
+}
+
+type registerPayload struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 func processRegister(w http.ResponseWriter, req *http.Request) {

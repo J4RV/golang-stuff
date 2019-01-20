@@ -4,7 +4,7 @@ import Hand from '../gamestate/Hand'
 import PlayersInfo from '../gamestate/PlayersInfo'
 import Table from '../gamestate/Table'
 import axios from 'axios'
-import {getGamestateUrl} from '../restUrls'
+import {gameStateUrl} from '../restUrls'
 
 class Game extends Component {
   render() {
@@ -21,7 +21,8 @@ class Game extends Component {
     this.updateState()
   }
   updateState = () => {
-    axios.get(getGamestateUrl(this.props.stateID))
+    const stateID = this.props.match.params.stateID
+    axios.get(gameStateUrl(stateID))
       .then(r => {
         this.setState(r.data)
         // this would be much better with websockets

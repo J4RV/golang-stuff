@@ -20,7 +20,7 @@ type stateController struct {
 	options Options
 }
 
-func NewGameUsecase(store cah.GameStateStore) *stateController {
+func NewGameStateUsecase(store cah.GameStateStore) *stateController {
 	return &stateController{store: store}
 }
 

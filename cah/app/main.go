@@ -19,11 +19,13 @@ func main() {
 }
 
 func run() {
-	gameStore := data.NewGameStateStore()
+	stateStore := data.NewGameStateStore()
+	gameStore := data.NewGameStore(stateStore)
 	cardStore := data.NewCardStore()
 	userStore := data.NewUserStore()
 	usecases := cah.Usecases{
-		GameState: usecase.NewGameUsecase(gameStore),
+		Game:      usecase.NewGameUsecase(gameStore, userStore),
+		GameState: usecase.NewGameStateUsecase(stateStore),
 		Card:      usecase.NewCardUsecase(cardStore),
 		User:      usecase.NewUserUsecase(userStore),
 	}

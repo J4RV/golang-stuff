@@ -53,6 +53,7 @@ func Start(uc cah.Usecases) {
 
 	restRouter := router.PathPrefix("/rest").Subrouter()
 	handleUsers(restRouter)
+	handleGames(restRouter)
 	handleGameStates(restRouter)
 
 	//Static files handler
@@ -89,26 +90,4 @@ func (fn srvHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		log.Printf("ServeHTTP error: %s", err)
 		http.Error(w, err.Error(), http.StatusPreconditionFailed)
 	}
-}
-
-func handleUsers(r *mux.Router) {
-	s := r.PathPrefix("/user").Subrouter()
-	s.HandleFunc("/login", processLogin).Methods("POST")
-	s.HandleFunc("/register", processRegister).Methods("POST")
-	s.HandleFunc("/logout", processLogout).Methods("POST", "GET")
-	s.HandleFunc("/validcookie", validCookie).Methods("GET")
-}
-
-func handleGames(r *mux.Router) {
-	s := r.PathPrefix("/game/{id}").Subrouter()
-	s.Handle("/ListOpen", srvHandler(getOpenGames)).Methods("GET")
-	/*s.Handle("/Join", srvHandler(playCards)).Methods("POST")
-	s.Handle("/Leave", srvHandler(playCards)).Methods("POST")*/
-}
-
-func handleGameStates(r *mux.Router) {
-	s := r.PathPrefix("/gamestate/{id}").Subrouter()
-	s.Handle("/State", srvHandler(getGameStateForUser)).Methods("GET")
-	s.Handle("/ChooseWinner", srvHandler(chooseWinner)).Methods("POST")
-	s.Handle("/PlayCards", srvHandler(playCards)).Methods("POST")
 }

@@ -131,7 +131,7 @@ class LoginController extends Component {
     }
     if (this.state.validcookie) {
       //return <Redirect to="/game/list" />
-      return <Redirect to="/game/open" />
+      return <Redirect to="/game/list" />
     }
     return <LoginForm onValidSubmit={() => this.setValid(true)} classes={this.props.classes} />
   }
