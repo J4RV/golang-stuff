@@ -1,13 +1,16 @@
-import React, { Component } from 'react'
+import './App.css'
+
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import LoginController from './user/UserController'
-import Game from './gamestate/Game'
+import React, { Component } from 'react'
+import {Route, BrowserRouter as Router} from 'react-router-dom'
+
 import AppBar from './AppBar'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import red from '@material-ui/core/colors/red'
-import grey from '@material-ui/core/colors/grey'
+import Game from './pages/Game'
+import Login from './pages/Login'
 import cyan from '@material-ui/core/colors/cyan'
-import './App.css'
+import grey from '@material-ui/core/colors/grey'
+import red from '@material-ui/core/colors/red'
 
 const theme = createMuiTheme({
   palette: {
@@ -25,13 +28,19 @@ const theme = createMuiTheme({
 
 class App extends Component {
   render() {
-    return <MuiThemeProvider theme={theme}>
-      <CssBaseline />
-      <LoginController>
-        <AppBar title='Cards Against Humanity' shortTitle="CAH" />
-        <Game stateID='1' />
-      </LoginController>
-    </MuiThemeProvider>
+    return <Router>
+      <MuiThemeProvider theme={theme}>
+        <CssBaseline />
+        <Route exact path="/" component={Login} />
+        <Route path="/ingame/:stateID" render={({ match }) => (
+          console.log(match) ||
+          <React.Fragment>
+            <AppBar />
+            <Game stateID={match.params.stateID} />
+          </React.Fragment>
+        )} />
+      </MuiThemeProvider>
+    </Router>
   }
 }
 

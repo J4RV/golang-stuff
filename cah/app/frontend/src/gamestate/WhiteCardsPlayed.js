@@ -1,9 +1,9 @@
-import React from 'react'
 import Card from './Card'
-import axios from 'axios'
+import React from 'react'
 import Typography from '@material-ui/core/Typography'
-import { withStyles } from '@material-ui/core/styles'
+import axios from 'axios'
 import {chooseWinnerUrl} from '../restUrls'
+import { withStyles } from '@material-ui/core/styles'
 
 const styles = theme => ({
   playerPlay: {

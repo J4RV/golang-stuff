@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import PlayersInfo from './PlayersInfo'
-import Hand from './Hand'
-import Table from './Table'
+
+import Hand from '../gamestate/Hand'
+import PlayersInfo from '../gamestate/PlayersInfo'
+import Table from '../gamestate/Table'
 import axios from 'axios'
 import {getGamestateUrl} from '../restUrls'
 
@@ -22,12 +23,11 @@ class Game extends Component {
   updateState = () => {
     axios.get(getGamestateUrl(this.props.stateID))
       .then(r => {
-        console.log(r.data)
         this.setState(r.data)
         // this would be much better with websockets
         window.setTimeout(this.updateState, 1000)
       })
-      .catch(e => console.log(e)
+      .catch(e => window.alert(e)
     )
   }
 }

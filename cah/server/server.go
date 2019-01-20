@@ -48,12 +48,15 @@ func Start(uc cah.Usecases) {
 	createTestGame()
 
 	router := mux.NewRouter()
+	//Any non found paths should redirect to index. React-router will handle those.
+	router.NotFoundHandler = http.HandlerFunc(serveFrontend(publicDir + "/index.html"))
+
 	restRouter := router.PathPrefix("/rest").Subrouter()
 	handleUsers(restRouter)
 	handleGameStates(restRouter)
 
-	//Wildcard for React Router, IT HAS TO BE THE LAST HANDLER TO BE ADDED TO THE ROUTER
-	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(publicDir))))
+	//Static files handler
+	router.PathPrefix("/static").Handler(http.FileServer(http.Dir(publicDir)))
 
 	StartServer(router)
 }
@@ -70,6 +73,12 @@ func StartServer(r *mux.Router) {
 		log.Println("Server will listen and serve without TLS")
 		log.Printf("Starting http server in port %d\n", port)
 		log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), r))
+	}
+}
+
+func serveFrontend(path string) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, req *http.Request) {
+		http.ServeFile(w, req, path)
 	}
 }
 

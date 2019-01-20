@@ -1,14 +1,16 @@
 import React, { Component } from 'react'
-import axios from 'axios'
-import FormControl from '@material-ui/core/FormControl'
-import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
-import Typography from '@material-ui/core/Typography'
-import { withStyles } from '@material-ui/core/styles'
-import Card from '../gamestate/Card'
-import Footer from '../Footer'
-import ErrorSnackbar from '../components/ErrorSnackbar'
 import {loginUrl, registerUrl, validCookieUrl} from '../restUrls'
+
+import Button from '@material-ui/core/Button'
+import Card from '../gamestate/Card'
+import ErrorSnackbar from '../components/ErrorSnackbar'
+import Footer from '../Footer'
+import FormControl from '@material-ui/core/FormControl'
+import { Redirect } from 'react-router'
+import TextField from '@material-ui/core/TextField'
+import Typography from '@material-ui/core/Typography'
+import axios from 'axios'
+import { withStyles } from '@material-ui/core/styles'
 
 const styles = theme => ({
   container: {
@@ -128,7 +130,8 @@ class LoginController extends Component {
       return <div>Loading...</div>
     }
     if (this.state.validcookie) {
-      return this.props.children
+      //return <Redirect to="/game/list" />
+      return <Redirect to="/ingame/1" />
     }
     return <LoginForm onValidSubmit={() => this.setValid(true)} classes={this.props.classes} />
   }
