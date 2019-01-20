@@ -4,12 +4,11 @@ import FormControl from '@material-ui/core/FormControl'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
-import ErrorIcon from '@material-ui/icons/Error'
-import Snackbar from '@material-ui/core/Snackbar'
-import SnackbarContent from '@material-ui/core/SnackbarContent'
 import { withStyles } from '@material-ui/core/styles'
-import Card from '../game/Card'
+import Card from '../gamestate/Card'
 import Footer from '../Footer'
+import ErrorSnackbar from '../components/ErrorSnackbar'
+import {loginUrl, registerUrl, validCookieUrl} from '../ServerUrls'
 
 const styles = theme => ({
   container: {
@@ -22,46 +21,9 @@ const styles = theme => ({
     padding: theme.spacing.unit * 2,
     display: "inline-block",
   },
-  error: {
-    color: theme.palette.getContrastText(theme.palette.error.dark),
-    background: theme.palette.error.dark,
-    display: 'flex',
-    alignItems: 'center',
-  },
-  icon: {
-    marginRight: theme.spacing.unit,
-  },
-  message: {
-    display: 'flex',
-    alignItems: 'center',
-  },
 });
 
-class ErrorSnackbar extends Component {
-  render() {
-    const classes = this.props.classes
-    return <Snackbar
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'left',
-      }}
-      open={this.props.msg != null && this.props.msg !== ""}
-    >
-      <SnackbarContent
-        className={classes.error}
-        aria-describedby="message-id"
-        message={
-          <span id="message-id" className={classes.message}>
-            <ErrorIcon className={classes.icon} />
-            {this.props.msg}
-          </span>
-        }
-      />
-    </Snackbar>
-  }
-}
-
-class SignInForm extends Component {
+class LoginForm extends Component {
   state = { username: "", password: "", disabled: false }
 
   handleChangeUser = (event) => {
@@ -76,13 +38,13 @@ class SignInForm extends Component {
     this.setState(newState)
   }
 
-  handleSubmit = (action) => {
+  handleSubmit = (url) => {
     this.setState({...this.state, disabled: true})
     let payload = {
       username: this.state.username,
       password: this.state.password,
     }
-    axios.post("user/" + action, payload)
+    axios.post(url, payload)
       .then(this.props.onValidSubmit)
       .catch(r => {
         this.setState({...this.state,
@@ -126,7 +88,7 @@ class SignInForm extends Component {
             type="submit"
             variant="contained"
             color="primary"
-            onClick={() => this.handleSubmit("login")}
+            onClick={() => this.handleSubmit(loginUrl)}
             disabled={this.state.disabled}
           >Log in</Button>
         </FormControl>
@@ -135,11 +97,14 @@ class SignInForm extends Component {
             type="button"
             variant="outlined"
             color="primary"
-            onClick={() => this.handleSubmit("register")}
+            onClick={() => this.handleSubmit(registerUrl)}
             disabled={this.state.disabled}
           >Register</Button>
         </FormControl>
-        <ErrorSnackbar msg={this.state.errormsg} classes={classes} />
+        <ErrorSnackbar
+          msg={this.state.errormsg}
+          onClose={() => this.setState({...this.state, errormsg: null})}
+        />
         <Footer />
       </form>
     </div>
@@ -151,7 +116,7 @@ class LoginController extends Component {
   setValid = (v) => { this.setState({ validcookie: v }) }
 
   componentWillMount() {
-    axios.get("user/validcookie")
+    axios.get(validCookieUrl)
       .then(r => {
         let v = (r.data === true) || (r.data === "true")
         this.setValid(v)
@@ -165,7 +130,7 @@ class LoginController extends Component {
     if (this.state.validcookie) {
       return this.props.children
     }
-    return <SignInForm onValidSubmit={() => this.setValid(true)} classes={this.props.classes} />
+    return <LoginForm onValidSubmit={() => this.setValid(true)} classes={this.props.classes} />
   }
 
 }

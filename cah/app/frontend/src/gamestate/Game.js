@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import PlayersInfo from '../game/PlayersInfo'
-import Hand from '../game/Hand'
-import Table from '../game/Table'
+import PlayersInfo from './PlayersInfo'
+import Hand from './Hand'
+import Table from './Table'
 import axios from 'axios'
-import './App.css'
+import {getGamestateUrl} from '../ServerUrls'
 
 class Game extends Component {
   render() {
@@ -20,7 +20,7 @@ class Game extends Component {
     this.updateState()
   }
   updateState = () => {
-    axios.get(`gamestate/${this.props.stateID}/State`)
+    axios.get(getGamestateUrl(this.props.stateID))
       .then(r => {
         console.log(r.data)
         this.setState(r.data)

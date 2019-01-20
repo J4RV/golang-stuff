@@ -3,6 +3,7 @@ import Card from './Card'
 import axios from 'axios'
 import Typography from '@material-ui/core/Typography'
 import { withStyles } from '@material-ui/core/styles'
+import {chooseWinnerUrl} from '../ServerUrls'
 
 const styles = theme => ({
   playerPlay: {
@@ -13,7 +14,7 @@ const styles = theme => ({
 });
 
 const handleOnClick = (stateID, winnerID) => {
-  axios.post(`gamestate/${stateID}/GiveBlackCardToWinner`, {
+  axios.post(chooseWinnerUrl(stateID), {
     winner: winnerID
   }).catch(r => window.alert(r.response.data)) // We'll need prettier things
 }

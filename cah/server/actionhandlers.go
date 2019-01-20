@@ -121,7 +121,7 @@ type chooseWinnerPayload struct {
 	Winner int `json:"winner"`
 }
 
-func giveBlackCardToWinner(w http.ResponseWriter, req *http.Request) error {
+func chooseWinner(w http.ResponseWriter, req *http.Request) error {
 	// User is logged
 	u, err := userFromSession(req)
 	if err != nil {

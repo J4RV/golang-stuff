@@ -6,6 +6,8 @@ import Check from '@material-ui/icons/Check'
 import Typography from '@material-ui/core/Typography'
 import withWidth from '@material-ui/core/withWidth'
 import axios from 'axios'
+import ErrorSnackbar from '../components/ErrorSnackbar'
+import {playCardsUrl} from '../ServerUrls'
 
 let PlayCardsButton = ({ isCzar, width, playCards }) => {
   if (isCzar) {
@@ -46,7 +48,7 @@ const CardsToPlay = ({ state }) => {
 }
 
 class Hand extends Component {
-  state = { cardIndexes: [] }
+  state = { cardIndexes: [], errormsg: null }
 
   render() {
     const gamestate = this.props.state
@@ -68,6 +70,10 @@ class Hand extends Component {
         <div style={{ marginTop: "2rem" }}>
           <PlayCardsButton playCards={this.playCards} isCzar={this.isCzar()} />
         </div>
+        <ErrorSnackbar
+          msg={this.state.errormsg}
+          onClose={() => this.setState({...this.state, errormsg: null})}
+        />
       </div>
     )
   }
@@ -90,11 +96,11 @@ class Hand extends Component {
   }
 
   playCards = () => {
-    axios.post(`gamestate/${this.props.state.stateID}/PlayCards`, {
+    axios.post(playCardsUrl(this.props.state.id), {
       cardIndexes: this.state.cardIndexes
     }).then(r => {
       this.setState({ cardIndexes: [] })
-    }).catch(r => window.alert(r.response.data)); // We'll need prettier things
+    }).catch(r => this.setState({...this.state, errormsg: r.response.data}))
   }
 }
 

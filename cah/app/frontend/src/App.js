@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import LoginController from './user/UserController'
-import Game from './game/Game'
+import Game from './gamestate/Game'
 import AppBar from './AppBar'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import red from '@material-ui/core/colors/red'
