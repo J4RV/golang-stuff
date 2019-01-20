@@ -56,7 +56,18 @@ func createGame(users []cah.User) error {
 		usecase.GameState.Options().WhiteDeck(wGameCards),
 		usecase.GameState.Options().HandSize(15),
 	)
-	usecase.Game.Create(users[0], "Test", "", []string{"base-uk", "expansion-1", "expansion-2", "kikis"}, s)
+	usecase.Game.Create(users[1], "A long and descriptive game name", "", []string{
+		"Base-UK",
+		"The First Expansion",
+		"Anime",
+		"Kikis",
+	}, s)
+	usecase.Game.Create(users[0], "Amo a juga", "", []string{
+		"Base-UK",
+		"The First Expansion",
+		"The Second Expansion",
+		"Kikis",
+	}, s)
 	/* Leave it open to check the game list
 	p := getPlayersForUsers(users...)
 	s, err := usecase.GameState.Start(p, s, usecase.GameState.Options().RandomStartingCzar())

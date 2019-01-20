@@ -62,7 +62,7 @@ class GamesTable extends Component {
               <TableCell align="right">Owner</TableCell>
               <TableCell align="right" >Has password</TableCell>
               <TableCell align="right">Expansions</TableCell>
-              <TableCell align="right">Join</TableCell>
+              <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>
@@ -73,10 +73,7 @@ class GamesTable extends Component {
                 <TableCell align="right">{game.hasPassword ? "Yes" : "No"}</TableCell>
                 <TableCell align="right">{game.expansions.join(", ")}</TableCell>
                 <TableCell align="right">
-                  <Button
-                    color="primary"
-                    variant="contained"
-                  >
+                  <Button color="primary" variant="contained">
                     Join
                   </Button>
                 </TableCell>
