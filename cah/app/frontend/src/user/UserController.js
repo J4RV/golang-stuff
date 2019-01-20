@@ -8,8 +8,8 @@ import ErrorIcon from '@material-ui/icons/Error'
 import Snackbar from '@material-ui/core/Snackbar'
 import SnackbarContent from '@material-ui/core/SnackbarContent'
 import { withStyles } from '@material-ui/core/styles'
-import Card from './Card'
-import Footer from './Footer'
+import Card from '../game/Card'
+import Footer from '../Footer'
 
 const styles = theme => ({
   container: {
@@ -62,13 +62,7 @@ class ErrorSnackbar extends Component {
 }
 
 class SignInForm extends Component {
-  state = { username: "", password: "", disabled: false };
-
-  setErrorMsg = (msg) => {
-    let newState = Object.assign({}, this.state)
-    newState.errormsg = msg
-    this.setState(newState);
-  }
+  state = { username: "", password: "", disabled: false }
 
   handleChangeUser = (event) => {
     let newState = Object.assign({}, this.state)
@@ -90,8 +84,11 @@ class SignInForm extends Component {
     }
     axios.post("user/" + action, payload)
       .then(this.props.onValidSubmit)
-      .catch(r => this.setErrorMsg(r.response.data))
-      .finally(this.setState({...this.state, disabled: false}))
+      .catch(r => {
+        this.setState({...this.state,
+          errormsg: r.response.data,
+          disabled: false})
+        return false})      
   }
 
   render() {
@@ -103,7 +100,7 @@ class SignInForm extends Component {
       <Typography variant="h4" gutterBottom>
         A party game for horrible people.
       </Typography>
-      <div className={classes.form} >
+      <form className={classes.form} onSubmit={() => this.handleSubmit("login")} >
         <Card
           isBlack
           text="I'm _ and my password is _."
@@ -112,7 +109,6 @@ class SignInForm extends Component {
         <FormControl margin="normal" required fullWidth>
           <TextField
             label="Username"
-            margin="normal"
             autoComplete="username"
             onChange={this.handleChangeUser}
           />
@@ -120,13 +116,12 @@ class SignInForm extends Component {
         <FormControl margin="normal" required fullWidth>
           <TextField
             label="Password"
-            margin="normal"
             type="password"
             autoComplete="password"
             onChange={this.handleChangePass}
           />
         </FormControl>
-        <FormControl margin="normal" required fullWidth>
+        <FormControl margin="normal" fullWidth>
           <Button
             type="submit"
             variant="contained"
@@ -135,10 +130,10 @@ class SignInForm extends Component {
             disabled={this.state.disabled}
           >Log in</Button>
         </FormControl>
-        <FormControl margin="normal" required fullWidth>
+        <FormControl margin="normal" fullWidth>
           <Button
-            type="submit"
-            variant="contained"
+            type="button"
+            variant="outlined"
             color="primary"
             onClick={() => this.handleSubmit("register")}
             disabled={this.state.disabled}
@@ -146,7 +141,7 @@ class SignInForm extends Component {
         </FormControl>
         <ErrorSnackbar msg={this.state.errormsg} classes={classes} />
         <Footer />
-      </div>
+      </form>
     </div>
   }
 }

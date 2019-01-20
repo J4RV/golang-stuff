@@ -3,7 +3,6 @@ import PlayersInfo from './PlayersInfo'
 import Hand from './Hand'
 import Table from './Table'
 import axios from 'axios'
-import './App.css'
 
 class Game extends Component {
   render() {
@@ -20,7 +19,7 @@ class Game extends Component {
     this.updateState()
   }
   updateState = () => {
-    axios.get(`rest/${this.props.gameid}/State`)
+    axios.get(`rest/${this.props.gameID}/State`)
       .then(r => {
         console.log(r.data)
         this.setState(r.data)

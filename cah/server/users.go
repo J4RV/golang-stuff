@@ -36,7 +36,7 @@ func processLogin(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "The username and password you entered did not match our records.", http.StatusForbidden)
 		return
 	}
-	session, err := store.Get(req, sessionid)
+	session, err := cookies.Get(req, sessionid)
 	session.Values[userid] = u.ID
 	session.Save(req, w)
 	log.Printf("User %s with id %d just logged in!", u.Username, u.ID)
@@ -58,7 +58,7 @@ func processRegister(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	session, err := store.Get(req, sessionid)
+	session, err := cookies.Get(req, sessionid)
 	session.Values[userid] = u.ID
 	session.Save(req, w)
 	log.Printf("User %s with id %d just registered!", u.Username, u.ID)
@@ -67,7 +67,7 @@ func processRegister(w http.ResponseWriter, req *http.Request) {
 }
 
 func processLogout(w http.ResponseWriter, req *http.Request) {
-	session, err := store.Get(req, sessionid)
+	session, err := cookies.Get(req, sessionid)
 	if err != nil {
 		http.Error(w, "There was a problem while getting the session cookie", http.StatusInternalServerError)
 	}
@@ -86,7 +86,7 @@ func validCookie(w http.ResponseWriter, req *http.Request) {
 	SESSIONS STUFF
 */
 
-var store *sessions.CookieStore
+var cookies *sessions.CookieStore
 
 const sessionid = "session_token"
 const userid = "user_id"
@@ -96,11 +96,11 @@ func init() {
 	if skey == "" {
 		panic("Please set SESSION_KEY environment variable; it is needed to have secure cookies")
 	}
-	store = sessions.NewCookieStore([]byte(skey))
+	cookies = sessions.NewCookieStore([]byte(skey))
 }
 
 func userFromSession(r *http.Request) (cah.User, error) {
-	session, err := store.Get(r, sessionid)
+	session, err := cookies.Get(r, sessionid)
 	if err != nil {
 		return cah.User{}, err
 	}

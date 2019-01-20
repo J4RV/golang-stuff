@@ -7,7 +7,7 @@ import (
 	"github.com/j4rv/golang-stuff/cah"
 )
 
-func (control GameController) Options() cah.GameOptions {
+func (control gameController) Options() cah.GameOptions {
 	return control.options
 }
 

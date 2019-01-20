@@ -11,29 +11,33 @@ import (
 	"github.com/j4rv/golang-stuff/cah"
 )
 
-type CardController struct {
-	Store cah.CardStore
+type cardController struct {
+	store cah.CardStore
 }
 
-func (cc CardController) AllBlacks() []cah.BlackCard {
-	return cc.Store.AllBlacks()
+func NewCardUsecase(store cah.CardStore) *cardController {
+	return &cardController{store: store}
 }
 
-func (cc CardController) AllWhites() []cah.WhiteCard {
-	return cc.Store.AllWhites()
+func (cc cardController) AllBlacks() []cah.BlackCard {
+	return cc.store.AllBlacks()
+}
+
+func (cc cardController) AllWhites() []cah.WhiteCard {
+	return cc.store.AllWhites()
 }
 
 // CreateFromReaders creates and stores cards from two readers.
 // The reader should provide a card per line. A line can contain "\n"s for card line breaks.
 // Lines containing only whitespace are ignored
-func (cc CardController) CreateFromReaders(wdat, bdat io.Reader, expansionName string) error {
+func (cc cardController) CreateFromReaders(wdat, bdat io.Reader, expansionName string) error {
 	// Create cards from files
 	var err error
 	err = doEveryLine(wdat, func(t string) {
 		if strings.TrimSpace(t) == "" {
 			return
 		}
-		cc.Store.CreateWhite(t, expansionName)
+		cc.store.CreateWhite(t, expansionName)
 	})
 	if err != nil {
 		return err
@@ -46,7 +50,7 @@ func (cc CardController) CreateFromReaders(wdat, bdat io.Reader, expansionName s
 		if blanks == 0 {
 			blanks = 1
 		}
-		cc.Store.CreateBlack(t, expansionName, blanks)
+		cc.store.CreateBlack(t, expansionName, blanks)
 	})
 	log.Println("Successfully loaded cards from expansion " + expansionName)
 	return err
@@ -55,7 +59,7 @@ func (cc CardController) CreateFromReaders(wdat, bdat io.Reader, expansionName s
 // CreateFromFolder creates and stores cards from an expansion folder
 // That folder should contain two files called 'white.md' and 'black.md'
 // The files content is treated as explained for the CreateCards function
-func (cc CardController) CreateFromFolder(folderPath, expansionName string) error {
+func (cc cardController) CreateFromFolder(folderPath, expansionName string) error {
 	wdat, err := os.Open(fmt.Sprintf("%s/white.md", folderPath))
 	defer wdat.Close()
 	if err != nil {

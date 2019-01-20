@@ -36,7 +36,7 @@ func TestGetUserByID(t *testing.T) {
 	if !ok {
 		t.Error("Did not find user with id 1")
 	} else {
-		if u.Username != "Green" && u.ID == 1 {
+		if u.Username != "Red" && u.ID == 1 {
 			t.Fatal("GetUserByID is horribly broken")
 		}
 	}

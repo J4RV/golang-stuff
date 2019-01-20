@@ -19,19 +19,14 @@ func main() {
 }
 
 func run() {
+	gameStore := data.NewGameStore()
 	cardStore := data.NewCardStore()
 	userStore := data.NewUserStore()
 	data.PopulateUsers(userStore)
 	usecases := cah.Usecases{
-		Game: usecase.GameController{
-			//Store: gameStore,
-		},
-		Card: usecase.CardController{
-			Store: cardStore,
-		},
-		User: usecase.UserController{
-			Store: userStore,
-		},
+		Game: usecase.NewGameUsecase(gameStore),
+		Card: usecase.NewCardUsecase(cardStore),
+		User: usecase.NewUserUsecase(userStore),
 	}
 	populateCards(usecases.Card)
 	server.Start(usecases)

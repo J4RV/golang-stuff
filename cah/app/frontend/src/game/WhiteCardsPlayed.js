@@ -12,20 +12,20 @@ const styles = theme => ({
   },
 });
 
-const handleOnClick = (id) => {
-  axios.post('rest/test/GiveBlackCardToWinner', {
+const handleOnClick = (gameID, id) => {
+  axios.post(`rest/${gameID}/GiveBlackCardToWinner`, {
     winner: id
   }).catch(r => window.alert(r.response.data)) // We'll need prettier things
 }
 
-const PlayerWhiteCardsPlayed = ({ play, isCzar, classes }) => {
+const PlayerWhiteCardsPlayed = ({ gameID, play, isCzar, classes }) => {
   const { whiteCards } = play
   if (whiteCards == null || whiteCards.length === 0) {
     return null // The Czar will have an empty play
   }
   return (<div className={classes.playerPlay}>
     {whiteCards.map(whiteCard =>
-      <Card {...whiteCard} onClick={() => isCzar && handleOnClick(play.id)} />)}
+      <Card {...whiteCard} onClick={() => isCzar && handleOnClick(gameID, play.id)} />)}
   </div>)
 }
 
@@ -37,7 +37,12 @@ const WhiteCardsPlayed = ({ state, classes }) => {
         Czar choosing winner...
       </Typography>
       {state.sinnerPlays.map((sp) =>
-        <PlayerWhiteCardsPlayed play={sp} isCzar={isCzar} classes={classes} />)}
+        <PlayerWhiteCardsPlayed 
+          gameID={state.gameID}
+          play={sp} 
+          isCzar={isCzar} 
+          classes={classes} 
+        />)}
     </React.Fragment>
   } else {
     return <Typography variant='h6' gutterBottom>

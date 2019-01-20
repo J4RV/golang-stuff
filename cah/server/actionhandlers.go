@@ -27,6 +27,7 @@ type sinnerPlay struct {
 }
 
 type gameStateResponse struct {
+	GameID          int             `json:"gameID"`
 	Phase           int             `json:"phase"`
 	Players         []playerInfo    `json:"players"`
 	CurrCzarID      int             `json:"currentCzarID"`
@@ -41,15 +42,16 @@ func getGameStateForUser(w http.ResponseWriter, req *http.Request) error {
 	if err != nil {
 		return err
 	}
-	game, err := getGame(req)
+	game, err := gameFromRequest(req)
 	if err != nil {
 		return err
 	}
-	p, err := getPlayer(game, u)
+	p, err := player(game, u)
 	if err != nil {
 		return err
 	}
 	response := gameStateResponse{
+		GameID:          game.ID,
 		Phase:           int(game.Phase),
 		Players:         getPlayerInfo(game),
 		CurrCzarID:      game.Players[game.CurrCzarIndex].ID,
@@ -115,22 +117,21 @@ func giveBlackCardToWinner(w http.ResponseWriter, req *http.Request) error {
 	if err != nil {
 		return errors.New("Misconstructed payload")
 	}
-	game, err := getGame(req)
+	game, err := gameFromRequest(req)
 	if err != nil {
 		return err
 	}
-	pid, err := getPlayerIndex(game, u)
+	pid, err := playerIndex(game, u)
 	if err != nil {
 		return err
 	}
 	if pid != game.CurrCzarIndex {
 		return errors.New("Only the Czar can choose the winner")
 	}
-	newS, err := usecase.Game.GiveBlackCardToWinner(payload.Winner, game)
+	_, err = usecase.Game.GiveBlackCardToWinner(payload.Winner, game)
 	if err != nil {
 		return err
 	}
-	updateGameState(req, newS)
 	return nil
 }
 
@@ -155,19 +156,15 @@ func playCards(w http.ResponseWriter, req *http.Request) error {
 	if err != nil {
 		return errors.New("Misconstructed payload")
 	}
-	game, err := getGame(req)
+	game, err := gameFromRequest(req)
 	if err != nil {
 		return err
 	}
-	pid, err := getPlayerIndex(game, u)
+	pid, err := playerIndex(game, u)
 	if err != nil {
 		return err
 	}
-	newS, err := usecase.Game.PlayWhiteCards(pid, payload.CardIndexes, game)
-	if err != nil {
-		return err
-	} // oneline error handling when
-	err = updateGameState(req, newS)
+	_, err = usecase.Game.PlayWhiteCards(pid, payload.CardIndexes, game)
 	if err != nil {
 		return err
 	}

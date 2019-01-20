@@ -12,8 +12,8 @@ import (
 var commonPass = "dev"
 
 type userMemStore struct {
-	lastID int
-	users  map[int]*cah.User
+	abstractMemStore
+	users map[int]*cah.User
 }
 
 func NewUserStore() *userMemStore {
@@ -31,8 +31,7 @@ func (store *userMemStore) Create(username, password string) (cah.User, error) {
 	user.Username = username
 	user.Password = passhash
 	user.Creation = time.Now()
-	user.ID = store.lastID
-	store.lastID++
+	user.ID = store.nextID()
 	store.users[user.ID] = &user
 	return user, nil
 }

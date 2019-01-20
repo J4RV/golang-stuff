@@ -1,14 +1,25 @@
 package cah
 
+type GameStore interface {
+	Create(Game) (Game, error)
+	ByID(id int) (Game, error)
+	//FetchOpen() []Game
+	Update(Game) error
+	//Delete(ID int) error
+}
+
 type GameUsecases interface {
+	// Uses repository
+	ByID(id int) (Game, error)
+	//FetchOpen() []Game
+	// Game logic
 	NewGame(opts ...Option) Game
 	Options() GameOptions
 	Start(p []*Player, g Game, opts ...Option) (Game, error)
 	GiveBlackCardToWinner(wId int, g Game) (Game, error)
 	PlayWhiteCards(p int, cs []int, g Game) (Game, error)
 	AllSinnersPlayedTheirCards(g Game) bool
-	NextCzar(g Game) (Game, error)
-	//End(g Game) (Game, error)
+	End(g Game) (Game, error)
 }
 
 type GameOptions interface {
@@ -21,6 +32,8 @@ type GameOptions interface {
 }
 
 type Game struct {
+	ID              int         `json:"id" db:"id"`
+	Name            string      `json:"name"`
 	Phase           Phase       `json:"phase"`
 	Players         []*Player   `json:"players"`
 	BlackDeck       []BlackCard `json:"blackDeck"`
@@ -44,6 +57,13 @@ func (s Game) CurrCzar() *Player {
 }
 
 func (s Game) Equal(other Game) bool {
+	// First we check very identifiable fields like ID or names
+	if s.ID != other.ID {
+		return false
+	}
+	if s.Name != other.Name {
+		return false
+	}
 	// Fast comparisons before checking lists
 	equal := s.Phase == other.Phase
 	equal = equal && s.CurrCzarIndex == other.CurrCzarIndex
@@ -52,7 +72,7 @@ func (s Game) Equal(other Game) bool {
 	if !equal {
 		return false
 	}
-	// Check lists one by one
+	// Now check lists one by one
 	for i := range s.Players {
 		if s.Players[i] != other.Players[i] {
 			return false
@@ -78,6 +98,8 @@ func (s Game) Equal(other Game) bool {
 
 func (s Game) Clone() Game {
 	res := Game{
+		ID:              s.ID,
+		Name:            s.Name,
 		Phase:           s.Phase,
 		CurrCzarIndex:   s.CurrCzarIndex,
 		BlackCardInPlay: s.BlackCardInPlay,
