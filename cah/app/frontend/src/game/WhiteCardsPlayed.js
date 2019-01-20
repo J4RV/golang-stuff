@@ -12,20 +12,20 @@ const styles = theme => ({
   },
 });
 
-const handleOnClick = (gameID, id) => {
-  axios.post(`rest/${gameID}/GiveBlackCardToWinner`, {
-    winner: id
+const handleOnClick = (stateID, winnerID) => {
+  axios.post(`gamestate/${stateID}/GiveBlackCardToWinner`, {
+    winner: winnerID
   }).catch(r => window.alert(r.response.data)) // We'll need prettier things
 }
 
-const PlayerWhiteCardsPlayed = ({ gameID, play, isCzar, classes }) => {
+const PlayerWhiteCardsPlayed = ({ stateID, play, isCzar, classes }) => {
   const { whiteCards } = play
   if (whiteCards == null || whiteCards.length === 0) {
     return null // The Czar will have an empty play
   }
   return (<div className={classes.playerPlay}>
     {whiteCards.map(whiteCard =>
-      <Card {...whiteCard} onClick={() => isCzar && handleOnClick(gameID, play.id)} />)}
+      <Card {...whiteCard} onClick={() => isCzar && handleOnClick(stateID, play.id)} />)}
   </div>)
 }
 
@@ -38,7 +38,7 @@ const WhiteCardsPlayed = ({ state, classes }) => {
       </Typography>
       {state.sinnerPlays.map((sp) =>
         <PlayerWhiteCardsPlayed 
-          gameID={state.gameID}
+          stateID={state.id}
           play={sp} 
           isCzar={isCzar} 
           classes={classes} 

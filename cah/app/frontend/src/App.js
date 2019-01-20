@@ -29,7 +29,7 @@ class App extends Component {
       <CssBaseline />
       <LoginController>
         <AppBar title='Cards Against Humanity' shortTitle="CAH" />
-        <Game gameID='1' />
+        <Game stateID='1' />
       </LoginController>
     </MuiThemeProvider>
   }

@@ -8,22 +8,22 @@ import (
 
 type gameMemStore struct {
 	abstractMemStore
-	games map[int]*cah.Game
+	games map[int]*cah.GameState
 }
 
 func NewGameStore() *gameMemStore {
 	return &gameMemStore{
-		games: make(map[int]*cah.Game),
+		games: make(map[int]*cah.GameState),
 	}
 }
 
-func (store *gameMemStore) Create(g cah.Game) (cah.Game, error) {
+func (store *gameMemStore) Create(g cah.GameState) (cah.GameState, error) {
 	g.ID = store.nextID()
 	store.games[g.ID] = &g
 	return g, nil
 }
 
-func (store *gameMemStore) ByID(id int) (cah.Game, error) {
+func (store *gameMemStore) ByID(id int) (cah.GameState, error) {
 	g, ok := store.games[id]
 	if !ok {
 		return *g, fmt.Errorf("No game found with ID %d", id)
@@ -31,7 +31,7 @@ func (store *gameMemStore) ByID(id int) (cah.Game, error) {
 	return *g, nil
 }
 
-func (store *gameMemStore) Update(g cah.Game) error {
+func (store *gameMemStore) Update(g cah.GameState) error {
 	_, err := store.ByID(g.ID)
 	if err != nil {
 		return err

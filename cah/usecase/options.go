@@ -13,34 +13,34 @@ func (control gameController) Options() cah.GameOptions {
 
 type Options struct{}
 
-func applyOptions(s *cah.Game, opts ...cah.Option) {
+func applyOptions(s *cah.GameState, opts ...cah.Option) {
 	for _, opt := range opts {
 		opt(s)
 	}
 }
 
 func (_ Options) HandSize(size int) cah.Option {
-	return func(s *cah.Game) {
+	return func(s *cah.GameState) {
 		s.HandSize = size
 	}
 }
 
 func (_ Options) BlackDeck(bd []cah.BlackCard) cah.Option {
-	return func(s *cah.Game) {
+	return func(s *cah.GameState) {
 		s.BlackDeck = bd
 		shuffleB(&s.BlackDeck)
 	}
 }
 
 func (_ Options) WhiteDeck(wd []cah.WhiteCard) cah.Option {
-	return func(s *cah.Game) {
+	return func(s *cah.GameState) {
 		s.WhiteDeck = wd
 		shuffleW(&s.WhiteDeck)
 	}
 }
 
 func (_ Options) RandomStartingCzar() cah.Option {
-	return func(s *cah.Game) {
+	return func(s *cah.GameState) {
 		if len(s.Players) == 0 {
 			log.Println("WARNING Tried to call RandomStartingCzar using a game without players")
 			return

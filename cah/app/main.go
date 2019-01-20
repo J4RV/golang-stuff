@@ -24,9 +24,9 @@ func run() {
 	userStore := data.NewUserStore()
 	data.PopulateUsers(userStore)
 	usecases := cah.Usecases{
-		Game: usecase.NewGameUsecase(gameStore),
-		Card: usecase.NewCardUsecase(cardStore),
-		User: usecase.NewUserUsecase(userStore),
+		GameState: usecase.NewGameUsecase(gameStore),
+		Card:      usecase.NewCardUsecase(cardStore),
+		User:      usecase.NewUserUsecase(userStore),
 	}
 	populateCards(usecases.Card)
 	server.Start(usecases)

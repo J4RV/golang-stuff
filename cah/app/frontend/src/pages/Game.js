@@ -20,7 +20,7 @@ class Game extends Component {
     this.updateState()
   }
   updateState = () => {
-    axios.get(`rest/${this.props.gameID}/State`)
+    axios.get(`gamestate/${this.props.stateID}/State`)
       .then(r => {
         console.log(r.data)
         this.setState(r.data)

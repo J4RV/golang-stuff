@@ -9,7 +9,7 @@ import (
 	"github.com/j4rv/golang-stuff/cah"
 )
 
-func playerIndex(g cah.Game, u cah.User) (int, error) {
+func playerIndex(g cah.GameState, u cah.User) (int, error) {
 	for i, p := range g.Players {
 		if p.User.ID == u.ID {
 			return i, nil
@@ -18,7 +18,7 @@ func playerIndex(g cah.Game, u cah.User) (int, error) {
 	return -1, errors.New("You are not playing this game")
 }
 
-func player(g cah.Game, u cah.User) (*cah.Player, error) {
+func player(g cah.GameState, u cah.User) (*cah.Player, error) {
 	i, err := playerIndex(g, u)
 	if err != nil {
 		return &cah.Player{}, errors.New("You are not playing this game")
@@ -26,13 +26,13 @@ func player(g cah.Game, u cah.User) (*cah.Player, error) {
 	return g.Players[i], nil
 }
 
-func gameFromRequest(req *http.Request) (cah.Game, error) {
-	id := mux.Vars(req)["gameID"]
+func gameFromRequest(req *http.Request) (cah.GameState, error) {
+	id := mux.Vars(req)["id"]
 	idInt, err := strconv.Atoi(id)
 	if err != nil {
-		return cah.Game{}, err
+		return cah.GameState{}, err
 	}
-	g, err := usecase.Game.ByID(idInt)
+	g, err := usecase.GameState.ByID(idInt)
 	if err != nil {
 		return g, errors.New("Could not get game from request")
 	}
@@ -51,12 +51,12 @@ func createGame(users []cah.User) error {
 		bGameCards[i] = c
 	}
 	p := getPlayersForUsers(users...)
-	s := usecase.Game.NewGame(
-		usecase.Game.Options().BlackDeck(bGameCards),
-		usecase.Game.Options().WhiteDeck(wGameCards),
-		usecase.Game.Options().HandSize(15),
+	s := usecase.GameState.NewGame(
+		usecase.GameState.Options().BlackDeck(bGameCards),
+		usecase.GameState.Options().WhiteDeck(wGameCards),
+		usecase.GameState.Options().HandSize(15),
 	)
-	s, err := usecase.Game.Start(p, s, usecase.Game.Options().RandomStartingCzar())
+	s, err := usecase.GameState.Start(p, s, usecase.GameState.Options().RandomStartingCzar())
 	if err != nil {
 		panic(err)
 	}

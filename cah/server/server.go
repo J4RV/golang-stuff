@@ -48,7 +48,7 @@ func Start(uc cah.Usecases) {
 	createTestGame()
 	router := mux.NewRouter()
 	handleUsers(router)
-	handleGames(router)
+	handleGameStates(router)
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(publicDir))))
 	StartServer(router)
 }
@@ -85,9 +85,18 @@ func handleUsers(r *mux.Router) {
 	s.HandleFunc("/validcookie", validCookie).Methods("GET")
 }
 
+/*
 func handleGames(r *mux.Router) {
-	s := r.PathPrefix("/rest/{gameID}").Subrouter()
-	s.Handle("/State", srvHandler(getGameStateForUser)).Methods("GET")
+	s := r.PathPrefix("/game/{id}").Subrouter()
+	s.Handle("/ListOpen", srvHandler(getGameStateForUser)).Methods("GET")
+	s.Handle("/Join", srvHandler(playCards)).Methods("POST")
+	s.Handle("/Leave", srvHandler(playCards)).Methods("POST")
+}
+*/
+
+func handleGameStates(r *mux.Router) {
+	s := r.PathPrefix("/gamestate/{id}").Subrouter()
+	s.Handle("/", srvHandler(getGameStateForUser)).Methods("GET")
 	s.Handle("/GiveBlackCardToWinner", srvHandler(giveBlackCardToWinner)).Methods("POST")
 	s.Handle("/PlayCards", srvHandler(playCards)).Methods("POST")
 }

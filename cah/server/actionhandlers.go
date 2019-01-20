@@ -35,7 +35,7 @@ type sinnerPlay struct {
 }
 
 type gameStateResponse struct {
-	GameID          int             `json:"gameID"`
+	ID              int             `json:"id"`
 	Phase           int             `json:"phase"`
 	Players         []playerInfo    `json:"players"`
 	CurrCzarID      int             `json:"currentCzarID"`
@@ -59,7 +59,7 @@ func getGameStateForUser(w http.ResponseWriter, req *http.Request) error {
 		return err
 	}
 	response := gameStateResponse{
-		GameID:          game.ID,
+		ID:              game.ID,
 		Phase:           int(game.Phase),
 		Players:         playersInfoFromGame(game),
 		CurrCzarID:      game.Players[game.CurrCzarIndex].User.ID,
@@ -72,7 +72,7 @@ func getGameStateForUser(w http.ResponseWriter, req *http.Request) error {
 	return nil
 }
 
-func playersInfoFromGame(game cah.Game) []playerInfo {
+func playersInfoFromGame(game cah.GameState) []playerInfo {
 	ret := make([]playerInfo, len(game.Players))
 	for i, p := range game.Players {
 		ret[i] = newPlayerInfo(*p)
@@ -99,8 +99,8 @@ func newFullPlayerInfo(player cah.Player) fullPlayerInfo {
 	}
 }
 
-func sinnerPlaysFromGame(game cah.Game) []sinnerPlay {
-	if !usecase.Game.AllSinnersPlayedTheirCards(game) {
+func sinnerPlaysFromGame(game cah.GameState) []sinnerPlay {
+	if !usecase.GameState.AllSinnersPlayedTheirCards(game) {
 		return []sinnerPlay{}
 	}
 	ret := make([]sinnerPlay, len(game.Players))
@@ -145,7 +145,7 @@ func giveBlackCardToWinner(w http.ResponseWriter, req *http.Request) error {
 	if pid != game.CurrCzarIndex {
 		return errors.New("Only the Czar can choose the winner")
 	}
-	_, err = usecase.Game.GiveBlackCardToWinner(payload.Winner, game)
+	_, err = usecase.GameState.GiveBlackCardToWinner(payload.Winner, game)
 	if err != nil {
 		return err
 	}
@@ -181,7 +181,7 @@ func playCards(w http.ResponseWriter, req *http.Request) error {
 	if err != nil {
 		return err
 	}
-	_, err = usecase.Game.PlayWhiteCards(pid, payload.CardIndexes, game)
+	_, err = usecase.GameState.PlayWhiteCards(pid, payload.CardIndexes, game)
 	if err != nil {
 		return err
 	}

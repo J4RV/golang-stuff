@@ -1,7 +1,8 @@
 package cah
 
 type Usecases struct {
-	Game GameUsecases
-	Card CardUsecases
-	User UserUsecases
+	Game      GameUsecases
+	GameState GameStateUsecases
+	Card      CardUsecases
+	User      UserUsecases
 }

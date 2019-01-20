@@ -90,7 +90,7 @@ class Hand extends Component {
   }
 
   playCards = () => {
-    axios.post(`rest/${this.props.state.gameID}/PlayCards`, {
+    axios.post(`gamestate/${this.props.state.stateID}/PlayCards`, {
       cardIndexes: this.state.cardIndexes
     }).then(r => {
       this.setState({ cardIndexes: [] })

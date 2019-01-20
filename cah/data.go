@@ -1,7 +1,8 @@
 package cah
 
 type DataStore struct {
-	Game GameStore
-	Card CardStore
-	User UserStore
+	Game      GameStore
+	GameState GameStateStore
+	Card      CardStore
+	User      UserStore
 }
