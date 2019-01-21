@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {loginUrl, registerUrl, validCookieUrl} from '../restUrls'
+import { loginUrl, registerUrl, validCookieUrl } from '../restUrls'
 
 import Button from '@material-ui/core/Button'
 import Card from '../gamestate/Card'
@@ -39,8 +39,9 @@ class LoginForm extends Component {
     this.setState(newState)
   }
 
-  handleSubmit = (url) => {
-    this.setState({...this.state, disabled: true})
+  handleSubmit = (event, url) => {
+    event.preventDefault() // necessary for firefox, or submitting the form will make the page reload!
+    this.setState({ ...this.state, disabled: true })
     let payload = {
       username: this.state.username,
       password: this.state.password,
@@ -48,10 +49,13 @@ class LoginForm extends Component {
     axios.post(url, payload)
       .then(this.props.onValidSubmit)
       .catch(r => {
-        this.setState({...this.state,
+        this.setState({
+          ...this.state,
           errormsg: r.response.data,
-          disabled: false})
-        return false})      
+          disabled: false
+        })
+      })
+    return false
   }
 
   render() {
@@ -63,7 +67,7 @@ class LoginForm extends Component {
       <Typography variant="h4" gutterBottom>
         A party game for horrible people.
       </Typography>
-      <form className={classes.form} onSubmit={() => this.handleSubmit("login")} >
+      <form className={classes.form} onSubmit={(e) => this.handleSubmit(e, loginUrl)} >
         <Card
           isBlack
           text="I'm _ and my password is _."
@@ -89,7 +93,7 @@ class LoginForm extends Component {
             type="submit"
             variant="contained"
             color="primary"
-            onClick={() => this.handleSubmit(loginUrl)}
+            onClick={(e) => this.handleSubmit(e, loginUrl)}
             disabled={this.state.disabled}
           >Log in</Button>
         </FormControl>
@@ -97,13 +101,13 @@ class LoginForm extends Component {
           <Button
             type="button"
             variant="contained"
-            onClick={() => this.handleSubmit(registerUrl)}
+            onClick={(e) => this.handleSubmit(e, registerUrl)}
             disabled={this.state.disabled}
           >Register</Button>
         </FormControl>
         <ErrorSnackbar
           msg={this.state.errormsg}
-          onClose={() => this.setState({...this.state, errormsg: null})}
+          onClose={() => this.setState({ ...this.state, errormsg: null })}
         />
         <Footer />
       </form>
