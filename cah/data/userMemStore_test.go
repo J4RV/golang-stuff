@@ -1,9 +1,6 @@
 package data
 
-import (
-	"testing"
-)
-
+/*
 var store = NewUserStore()
 
 func init() {
@@ -24,3 +21,4 @@ func TestGetUserByID(t *testing.T) {
 		t.Error("Found an user with id 999 but expected none")
 	}
 }
+*/

@@ -18,6 +18,8 @@ func NewUserStore() *userMemStore {
 }
 
 func (store *userMemStore) Create(username, password string) (cah.User, error) {
+	store.lock()
+	defer store.release()
 	user := cah.User{}
 	user.Username = username
 	user.Password = password
@@ -28,6 +30,8 @@ func (store *userMemStore) Create(username, password string) (cah.User, error) {
 }
 
 func (store *userMemStore) ByID(id int) (cah.User, bool) {
+	store.lock()
+	defer store.release()
 	u, ok := store.users[id]
 	if !ok {
 		return cah.User{}, false
@@ -36,6 +40,8 @@ func (store *userMemStore) ByID(id int) (cah.User, bool) {
 }
 
 func (store *userMemStore) ByName(name string) (cah.User, bool) {
+	store.lock()
+	defer store.release()
 	for _, u := range store.users {
 		if u.Username == name {
 			return *u, true

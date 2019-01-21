@@ -20,20 +20,24 @@ func NewCardStore() *cardMemStore {
 	}
 }
 
-func (s *cardMemStore) CreateWhite(t, e string) error {
+func (store *cardMemStore) CreateWhite(t, e string) error {
+	store.lock()
+	defer store.release()
 	c := cah.WhiteCard{}
-	c.ID = s.nextID()
+	c.ID = store.nextID()
 	c.Text = t
 	c.Expansion = e
 	err := validateCard(c.Card)
 	if err != nil {
 		return err
 	}
-	s.whiteCards = append(s.whiteCards, c)
+	store.whiteCards = append(store.whiteCards, c)
 	return nil
 }
 
-func (s *cardMemStore) CreateBlack(t, e string, blanks int) error {
+func (store *cardMemStore) CreateBlack(t, e string, blanks int) error {
+	store.lock()
+	defer store.release()
 	if blanks < 1 {
 		return errors.New("Black cards need to have at least 1 blank")
 	}
@@ -41,7 +45,7 @@ func (s *cardMemStore) CreateBlack(t, e string, blanks int) error {
 		return fmt.Errorf("Black cards blanks maximum is five, but got %d", blanks)
 	}
 	c := cah.BlackCard{}
-	c.ID = s.nextID()
+	c.ID = store.nextID()
 	c.Text = t
 	c.Expansion = e
 	c.BlanksAmount = blanks
@@ -49,16 +53,20 @@ func (s *cardMemStore) CreateBlack(t, e string, blanks int) error {
 	if err != nil {
 		return err
 	}
-	s.blackCards = append(s.blackCards, c)
+	store.blackCards = append(store.blackCards, c)
 	return nil
 }
 
-func (s *cardMemStore) AllWhites() []cah.WhiteCard {
-	return s.whiteCards
+func (store *cardMemStore) AllWhites() []cah.WhiteCard {
+	store.lock()
+	defer store.release()
+	return store.whiteCards
 }
 
-func (s *cardMemStore) AllBlacks() []cah.BlackCard {
-	return s.blackCards
+func (store *cardMemStore) AllBlacks() []cah.BlackCard {
+	store.lock()
+	defer store.release()
+	return store.blackCards
 }
 
 func validateCard(c cah.Card) error {

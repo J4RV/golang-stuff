@@ -21,6 +21,8 @@ func NewGameStore(ss cah.GameStateStore) *gameMemStore {
 }
 
 func (store *gameMemStore) Create(g cah.Game) error {
+	store.lock()
+	defer store.release()
 	if g.ID != 0 {
 		return errors.New("Tried to create a game but its ID was not zero")
 	}
@@ -30,6 +32,8 @@ func (store *gameMemStore) Create(g cah.Game) error {
 }
 
 func (store *gameMemStore) ByStatePhase(p cah.Phase) []cah.Game {
+	store.lock()
+	defer store.release()
 	ret := []cah.Game{}
 	for _, g := range store.games {
 		state, err := store.stateStore.ByID(g.StateID)
