@@ -1,4 +1,4 @@
-package data
+package mem
 
 type abstractMemStore struct {
 	lastID   int

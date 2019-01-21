@@ -1,9 +1,26 @@
 package usecase
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/j4rv/golang-stuff/cah/db/mem"
+	"github.com/j4rv/golang-stuff/cah/usecase/fixture"
+
+	"github.com/j4rv/golang-stuff/cah"
+)
 
 var commonPass = "dev"
 var commonPassHash, _ = userPassHash(commonPass)
+
+var usecase cah.UserUsecases
+
+func init() {
+	store := mem.NewUserStore()
+	usecase = NewUserUsecase(store)
+	fixture.PopulateUsers(usecase)
+}
 
 func TestPassHashNotFailing(t *testing.T) {
 	hash, err := userPassHash(commonPass)
@@ -25,22 +42,38 @@ func TestCorrectPass(t *testing.T) {
 	}
 }
 
-/*
-Needs store mock, dont want to do it right now tbh
-var usecase = NewUserUsecase()
+func TestUserByID(t *testing.T) {
+	var table = []struct {
+		id    int
+		name  string
+		found bool
+	}{
+		{-1, "", false},
+		{0, "", false},
+		{1, "Red", true},
+		{3, "Blue", true},
+		{999, "", false},
+	}
+	for _, row := range table {
+		u, ok := usecase.ByID(row.id)
+		assert.Equal(t, row.found, ok)
+		if ok {
+			assert.Equal(t, row.name, u.Username)
+		}
+	}
+}
 
-// this one also testes the ByName method
 func TestGetUserByLogin(t *testing.T) {
-	u, err := usecase.Login("Green", commonPass)
-	if err != nil {
-		t.Error(err)
+	u, ok := usecase.Login("Green", "Green")
+	if !ok {
+		t.Error("Could not login as Green")
 	} else {
 		if u.Username != "Green" {
 			t.Fatal("GetUserByLogin is horribly broken")
 		}
 	}
-	u, err = store.ByCredentials("Green", "not green's password")
-	if err == nil {
+	u, ok = usecase.Login("Green", "not green's password")
+	if ok {
 		t.Error("Error should not be nil")
 	}
-}*/
+}

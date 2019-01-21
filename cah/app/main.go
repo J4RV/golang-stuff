@@ -5,9 +5,10 @@ import (
 	"time"
 
 	"github.com/j4rv/golang-stuff/cah"
-	"github.com/j4rv/golang-stuff/cah/data"
+	db "github.com/j4rv/golang-stuff/cah/db/mem"
 	"github.com/j4rv/golang-stuff/cah/server"
 	"github.com/j4rv/golang-stuff/cah/usecase"
+	"github.com/j4rv/golang-stuff/cah/usecase/fixture"
 )
 
 func init() {
@@ -19,17 +20,17 @@ func main() {
 }
 
 func run() {
-	stateStore := data.NewGameStateStore()
-	gameStore := data.NewGameStore(stateStore)
-	cardStore := data.NewCardStore()
-	userStore := data.NewUserStore()
+	stateStore := db.NewGameStateStore()
+	gameStore := db.NewGameStore(stateStore)
+	cardStore := db.NewCardStore()
+	userStore := db.NewUserStore()
 	usecases := cah.Usecases{
 		Game:      usecase.NewGameUsecase(gameStore, userStore),
 		GameState: usecase.NewGameStateUsecase(stateStore),
 		Card:      usecase.NewCardUsecase(cardStore),
 		User:      usecase.NewUserUsecase(userStore),
 	}
-	usecase.PopulateUsers(usecases.User)
+	fixture.PopulateUsers(usecases.User)
 	populateCards(usecases.Card)
 	server.Start(usecases)
 }

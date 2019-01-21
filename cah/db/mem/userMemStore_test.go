@@ -1,10 +1,15 @@
-package data
+package mem
 
-/*
+import (
+	"testing"
+
+	"github.com/j4rv/golang-stuff/cah/db/mem/fixture"
+)
+
 var store = NewUserStore()
 
 func init() {
-	PopulateUsers(store)
+	fixture.PopulateUsers(store)
 }
 
 func TestGetUserByID(t *testing.T) {
@@ -21,4 +26,3 @@ func TestGetUserByID(t *testing.T) {
 		t.Error("Found an user with id 999 but expected none")
 	}
 }
-*/

@@ -58,16 +58,3 @@ func userCorrectPass(pass string, storedhash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(storedhash), []byte(pass))
 	return err == nil
 }
-
-// for testing
-
-const commonPass = "dev"
-
-func PopulateUsers(uuc cah.UserUsecases) {
-	uuc.Register("Red", commonPass)
-	uuc.Register("Green", commonPass)
-	uuc.Register("Blue", commonPass)
-	uuc.Register("Gold", commonPass)
-	uuc.Register("Silver", commonPass)
-	log.Print("Base users initialized")
-}

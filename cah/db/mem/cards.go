@@ -1,4 +1,4 @@
-package data
+package mem
 
 import (
 	"errors"
