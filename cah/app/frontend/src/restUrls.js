@@ -11,3 +11,4 @@ export const chooseWinnerUrl = (stateID) => `gamestate/${stateID}/ChooseWinner`
 
 // Game
 export const openGamesUrl = "game/ListOpen"
+export const createGameUrl = "game/Create"

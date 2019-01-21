@@ -19,6 +19,7 @@ const styles = theme => ({
   form: {
     maxWidth: 260,
     marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2,
     padding: theme.spacing.unit * 2,
     display: "inline-block",
   },
@@ -73,21 +74,17 @@ class LoginForm extends Component {
           text="I'm _ and my password is _."
           expansion="Security questions"
         />
-        <FormControl margin="normal" required fullWidth>
-          <TextField
-            label="Username"
-            autoComplete="username"
-            onChange={this.handleChangeUser}
-          />
-        </FormControl>
-        <FormControl margin="normal" required fullWidth>
-          <TextField
-            label="Password"
-            type="password"
-            autoComplete="password"
-            onChange={this.handleChangePass}
-          />
-        </FormControl>
+        <TextField required fullWidth margin="normal"
+          label="Username"
+          autoComplete="username"
+          onChange={this.handleChangeUser}
+        />
+        <TextField required fullWidth margin="normal"
+          label="Password"
+          type="password"
+          autoComplete="password"
+          onChange={this.handleChangePass}
+        />
         <FormControl margin="normal" fullWidth>
           <Button
             type="submit"

@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
-import {loginUrl, registerUrl, validCookieUrl} from '../restUrls'
+import { createGameUrl } from '../restUrls'
 
 import Button from '@material-ui/core/Button'
-import Card from '../gamestate/Card'
 import ErrorSnackbar from '../components/ErrorSnackbar'
 import Footer from '../Footer'
 import FormControl from '@material-ui/core/FormControl'
@@ -20,6 +19,7 @@ const styles = theme => ({
   form: {
     maxWidth: 260,
     marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2,
     padding: theme.spacing.unit * 2,
     display: "inline-block",
   },
@@ -41,7 +41,7 @@ class LoginForm extends Component {
   }
 
   handleSubmit = (url) => {
-    this.setState({...this.state, disabled: true})
+    this.setState({ ...this.state, disabled: true })
     let payload = {
       username: this.state.username,
       password: this.state.password,
@@ -49,10 +49,13 @@ class LoginForm extends Component {
     axios.post(url, payload)
       .then(this.props.onValidSubmit)
       .catch(r => {
-        this.setState({...this.state,
+        this.setState({
+          ...this.state,
           errormsg: r.response.data,
-          disabled: false})
-        return false})      
+          disabled: false
+        })
+        return false
+      })
   }
 
   render() {
@@ -65,47 +68,29 @@ class LoginForm extends Component {
         A party game for horrible people.
       </Typography>
       <form className={classes.form} onSubmit={() => this.handleSubmit("login")} >
-        <Card
-          isBlack
-          text="I'm _ and my password is _."
-          expansion="Security questions"
+        <TextField required fullWidth margin="normal"
+          label="Room name"
+          autoComplete="room_name"
+          onChange={this.handleChangeUser}
         />
-        <FormControl margin="normal" required fullWidth>
-          <TextField
-            label="Username"
-            autoComplete="username"
-            onChange={this.handleChangeUser}
-          />
-        </FormControl>
-        <FormControl margin="normal" required fullWidth>
-          <TextField
-            label="Password"
-            type="password"
-            autoComplete="password"
-            onChange={this.handleChangePass}
-          />
-        </FormControl>
+        <TextField fullWidth margin="normal"
+          label="Room password"
+          type="password"
+          autoComplete="room_password"
+          onChange={this.handleChangePass}
+        />
         <FormControl margin="normal" fullWidth>
-          <Button
+          <Button margin="normal"
             type="submit"
             variant="contained"
             color="primary"
             onClick={() => this.handleSubmit(loginUrl)}
             disabled={this.state.disabled}
-          >Log in</Button>
-        </FormControl>
-        <FormControl margin="normal" fullWidth>
-          <Button
-            type="button"
-            variant="outlined"
-            color="primary"
-            onClick={() => this.handleSubmit(registerUrl)}
-            disabled={this.state.disabled}
-          >Register</Button>
+          >Create Game</Button>
         </FormControl>
         <ErrorSnackbar
           msg={this.state.errormsg}
-          onClose={() => this.setState({...this.state, errormsg: null})}
+          onClose={() => this.setState({ ...this.state, errormsg: null })}
         />
         <Footer />
       </form>
@@ -113,29 +98,4 @@ class LoginForm extends Component {
   }
 }
 
-class LoginController extends Component {
-  state = {};
-  setValid = (v) => { this.setState({ validcookie: v }) }
-
-  componentWillMount() {
-    axios.get(validCookieUrl)
-      .then(r => {
-        let v = (r.data === true) || (r.data === "true")
-        this.setValid(v)
-      })
-  }
-
-  render() {
-    if (this.state.validcookie == null) {
-      return <div>Loading...</div>
-    }
-    if (this.state.validcookie) {
-      //return <Redirect to="/game/list" />
-      return <Redirect to="/game/list" />
-    }
-    return <LoginForm onValidSubmit={() => this.setValid(true)} classes={this.props.classes} />
-  }
-
-}
-
-export default withStyles(styles)(LoginController)
+export default withStyles(styles)(LoginForm)

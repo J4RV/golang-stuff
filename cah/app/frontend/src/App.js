@@ -39,7 +39,7 @@ class App extends Component {
             <Route path="/" render={() => <Redirect to="/game/open" />} exact />
             <Route path="/" component={AppBar} />
           </Switch>
-          <Route exact path="/game/new" component={GameCreate} />
+          <Route exact path="/game/create" component={GameCreate} />
           <Route exact path="/game/open" component={GameList} />
           <Route path="/ingame/:stateID" component={Game} />
         </LoggedIn>        
