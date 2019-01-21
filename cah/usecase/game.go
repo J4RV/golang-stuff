@@ -33,6 +33,7 @@ func (control gameController) Create(owner cah.User, name, pass string) error {
 	game := cah.Game{
 		OwnerID: owner.ID,
 		Name:    trimmed,
+		Users:   []cah.User{},
 	}
 	if pass != "" {
 		hashed, err := gamePassHash(pass)

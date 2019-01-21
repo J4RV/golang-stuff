@@ -39,22 +39,35 @@ const styles = theme => ({
   },
 });
 
-class GamesTable extends Component {
+const GamesTable = (games) => (
+  <Table>
+    <TableHead>
+      <TableRow>
+        <TableCell align="right">Name</TableCell>
+        <TableCell align="right">Owner</TableCell>
+        <TableCell align="right" >Has password</TableCell>
+        <TableCell />
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {games.map(game => (
+        <TableRow key={game.id}>
+          <TableCell align="right">{game.name}</TableCell>
+          <TableCell align="right">{game.owner}</TableCell>
+          <TableCell align="right">{game.hasPassword ? "Yes" : "No"}</TableCell>
+          <TableCell align="right">
+            <Button color="primary" variant="contained">
+              Join
+                  </Button>
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+)
+
+class GameListPage extends Component {
   state = { games: [], creatingGame: false };
-
-  componentWillMount() {
-    this.updateGames()
-  }
-
-  updateGames = () => {
-    axios.get(openGamesUrl)
-      .then(r => {
-        this.setState({ ...this.state, games: r.data })
-      })
-      .catch(e => console.log(e.response.data))
-  }
-
-  creatingGame = (value) => this.setState({ ...this.state, creatingGame: value })
 
   render() {
     const { classes } = this.props
@@ -63,30 +76,7 @@ class GamesTable extends Component {
         Open games
       </Typography>
       <Paper className={classes.tableContainer}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell align="right">Name</TableCell>
-              <TableCell align="right">Owner</TableCell>
-              <TableCell align="right" >Has password</TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {this.state.games.map(game => (
-              <TableRow key={game.id}>
-                <TableCell align="right">{game.name}</TableCell>
-                <TableCell align="right">{game.owner}</TableCell>
-                <TableCell align="right">{game.hasPassword ? "Yes" : "No"}</TableCell>
-                <TableCell align="right">
-                  <Button color="primary" variant="contained">
-                    Join
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <GamesTable games={this.state.games} />
       </Paper>
       <Button
         type="button"
@@ -96,16 +86,30 @@ class GamesTable extends Component {
       </Button>
       <GameCreate
         open={this.state.creatingGame}
-        onCreation={() => { this.updateGames(); this.creatingGame(false) }}
+        onCreation={() => { this.refreshGames(); this.creatingGame(false) }}
         onClose={() => this.creatingGame(false)}
       />
     </div>
   }
+
+  componentWillMount() {
+    this.refreshGames()
+  }
+
+  refreshGames = () => {
+    axios.get(openGamesUrl)
+      .then(r => {
+        this.setState({ ...this.state, games: r.data })
+      })
+      .catch(e => console.log(e.response.data))
+  }
+
+  creatingGame = (value) => this.setState({ ...this.state, creatingGame: value })
 }
 
 const GameList = (props) => (
   <React.Fragment>
-    <GamesTable {...props} />
+    <GameListPage {...props} />
   </React.Fragment>
 )
 
