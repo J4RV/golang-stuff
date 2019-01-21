@@ -2,7 +2,6 @@ package mem
 
 import (
 	"errors"
-	"log"
 
 	"github.com/j4rv/golang-stuff/cah"
 )
@@ -36,12 +35,7 @@ func (store *gameMemStore) ByStatePhase(p cah.Phase) []cah.Game {
 	defer store.release()
 	ret := []cah.Game{}
 	for _, g := range store.games {
-		state, err := store.stateStore.ByID(g.StateID)
-		if err != nil {
-			log.Printf("Possible inconsistency in game with ID %d, pointing to non existing state %d\n", g.ID, g.StateID)
-			continue
-		}
-		if state.Phase == p {
+		if g.StateID == 0 {
 			ret = append(ret, g)
 		}
 	}

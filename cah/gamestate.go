@@ -7,11 +7,9 @@ type GameStateStore interface {
 }
 
 type GameStateUsecases interface {
-	// Uses repository
 	ByID(id int) (GameState, error)
 	//FetchOpen() []Game
-	// Game logic
-	NewGame(opts ...Option) GameState
+	NewGameState() GameState
 	Options() GameOptions
 	Start(p []*Player, g GameState, opts ...Option) (GameState, error)
 	GiveBlackCardToWinner(wId int, g GameState) (GameState, error)
@@ -21,11 +19,9 @@ type GameStateUsecases interface {
 }
 
 type GameOptions interface {
-	// Options for new games
 	WhiteDeck(wd []WhiteCard) Option
 	BlackDeck(bd []BlackCard) Option
 	HandSize(size int) Option
-	// Options for starting games
 	RandomStartingCzar() Option
 }
 

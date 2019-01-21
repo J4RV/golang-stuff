@@ -40,43 +40,6 @@ func gameFromRequest(req *http.Request) (cah.GameState, error) {
 	return g, nil
 }
 
-func createGame(users []cah.User) error {
-	bd := usecase.Card.AllBlacks()
-	wd := usecase.Card.AllWhites()
-	var wGameCards = make([]cah.WhiteCard, len(wd))
-	for i, c := range wd {
-		wGameCards[i] = c
-	}
-	var bGameCards = make([]cah.BlackCard, len(bd))
-	for i, c := range bd {
-		bGameCards[i] = c
-	}
-	s := usecase.GameState.NewGame(
-		usecase.GameState.Options().BlackDeck(bGameCards),
-		usecase.GameState.Options().WhiteDeck(wGameCards),
-		usecase.GameState.Options().HandSize(15),
-	)
-	usecase.Game.Create(users[1], "A long and descriptive game name", "", []string{
-		"Base-UK",
-		"The First Expansion",
-		"Anime",
-		"Kikis",
-	}, s)
-	usecase.Game.Create(users[0], "Amo a juga", "", []string{
-		"Base-UK",
-		"The First Expansion",
-		"The Second Expansion",
-		"Kikis",
-	}, s)
-	/* Leave it open to check the game list
-	p := getPlayersForUsers(users...)
-	s, err := usecase.GameState.Start(p, s, usecase.GameState.Options().RandomStartingCzar())
-	if err != nil {
-		panic(err)
-	}*/
-	return nil
-}
-
 // TODO move to data: CreatePlayersFromUsers
 func getPlayersForUsers(users ...cah.User) []*cah.Player {
 	ret := make([]*cah.Player, len(users))
@@ -89,7 +52,30 @@ func getPlayersForUsers(users ...cah.User) []*cah.Player {
 // For quick prototyping
 
 func createTestGame() {
-	createGame(getTestUsers())
+	users := getTestUsers()
+	bd := usecase.Card.AllBlacks()
+	wd := usecase.Card.AllWhites()
+	var wGameCards = make([]cah.WhiteCard, len(wd))
+	for i, c := range wd {
+		wGameCards[i] = c
+	}
+	var bGameCards = make([]cah.BlackCard, len(bd))
+	for i, c := range bd {
+		bGameCards[i] = c
+	}
+	usecase.Game.Create(users[1], "A long and descriptive game name", "")
+	usecase.Game.Create(users[0], "Amo a juga", "1234")
+	/* Leave it open to check the game list
+	p := getPlayersForUsers(users...)
+	s, err := usecase.GameState.Start(p, s,
+		usecase.GameState.Options().RandomStartingCzar(),
+		usecase.GameState.Options().BlackDeck(bGameCards),
+		usecase.GameState.Options().WhiteDeck(wGameCards),
+		usecase.GameState.Options().HandSize(15),
+	)
+	if err != nil {
+		panic(err)
+	}*/
 }
 
 func getTestUsers() []cah.User {

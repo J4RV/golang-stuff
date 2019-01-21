@@ -1,7 +1,7 @@
 import { Button, Typography } from '@material-ui/core';
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Paper from '@material-ui/core/Paper'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -9,7 +9,7 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import axios from 'axios'
-import {openGamesUrl} from '../restUrls'
+import { openGamesUrl } from '../restUrls'
 import { withStyles } from '@material-ui/core/styles'
 import withWidth from '@material-ui/core/withWidth';
 
@@ -39,17 +39,18 @@ const styles = theme => ({
 });
 
 class GamesTable extends Component {
-  state = {games: []};
+  state = { games: [] };
 
   componentWillMount() {
     axios.get(openGamesUrl)
       .then(r => {
-        this.setState({games: r.data})})
+        this.setState({ games: r.data })
+      })
       .catch(e => console.log(e.response.data))
   }
 
   render() {
-    const {classes} = this.props
+    const { classes } = this.props
     return <div className={classes.root}>
       <Typography variant="h5" className={classes.title}>
         Open games
@@ -61,7 +62,6 @@ class GamesTable extends Component {
               <TableCell align="right">Name</TableCell>
               <TableCell align="right">Owner</TableCell>
               <TableCell align="right" >Has password</TableCell>
-              <TableCell align="right">Expansions</TableCell>
               <TableCell />
             </TableRow>
           </TableHead>
@@ -71,7 +71,6 @@ class GamesTable extends Component {
                 <TableCell align="right">{game.name}</TableCell>
                 <TableCell align="right">{game.owner}</TableCell>
                 <TableCell align="right">{game.hasPassword ? "Yes" : "No"}</TableCell>
-                <TableCell align="right">{game.expansions.join(", ")}</TableCell>
                 <TableCell align="right">
                   <Button color="primary" variant="contained">
                     Join

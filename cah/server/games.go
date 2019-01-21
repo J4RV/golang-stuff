@@ -1,6 +1,8 @@
 package server
 
 import (
+	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 
@@ -10,16 +12,20 @@ import (
 func handleGames(r *mux.Router) {
 	s := r.PathPrefix("/game").Subrouter()
 	s.Handle("/ListOpen", srvHandler(openGames)).Methods("GET")
+	s.Handle("/Create", srvHandler(createGame)).Methods("POST")
 	/*s.Handle("/Join", srvHandler(playCards)).Methods("POST")
 	s.Handle("/Leave", srvHandler(playCards)).Methods("POST")*/
 }
 
+/*
+OPEN GAMES LIST
+*/
+
 type gameResponse struct {
-	ID          int      `json:"id" `
-	Owner       string   `json:"owner"`
-	Name        string   `json:"name" `
-	HasPassword bool     `json:"hasPassword" `
-	Expansions  []string `json:"expansions" `
+	ID          int    `json:"id" `
+	Owner       string `json:"owner"`
+	Name        string `json:"name" `
+	HasPassword bool   `json:"hasPassword" `
 	//StateID     int      `json:"stateID"`
 }
 
@@ -36,10 +42,38 @@ func openGames(w http.ResponseWriter, req *http.Request) error {
 			Owner:       owner.Username,
 			Name:        g.Name,
 			HasPassword: g.Password != "",
-			Expansions:  g.Expansions,
 			//StateID:     g.StateID,
 		})
 	}
 	writeResponse(w, response)
+	return nil
+}
+
+/*
+CREATE GAME
+*/
+
+type createGamePayload struct {
+	Name     string `json:"name"`
+	Password string `json:"password,omitempty"`
+}
+
+func createGame(w http.ResponseWriter, req *http.Request) error {
+	// User is logged
+	u, err := userFromSession(req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusForbidden)
+	}
+	// Decode user's payload
+	var payload createGamePayload
+	decoder := json.NewDecoder(req.Body)
+	err = decoder.Decode(&payload)
+	if err != nil {
+		return errors.New("Misconstructed payload")
+	}
+	err = usecase.Game.Create(u, payload.Name, payload.Password)
+	if err != nil {
+		return err
+	}
 	return nil
 }

@@ -3,6 +3,7 @@ package usecase
 import (
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/j4rv/golang-stuff/cah"
 )
@@ -24,6 +25,21 @@ func NewGameStateUsecase(store cah.GameStateStore) *stateController {
 	return &stateController{store: store}
 }
 
+func (control stateController) NewGameState() cah.GameState {
+	ret := cah.GameState{
+		Players:     []*cah.Player{},
+		HandSize:    10,
+		DiscardPile: []cah.WhiteCard{},
+		WhiteDeck:   []cah.WhiteCard{},
+		BlackDeck:   []cah.BlackCard{},
+	}
+	ret, err := control.store.Create(ret)
+	if err != nil {
+		log.Println("Error while creating a new game:", err)
+	}
+	return ret
+}
+
 func (control stateController) ByID(id int) (cah.GameState, error) {
 	return control.store.ByID(id)
 }
@@ -43,14 +59,17 @@ func (control stateController) Start(p []*cah.Player, g cah.GameState, opts ...c
 	if p == nil || len(p) < 3 {
 		return g, fmt.Errorf("Wrong players argument: '%v'. Cannot be nil and the minimum amount of players is 3", p)
 	}
+
 	ret := g.Clone()
+	ret.Players = p
+	applyOptions(&ret, opts...)
+
 	ret, err := control.putBlackCardInPlay(g)
 	if err != nil {
 		return g, err
 	}
-	ret.Players = p
+
 	playersDraw(&ret)
-	applyOptions(&ret, opts...)
 	err = control.store.Update(ret)
 	if err != nil {
 		return g, err

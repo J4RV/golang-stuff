@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/j4rv/golang-stuff/cah"
@@ -10,29 +9,24 @@ import (
 
 type gameController struct {
 	store cah.GameStore
-	users cah.UserStore
+	users cah.UserUsecases
 }
 
-func NewGameUsecase(store cah.GameStore, us cah.UserStore) *gameController {
+func NewGameUsecase(store cah.GameStore, uuc cah.UserUsecases) *gameController {
 	return &gameController{
 		store: store,
-		users: us,
+		users: uuc,
 	}
 }
 
-func (control gameController) Create(owner cah.User, name, pass string, expansions []string, state cah.GameState) error {
-	if state.Phase != cah.NotStarted {
-		return errors.New("Cannot create a new game with an already started State")
-	}
+func (control gameController) Create(owner cah.User, name, pass string) error {
 	owner, ok := control.users.ByID(owner.ID)
 	if !ok {
 		return fmt.Errorf("No user find with owner ID %d", owner.ID)
 	}
 	game := cah.Game{
-		OwnerID:    owner.ID,
-		Name:       name,
-		Expansions: expansions,
-		StateID:    state.ID,
+		OwnerID: owner.ID,
+		Name:    name,
 	}
 	if pass != "" {
 		hashed, err := gamePassHash(pass)
