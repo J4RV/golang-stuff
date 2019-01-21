@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import ErrorIcon from '@material-ui/icons/Error'
 import Snackbar from '@material-ui/core/Snackbar'
 import SnackbarContent from '@material-ui/core/SnackbarContent'
-import CloseIcon from '@material-ui/icons/Close'
-import IconButton from "@material-ui/core/IconButton"
+import CloseButton from './CloseButton'
 import { withStyles } from '@material-ui/core/styles'
 
 const styles = theme => ({
@@ -42,15 +41,8 @@ class ErrorSnackbar extends Component {
           </span>
         }
         action={[
-        <IconButton
-          key="close"
-          aria-label="Close"
-          color="inherit"
-          onClick={this.props.onClose}
-        >
-          <CloseIcon />
-        </IconButton>
-      ]}
+          <CloseButton onClick={this.props.onClose} />
+        ]}
       />
     </Snackbar>
   }

@@ -3,47 +3,68 @@ import { createGameUrl } from '../restUrls'
 
 import Button from '@material-ui/core/Button'
 import ErrorSnackbar from '../components/ErrorSnackbar'
-import Footer from '../Footer'
-import FormControl from '@material-ui/core/FormControl'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import Dialog from '@material-ui/core/Dialog'
 import { Redirect } from 'react-router'
 import TextField from '@material-ui/core/TextField'
-import Typography from '@material-ui/core/Typography'
 import axios from 'axios'
 import { withStyles } from '@material-ui/core/styles'
 
 const styles = theme => ({
-  container: {
-    textAlign: "center",
-    marginTop: theme.spacing.unit * 2,
-  },
   form: {
-    maxWidth: 260,
-    marginTop: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit * 2,
+    maxWidth: 360,
     padding: theme.spacing.unit * 2,
+    paddingTop: 0,
     display: "inline-block",
   },
-});
+})
 
-class LoginForm extends Component {
-  state = { username: "", password: "", disabled: false }
+class CreateGameForm extends Component {
+  state = { name: "", password: "", disabled: false, createdSuccessfully: false }
 
-  handleChangeUser = (event) => {
-    let newState = Object.assign({}, this.state)
-    newState.username = event.target.value.trim()
-    this.setState(newState)
-  }
-
-  handleChangePass = (event) => {
-    let newState = Object.assign({}, this.state)
-    newState.password = event.target.value.trim()
-    this.setState(newState)
+  render() {
+    const classes = this.props.classes
+    if (this.state.createdSuccessfully) {
+      return <Redirect to="/game/open" />
+    }
+    return (
+      <form className={classes.form} onSubmit={() => this.handleSubmit(createGameUrl)} >
+        <TextField required fullWidth margin="normal"
+          label="Room name"
+          autoComplete="roomName"
+          onChange={this.handleChangeName}
+        />
+        <TextField fullWidth margin="normal"
+          label="Room password"
+          autoComplete="roomPassword"
+          onChange={this.handleChangePass}
+        />
+        <DialogActions>
+          <Button margin="normal"
+            onClick={this.props.onCancel}
+            disabled={this.state.disabled}
+          >Cancel</Button>
+          <Button margin="normal" autoFocus
+            type="submit"
+            variant="contained"
+            color="primary"
+            onClick={() => this.handleSubmit(createGameUrl)}
+            disabled={this.state.disabled}
+          >Create Game</Button>
+        </DialogActions>
+        <ErrorSnackbar
+          msg={this.state.errormsg}
+          onClose={() => this.setState({ ...this.state, errormsg: null })}
+        />
+      </form>
+    )
   }
 
   handleSubmit = (url) => {
     this.setState({ ...this.state, disabled: true })
     let payload = {
-      username: this.state.username,
+      name: this.state.name,
       password: this.state.password,
     }
     axios.post(url, payload)
@@ -58,44 +79,24 @@ class LoginForm extends Component {
       })
   }
 
-  render() {
-    const classes = this.props.classes
-    return <div className={classes.container}>
-      <Typography variant="h2" gutterBottom>
-        Cards Against Humanity
-      </Typography>
-      <Typography variant="h4" gutterBottom>
-        A party game for horrible people.
-      </Typography>
-      <form className={classes.form} onSubmit={() => this.handleSubmit("login")} >
-        <TextField required fullWidth margin="normal"
-          label="Room name"
-          autoComplete="room_name"
-          onChange={this.handleChangeUser}
-        />
-        <TextField fullWidth margin="normal"
-          label="Room password"
-          type="password"
-          autoComplete="room_password"
-          onChange={this.handleChangePass}
-        />
-        <FormControl margin="normal" fullWidth>
-          <Button margin="normal"
-            type="submit"
-            variant="contained"
-            color="primary"
-            onClick={() => this.handleSubmit(loginUrl)}
-            disabled={this.state.disabled}
-          >Create Game</Button>
-        </FormControl>
-        <ErrorSnackbar
-          msg={this.state.errormsg}
-          onClose={() => this.setState({ ...this.state, errormsg: null })}
-        />
-        <Footer />
-      </form>
-    </div>
+  handleChangeName = (event) => {
+    let newState = Object.assign({}, this.state)
+    newState.name = event.target.value.trim()
+    this.setState(newState)
+  }
+
+  handleChangePass = (event) => {
+    let newState = Object.assign({}, this.state)
+    newState.password = event.target.value.trim()
+    this.setState(newState)
   }
 }
 
-export default withStyles(styles)(LoginForm)
+const CreateGameDialog = (props) => (
+  <Dialog aria-labelledby="create-game-dialog-title" {...props}>
+    <DialogTitle id="create-game-dialog-title">Create new Game</DialogTitle>
+    <CreateGameForm classes={props.classes} onValidSubmit={props.onCreation} />
+  </Dialog>
+)
+
+export default withStyles(styles)(CreateGameDialog)

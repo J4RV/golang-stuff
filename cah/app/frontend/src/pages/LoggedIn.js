@@ -50,11 +50,13 @@ class LoginForm extends Component {
     axios.post(url, payload)
       .then(this.props.onValidSubmit)
       .catch(r => {
-        this.setState({
-          ...this.state,
-          errormsg: r.response.data,
-          disabled: false
-        })
+        if (r.response) {
+          this.setState({
+            ...this.state,
+            errormsg: r.response.data,
+            disabled: false
+          })
+        }
       })
     return false
   }
@@ -114,7 +116,7 @@ class LoginForm extends Component {
 
 class LoggedInControl extends Component {
   state = {};
-  setValid = (v) => { this.setState({ validcookie: v }) }
+  setValid = (v) => this.setState({ validcookie: v })
 
   componentWillMount() {
     axios.get(validCookieUrl)

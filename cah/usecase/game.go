@@ -1,7 +1,9 @@
 package usecase
 
 import (
+	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/j4rv/golang-stuff/cah"
 	"golang.org/x/crypto/bcrypt"
@@ -20,13 +22,17 @@ func NewGameUsecase(store cah.GameStore, uuc cah.UserUsecases) *gameController {
 }
 
 func (control gameController) Create(owner cah.User, name, pass string) error {
+	trimmed := strings.TrimSpace(name)
+	if trimmed == "" {
+		return errors.New("A game name cannot be blank")
+	}
 	owner, ok := control.users.ByID(owner.ID)
 	if !ok {
 		return fmt.Errorf("No user find with owner ID %d", owner.ID)
 	}
 	game := cah.Game{
 		OwnerID: owner.ID,
-		Name:    name,
+		Name:    trimmed,
 	}
 	if pass != "" {
 		hashed, err := gamePassHash(pass)

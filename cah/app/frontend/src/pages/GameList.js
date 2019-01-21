@@ -1,6 +1,7 @@
 import { Button, Typography } from '@material-ui/core';
 import React, { Component } from 'react'
 
+import GameCreate from './GameCreate'
 import { Link } from 'react-router-dom'
 import Paper from '@material-ui/core/Paper'
 import Table from '@material-ui/core/Table'
@@ -39,15 +40,21 @@ const styles = theme => ({
 });
 
 class GamesTable extends Component {
-  state = { games: [] };
+  state = { games: [], creatingGame: false };
 
   componentWillMount() {
+    this.updateGames()
+  }
+
+  updateGames = () => {
     axios.get(openGamesUrl)
       .then(r => {
-        this.setState({ games: r.data })
+        this.setState({ ...this.state, games: r.data })
       })
       .catch(e => console.log(e.response.data))
   }
+
+  creatingGame = (value) => this.setState({ ...this.state, creatingGame: value })
 
   render() {
     const { classes } = this.props
@@ -81,15 +88,17 @@ class GamesTable extends Component {
           </TableBody>
         </Table>
       </Paper>
-      <Link to="/game/create">
-        <Button
-          type="button"
-          //variant="contained"
-          className={classes.createBtn}
-        >
-          Create new game
-        </Button>
-      </Link>
+      <Button
+        type="button"
+        onClick={() => this.creatingGame(true)}
+        className={classes.createBtn}>
+        Create new game
+      </Button>
+      <GameCreate
+        open={this.state.creatingGame}
+        onCreation={() => { this.updateGames(); this.creatingGame(false) }}
+        onClose={() => this.creatingGame(false)}
+      />
     </div>
   }
 }
