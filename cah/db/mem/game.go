@@ -2,6 +2,7 @@ package mem
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/j4rv/golang-stuff/cah"
 )
@@ -30,6 +31,16 @@ func (store *gameMemStore) Create(g cah.Game) error {
 	return nil
 }
 
+func (store *gameMemStore) ByID(id int) (cah.Game, error) {
+	store.lock()
+	defer store.release()
+	g, ok := store.games[id]
+	if !ok {
+		return g, fmt.Errorf("No game found with id %d", id)
+	}
+	return g, nil
+}
+
 func (store *gameMemStore) ByStatePhase(p cah.Phase) []cah.Game {
 	store.lock()
 	defer store.release()
@@ -40,4 +51,11 @@ func (store *gameMemStore) ByStatePhase(p cah.Phase) []cah.Game {
 		}
 	}
 	return ret
+}
+
+func (store *gameMemStore) Update(g cah.Game) error {
+	store.lock()
+	defer store.release()
+	store.games[g.ID] = g
+	return nil
 }

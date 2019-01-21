@@ -2,13 +2,16 @@ package cah
 
 type GameStore interface {
 	Create(Game) error
+	ByID(int) (Game, error)
 	ByStatePhase(Phase) []Game
+	Update(Game) error
 }
 
 type GameUsecases interface {
 	Create(owner User, name, pass string) error
+	ByID(int) (Game, error)
 	AllOpen() []Game
-	//TODO Join(Game) error
+	UserJoins(User, Game) error
 	//Start(gameID int, options ...Option) error
 }
 

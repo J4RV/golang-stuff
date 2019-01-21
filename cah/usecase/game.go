@@ -33,7 +33,7 @@ func (control gameController) Create(owner cah.User, name, pass string) error {
 	game := cah.Game{
 		OwnerID: owner.ID,
 		Name:    trimmed,
-		Users:   []cah.User{},
+		Users:   []cah.User{owner},
 	}
 	if pass != "" {
 		hashed, err := gamePassHash(pass)
@@ -45,8 +45,22 @@ func (control gameController) Create(owner cah.User, name, pass string) error {
 	return control.store.Create(game)
 }
 
+func (control gameController) ByID(id int) (cah.Game, error) {
+	return control.store.ByID(id)
+}
+
 func (control gameController) AllOpen() []cah.Game {
 	return control.store.ByStatePhase(cah.NotStarted)
+}
+
+func (control gameController) UserJoins(user cah.User, game cah.Game) error {
+	for _, u := range game.Users {
+		if u.ID == user.ID {
+			return nil // don't add the user if they already joined
+		}
+	}
+	game.Users = append(game.Users, user)
+	return control.store.Update(game)
 }
 
 // crypto

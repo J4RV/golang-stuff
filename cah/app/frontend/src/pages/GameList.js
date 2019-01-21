@@ -1,16 +1,16 @@
 import { Button, Typography } from '@material-ui/core';
 import React, { Component } from 'react'
+import { joinGameUrl, openGamesUrl } from '../restUrls'
 
 import GameCreate from './GameCreate'
-import { Link } from 'react-router-dom'
 import Paper from '@material-ui/core/Paper'
+import { Redirect } from 'react-router'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import axios from 'axios'
-import { openGamesUrl } from '../restUrls'
 import { withStyles } from '@material-ui/core/styles'
 import withWidth from '@material-ui/core/withWidth';
 
@@ -39,13 +39,14 @@ const styles = theme => ({
   },
 });
 
-const GamesTable = (games) => (
+const GamesTable = ({ games, joinGame }) => (
   <Table>
     <TableHead>
       <TableRow>
         <TableCell align="right">Name</TableCell>
         <TableCell align="right">Owner</TableCell>
-        <TableCell align="right" >Has password</TableCell>
+        <TableCell align="right">Has password</TableCell>
+        <TableCell align="right">Current players</TableCell>
         <TableCell />
       </TableRow>
     </TableHead>
@@ -55,10 +56,14 @@ const GamesTable = (games) => (
           <TableCell align="right">{game.name}</TableCell>
           <TableCell align="right">{game.owner}</TableCell>
           <TableCell align="right">{game.hasPassword ? "Yes" : "No"}</TableCell>
+          <TableCell align="right">{game.players.join(", ")}</TableCell>
           <TableCell align="right">
-            <Button color="primary" variant="contained">
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={() => joinGame(game.id)}>
               Join
-                  </Button>
+            </Button>
           </TableCell>
         </TableRow>
       ))}
@@ -67,27 +72,30 @@ const GamesTable = (games) => (
 )
 
 class GameListPage extends Component {
-  state = { games: [], creatingGame: false };
+  state = { games: [], creatingGame: false, joinedGame: null };
 
   render() {
     const { classes } = this.props
+    if (this.state.joinedGame) {
+      return <Redirect to={`room/${this.state.joinedGame}`} />
+    }
     return <div className={classes.root}>
       <Typography variant="h5" className={classes.title}>
         Open games
       </Typography>
       <Paper className={classes.tableContainer}>
-        <GamesTable games={this.state.games} />
+        <GamesTable games={this.state.games} joinGame={this.joinGame} />
       </Paper>
       <Button
         type="button"
-        onClick={() => this.creatingGame(true)}
+        onClick={() => this.setCreatingGame(true)}
         className={classes.createBtn}>
         Create new game
       </Button>
       <GameCreate
         open={this.state.creatingGame}
-        onCreation={() => { this.refreshGames(); this.creatingGame(false) }}
-        onClose={() => this.creatingGame(false)}
+        onCreation={() => { this.refreshGames(); this.setCreatingGame(false) }}
+        onClose={() => this.setCreatingGame(false)}
       />
     </div>
   }
@@ -101,10 +109,16 @@ class GameListPage extends Component {
       .then(r => {
         this.setState({ ...this.state, games: r.data })
       })
-      .catch(e => console.log(e.response.data))
+      .catch(e => window.alert(e.response.data))
   }
 
-  creatingGame = (value) => this.setState({ ...this.state, creatingGame: value })
+  joinGame = (gameID) => {
+    axios.post(joinGameUrl, { id: gameID })
+      .then(this.setState({ ...this.state, joinedGame: gameID }))
+      .catch(e => window.alert(e.response.data))
+  }
+
+  setCreatingGame = (value) => this.setState({ ...this.state, creatingGame: value })
 }
 
 const GameList = (props) => (

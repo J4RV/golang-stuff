@@ -18,7 +18,7 @@ func handleUsers(r *mux.Router) {
 	s.HandleFunc("/login", processLogin).Methods("POST")
 	s.HandleFunc("/register", processRegister).Methods("POST")
 	s.HandleFunc("/logout", processLogout).Methods("POST", "GET")
-	s.HandleFunc("/validcookie", validCookie).Methods("GET")
+	s.HandleFunc("/valid-cookie", validCookie).Methods("GET")
 }
 
 type loginPayload struct {

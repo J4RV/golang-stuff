@@ -2,13 +2,14 @@
 export const loginUrl = "user/login"
 export const logoutUrl = "user/logout"
 export const registerUrl = "user/register"
-export const validCookieUrl = "user/validcookie"
+export const validCookieUrl = "user/valid-cookie"
 
 // Game state
-export const gameStateUrl = (stateID) => `gamestate/${stateID}/State`
-export const playCardsUrl = (stateID) => `gamestate/${stateID}/PlayCards`
-export const chooseWinnerUrl = (stateID) => `gamestate/${stateID}/ChooseWinner`
+export const gameStateUrl = (stateID) => `gamestate/${stateID}/state`
+export const playCardsUrl = (stateID) => `gamestate/${stateID}/play-cards`
+export const chooseWinnerUrl = (stateID) => `gamestate/${stateID}/choose-winner`
 
 // Game
-export const openGamesUrl = "game/ListOpen"
-export const createGameUrl = "game/Create"
+export const openGamesUrl = "game/list-open"
+export const createGameUrl = "game/create"
+export const joinGameUrl = "game/join"

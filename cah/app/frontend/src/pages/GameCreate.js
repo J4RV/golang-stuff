@@ -1,14 +1,13 @@
 import React, { Component } from 'react'
-import { createGameUrl } from '../restUrls'
 
 import Button from '@material-ui/core/Button'
-import ErrorSnackbar from '../components/ErrorSnackbar'
+import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogTitle from '@material-ui/core/DialogTitle'
-import Dialog from '@material-ui/core/Dialog'
-import { Redirect } from 'react-router'
+import ErrorSnackbar from '../components/ErrorSnackbar'
 import TextField from '@material-ui/core/TextField'
 import axios from 'axios'
+import { createGameUrl } from '../restUrls'
 import { withStyles } from '@material-ui/core/styles'
 
 const styles = theme => ({
@@ -21,18 +20,15 @@ const styles = theme => ({
 })
 
 class CreateGameForm extends Component {
-  state = { name: "", password: "", disabled: false, createdSuccessfully: false }
+  state = { name: "", password: "", disabled: false }
 
   render() {
     const classes = this.props.classes
-    if (this.state.createdSuccessfully) {
-      return <Redirect to="/game/open" />
-    }
     return (
       <form className={classes.form} onSubmit={() => this.handleSubmit(createGameUrl)} >
         <TextField required fullWidth margin="normal"
           label="Room name"
-          autoComplete="roomName"
+          autoComplete="roomName" s
           onChange={this.handleChangeName}
         />
         <TextField fullWidth margin="normal"

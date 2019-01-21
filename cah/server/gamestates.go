@@ -12,9 +12,9 @@ import (
 
 func handleGameStates(r *mux.Router) {
 	s := r.PathPrefix("/gamestate/{id}").Subrouter()
-	s.Handle("/State", srvHandler(gameStateForUser)).Methods("GET")
-	s.Handle("/ChooseWinner", srvHandler(chooseWinner)).Methods("POST")
-	s.Handle("/PlayCards", srvHandler(playCards)).Methods("POST")
+	s.Handle("/state", srvHandler(gameStateForUser)).Methods("GET")
+	s.Handle("/choose-winner", srvHandler(chooseWinner)).Methods("POST")
+	s.Handle("/play-cards", srvHandler(playCards)).Methods("POST")
 }
 
 /*
