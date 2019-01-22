@@ -21,8 +21,8 @@ func NewCardStore() *cardMemStore {
 }
 
 func (store *cardMemStore) CreateWhite(t, e string) error {
-	store.lock()
-	defer store.release()
+	store.Lock()
+	defer store.RLock()
 	c := cah.WhiteCard{}
 	c.ID = store.nextID()
 	c.Text = t
@@ -36,8 +36,8 @@ func (store *cardMemStore) CreateWhite(t, e string) error {
 }
 
 func (store *cardMemStore) CreateBlack(t, e string, blanks int) error {
-	store.lock()
-	defer store.release()
+	store.Lock()
+	defer store.RLock()
 	if blanks < 1 {
 		return errors.New("Black cards need to have at least 1 blank")
 	}
@@ -58,14 +58,14 @@ func (store *cardMemStore) CreateBlack(t, e string, blanks int) error {
 }
 
 func (store *cardMemStore) AllWhites() []cah.WhiteCard {
-	store.lock()
-	defer store.release()
+	store.Lock()
+	defer store.RLock()
 	return store.whiteCards
 }
 
 func (store *cardMemStore) AllBlacks() []cah.BlackCard {
-	store.lock()
-	defer store.release()
+	store.Lock()
+	defer store.RLock()
 	return store.blackCards
 }
 
