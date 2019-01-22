@@ -19,7 +19,7 @@ func NewGameStateStore() *stateMemStore {
 
 func (store *stateMemStore) Create(g cah.GameState) (cah.GameState, error) {
 	store.Lock()
-	defer store.RLock()
+	defer store.Unlock()
 	g.ID = store.nextID()
 	store.games[g.ID] = &g
 	return g, nil
@@ -27,7 +27,7 @@ func (store *stateMemStore) Create(g cah.GameState) (cah.GameState, error) {
 
 func (store *stateMemStore) ByID(id int) (cah.GameState, error) {
 	store.Lock()
-	defer store.RLock()
+	defer store.Unlock()
 	return store.byID(id)
 }
 
@@ -41,7 +41,7 @@ func (store *stateMemStore) byID(id int) (cah.GameState, error) {
 
 func (store *stateMemStore) Update(g cah.GameState) error {
 	store.Lock()
-	defer store.RLock()
+	defer store.Unlock()
 	_, err := store.byID(g.ID)
 	if err != nil {
 		return err
@@ -52,7 +52,7 @@ func (store *stateMemStore) Update(g cah.GameState) error {
 
 func (store *stateMemStore) Delete(id int) error {
 	store.Lock()
-	defer store.RLock()
+	defer store.Unlock()
 	_, err := store.byID(id)
 	if err != nil {
 		return err
