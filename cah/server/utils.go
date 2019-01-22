@@ -2,10 +2,7 @@ package server
 
 import (
 	"errors"
-	"net/http"
-	"strconv"
 
-	"github.com/gorilla/mux"
 	"github.com/j4rv/golang-stuff/cah"
 )
 
@@ -25,19 +22,6 @@ func player(g cah.GameState, u cah.User) (*cah.Player, error) {
 		return &cah.Player{}, errors.New("You are not playing this game")
 	}
 	return g.Players[i], nil
-}
-
-func gameFromRequest(req *http.Request) (cah.GameState, error) {
-	id := mux.Vars(req)["id"]
-	idInt, err := strconv.Atoi(id)
-	if err != nil {
-		return cah.GameState{}, err
-	}
-	g, err := usecase.GameState.ByID(idInt)
-	if err != nil {
-		return g, errors.New("Could not get game from request")
-	}
-	return g, nil
 }
 
 // TODO move to data: CreatePlayersFromUsers

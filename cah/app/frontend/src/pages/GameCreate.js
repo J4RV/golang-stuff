@@ -5,6 +5,7 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import ErrorSnackbar from '../components/ErrorSnackbar'
+import { Redirect } from 'react-router-dom'
 import TextField from '@material-ui/core/TextField'
 import axios from 'axios'
 import { createGameUrl } from '../restUrls'
@@ -19,60 +20,69 @@ const styles = theme => ({
   },
 })
 
-class CreateGameForm extends Component {
-  state = { name: "", password: "", disabled: false }
+class CreateGameDialog extends Component {
+  state = { name: "", password: "", waitingResponse: false, closed: false }
 
   render() {
     const classes = this.props.classes
+    if (this.state.closed) {
+      return <Redirect to="/" />
+    }
     return (
-      <form className={classes.form} onSubmit={() => this.handleSubmit(createGameUrl)} >
-        <TextField required fullWidth margin="normal"
-          label="Room name"
-          autoComplete="roomName" s
-          onChange={this.handleChangeName}
-        />
-        <TextField fullWidth margin="normal"
-          label="Room password"
-          autoComplete="roomPassword"
-          onChange={this.handleChangePass}
-        />
-        <DialogActions>
-          <Button margin="normal"
-            onClick={this.props.onCancel}
-            disabled={this.state.disabled}
-          >Cancel</Button>
-          <Button margin="normal" autoFocus
-            type="submit"
-            variant="contained"
-            color="primary"
-            onClick={() => this.handleSubmit(createGameUrl)}
-            disabled={this.state.disabled}
-          >Create Game</Button>
-        </DialogActions>
-        <ErrorSnackbar
-          msg={this.state.errormsg}
-          onClose={() => this.setState({ ...this.state, errormsg: null })}
-        />
-      </form>
+      <Dialog open={true} onClose={this.close} {...this.props} aria-labelledby="create-game-dialog-title">
+        <DialogTitle id="create-game-dialog-title">Create new Game</DialogTitle>
+        <form className={classes.form} onSubmit={this.handleSubmit} >
+          <TextField required fullWidth margin="normal"
+            label="Room name"
+            autoComplete="roomName" s
+            onChange={this.handleChangeName}
+          />
+          <TextField fullWidth margin="normal"
+            label="Room password"
+            autoComplete="roomPassword"
+            onChange={this.handleChangePass}
+          />
+          <DialogActions>
+            <Button margin="normal"
+              onClick={this.close}
+              disabled={this.state.waitingResponse}
+            >Cancel</Button>
+            <Button margin="normal" autoFocus
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={this.state.waitingResponse}
+            >Create Game</Button>
+          </DialogActions>
+          <ErrorSnackbar
+            msg={this.state.errormsg}
+            onClose={() => this.setState({ ...this.state, errormsg: null })}
+          />
+        </form>
+      </Dialog>
     )
   }
 
-  handleSubmit = (url) => {
-    this.setState({ ...this.state, disabled: true })
+  handleSubmit = () => {
+    this.setState({ ...this.state, waitingResponse: true })
     let payload = {
       name: this.state.name,
       password: this.state.password,
     }
-    axios.post(url, payload)
-      .then(this.props.onValidSubmit)
+    axios.post(createGameUrl, payload)
+      .then(this.close)
       .catch(r => {
         this.setState({
           ...this.state,
           errormsg: r.response.data,
-          disabled: false
+          waitingResponse: false
         })
         return false
       })
+  }
+
+  close = () => {
+    this.setState({ ...this.state, closed: true })
   }
 
   handleChangeName = (event) => {
@@ -87,12 +97,5 @@ class CreateGameForm extends Component {
     this.setState(newState)
   }
 }
-
-const CreateGameDialog = (props) => (
-  <Dialog aria-labelledby="create-game-dialog-title" {...props}>
-    <DialogTitle id="create-game-dialog-title">Create new Game</DialogTitle>
-    <CreateGameForm classes={props.classes} onValidSubmit={props.onCreation} />
-  </Dialog>
-)
 
 export default withStyles(styles)(CreateGameDialog)

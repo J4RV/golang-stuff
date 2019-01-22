@@ -2,7 +2,7 @@ import { Button, Typography } from '@material-ui/core';
 import React, { Component } from 'react'
 import { joinGameUrl, openGamesUrl } from '../restUrls'
 
-import GameCreate from './GameCreate'
+import { Link } from 'react-router-dom'
 import Paper from '@material-ui/core/Paper'
 import { Redirect } from 'react-router'
 import Table from '@material-ui/core/Table'
@@ -45,7 +45,7 @@ const GamesTable = ({ games, joinGame }) => (
       <TableRow>
         <TableCell align="right">Name</TableCell>
         <TableCell align="right">Owner</TableCell>
-        <TableCell align="right">Has password</TableCell>
+        {/*<TableCell align="right">Has password</TableCell>*/}
         <TableCell align="right">Current players</TableCell>
         <TableCell />
       </TableRow>
@@ -55,7 +55,7 @@ const GamesTable = ({ games, joinGame }) => (
         <TableRow key={game.id}>
           <TableCell align="right">{game.name}</TableCell>
           <TableCell align="right">{game.owner}</TableCell>
-          <TableCell align="right">{game.hasPassword ? "Yes" : "No"}</TableCell>
+          {/*<TableCell align="right">{game.hasPassword ? "Yes" : "No"}</TableCell>*/}
           <TableCell align="right">{game.players.join(", ")}</TableCell>
           <TableCell align="right">
             <Button
@@ -72,7 +72,7 @@ const GamesTable = ({ games, joinGame }) => (
 )
 
 class GameListPage extends Component {
-  state = { games: [], creatingGame: false, joinedGame: null };
+  state = { games: [], joinedGame: null };
 
   render() {
     const { classes } = this.props
@@ -86,17 +86,14 @@ class GameListPage extends Component {
       <Paper className={classes.tableContainer}>
         <GamesTable games={this.state.games} joinGame={this.joinGame} />
       </Paper>
-      <Button
-        type="button"
-        onClick={() => this.setCreatingGame(true)}
-        className={classes.createBtn}>
-        Create new game
-      </Button>
-      <GameCreate
-        open={this.state.creatingGame}
-        onCreation={() => { this.refreshGames(); this.setCreatingGame(false) }}
-        onClose={() => this.setCreatingGame(false)}
-      />
+      <Link to="list/create">
+        <Button
+          type="button"
+          onClick={() => this.setCreatingGame(true)}
+          className={classes.createBtn}>
+          Create new game
+        </Button>
+      </Link>
     </div>
   }
 

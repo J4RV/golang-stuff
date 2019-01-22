@@ -5,13 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/j4rv/golang-stuff/cah"
 )
 
 func handleGameStates(r *mux.Router) {
-	s := r.PathPrefix("/gamestate/{id}").Subrouter()
+	s := r.PathPrefix("/gamestate/{gameStateID}").Subrouter()
 	s.Handle("/state", srvHandler(gameStateForUser)).Methods("GET")
 	s.Handle("/choose-winner", srvHandler(chooseWinner)).Methods("POST")
 	s.Handle("/play-cards", srvHandler(playCards)).Methods("POST")
@@ -58,7 +59,7 @@ func gameStateForUser(w http.ResponseWriter, req *http.Request) error {
 	if err != nil {
 		return err
 	}
-	game, err := gameFromRequest(req)
+	game, err := gameStateFromRequest(req)
 	if err != nil {
 		return err
 	}
@@ -142,7 +143,7 @@ func chooseWinner(w http.ResponseWriter, req *http.Request) error {
 	if err != nil {
 		return errors.New("Misconstructed payload")
 	}
-	game, err := gameFromRequest(req)
+	game, err := gameStateFromRequest(req)
 	if err != nil {
 		return err
 	}
@@ -181,7 +182,7 @@ func playCards(w http.ResponseWriter, req *http.Request) error {
 	if err != nil {
 		return errors.New("Misconstructed payload")
 	}
-	game, err := gameFromRequest(req)
+	game, err := gameStateFromRequest(req)
 	if err != nil {
 		return err
 	}
@@ -206,4 +207,17 @@ func writeResponse(w http.ResponseWriter, obj interface{}) {
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprintf(w, "%s", j)
 	}
+}
+
+func gameStateFromRequest(req *http.Request) (cah.GameState, error) {
+	strID := mux.Vars(req)["gameStateID"]
+	id, err := strconv.Atoi(strID)
+	if err != nil {
+		return cah.GameState{}, err
+	}
+	g, err := usecase.GameState.ByID(id)
+	if err != nil {
+		return g, errors.New("Could not get game state from request")
+	}
+	return g, nil
 }

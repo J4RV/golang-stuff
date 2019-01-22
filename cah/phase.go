@@ -10,9 +10,9 @@ const (
 )
 
 var phases = [...]string{
-	"NotStarted",
-	"SinnersPlaying",
-	"CzarChoosingWinner",
+	"Not started",
+	"Sinners playing their cards",
+	"Czar is choosing winner",
 	"Finished",
 }
 

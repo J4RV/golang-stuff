@@ -3,6 +3,7 @@ package usecase
 import (
 	"errors"
 	"log"
+	"strings"
 
 	"github.com/j4rv/golang-stuff/cah"
 	"golang.org/x/crypto/bcrypt"
@@ -17,6 +18,13 @@ func NewUserUsecase(store cah.UserStore) *userController {
 }
 
 func (uc userController) Register(name, pass string) (cah.User, error) {
+	trimmedName := strings.TrimSpace(name)
+	if trimmedName == "" {
+		return cah.User{}, errors.New("Username cannot be empty.")
+	}
+	if pass == "" {
+		return cah.User{}, errors.New("Password cannot be empty.")
+	}
 	_, ok := uc.store.ByName(name)
 	if ok {
 		return cah.User{}, errors.New("That username already exists. Please try another.")
@@ -35,7 +43,8 @@ func (uc userController) ByID(id int) (cah.User, bool) {
 }
 
 func (uc userController) Login(name, pass string) (cah.User, bool) {
-	u, ok := uc.store.ByName(name)
+	trimmedName := strings.TrimSpace(name)
+	u, ok := uc.store.ByName(trimmedName)
 	if !ok {
 		return cah.User{}, false
 	}

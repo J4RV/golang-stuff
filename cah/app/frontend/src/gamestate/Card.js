@@ -51,7 +51,7 @@ const styles = theme => ({
 });
 
 class Card extends React.Component {
-  render(){
+  render() {
     const { text, isBlack, elevated, glowing, inHand, expansion, className, classes, style, ...rest } = this.props
     let shadowClass
     if (glowing) {
@@ -72,8 +72,11 @@ class Card extends React.Component {
     </div>
   }
   randomRotate = () => {
-    this.setState({rotation: Math.random() * 5 - 2.5})
+    this.setState({ rotation: Math.random() * 5 - 2.5 })
+    /*
+    Too expensive for mobile, check page width and only do this for large screens
     window.setTimeout(this.randomRotate, Math.random() * 2000 + 1000)    
+    */
   }
   componentWillMount() {
     this.randomRotate()

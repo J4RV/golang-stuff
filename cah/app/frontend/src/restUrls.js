@@ -1,3 +1,5 @@
+export let baseUrl = window.location.host
+
 // User
 export const loginUrl = "user/login"
 export const logoutUrl = "user/logout"
@@ -13,3 +15,4 @@ export const chooseWinnerUrl = (stateID) => `gamestate/${stateID}/choose-winner`
 export const openGamesUrl = "game/list-open"
 export const createGameUrl = "game/create"
 export const joinGameUrl = "game/join"
+export const roomStateUrl = (gameID) => `game/${gameID}/room-state`

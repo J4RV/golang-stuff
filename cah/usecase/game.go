@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/j4rv/golang-stuff/cah"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type gameController struct {
@@ -31,16 +30,14 @@ func (control gameController) Create(owner cah.User, name, pass string) error {
 		return fmt.Errorf("No user find with owner ID %d", owner.ID)
 	}
 	game := cah.Game{
-		OwnerID: owner.ID,
-		Name:    trimmed,
-		Users:   []cah.User{owner},
+		Owner:  owner,
+		UserID: owner.ID,
+		Name:   trimmed,
+		Users:  []cah.User{owner},
 	}
-	if pass != "" {
-		hashed, err := gamePassHash(pass)
-		if err != nil {
-			return err
-		}
-		game.Password = hashed
+	trimmedPass := strings.TrimSpace(pass)
+	if trimmedPass != "" {
+		game.Password = trimmedPass
 	}
 	return control.store.Create(game)
 }
@@ -61,18 +58,4 @@ func (control gameController) UserJoins(user cah.User, game cah.Game) error {
 	}
 	game.Users = append(game.Users, user)
 	return control.store.Update(game)
-}
-
-// crypto
-
-const gamePassCost = 4
-
-func gamePassHash(p string) (string, error) {
-	b, err := bcrypt.GenerateFromPassword([]byte(p), gamePassCost)
-	return string(b), err
-}
-
-func gameCorrectPass(pass string, storedhash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(storedhash), []byte(pass))
-	return err == nil
 }

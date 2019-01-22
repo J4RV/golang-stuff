@@ -3,14 +3,17 @@ package server
 import (
 	"encoding/json"
 	"errors"
-	"log"
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/j4rv/golang-stuff/cah"
 )
 
 func handleGames(r *mux.Router) {
 	s := r.PathPrefix("/game").Subrouter()
+	s.Handle("/{gameID}/room-state", srvHandler(roomState)).Methods("GET")
 	s.Handle("/list-open", srvHandler(openGames)).Methods("GET")
 	s.Handle("/create", srvHandler(createGame)).Methods("POST")
 	s.Handle("/join", srvHandler(joinGame)).Methods("POST")
@@ -21,36 +24,46 @@ func handleGames(r *mux.Router) {
 OPEN GAMES LIST
 */
 
-type openGameResponse struct {
+type gameRoomResponse struct {
 	ID          int      `json:"id"`
-	Owner       string   `json:"owner"`
 	Name        string   `json:"name"`
+	Owner       string   `json:"owner"`
 	HasPassword bool     `json:"hasPassword"`
 	Players     []string `json:"players"`
+	Phase       string   `json:"phase"`
+}
+
+func roomState(w http.ResponseWriter, req *http.Request) error {
+	g, err := gameFromRequest(req)
+	if err != nil {
+		return err
+	}
+	writeResponse(w, gameToResponse(g))
+	return nil
 }
 
 func openGames(w http.ResponseWriter, req *http.Request) error {
-	response := []openGameResponse{}
+	response := []gameRoomResponse{}
 	for _, g := range usecase.Game.AllOpen() {
-		owner, ok := usecase.User.ByID(g.OwnerID)
-		if !ok {
-			log.Printf("Game '%s' owner with ID %d not found", g.Name, g.OwnerID)
-			continue
-		}
-		players := make([]string, len(g.Users))
-		for i := range g.Users {
-			players[i] = g.Users[i].Username
-		}
-		response = append(response, openGameResponse{
-			ID:          g.ID,
-			Owner:       owner.Username,
-			Name:        g.Name,
-			HasPassword: g.Password != "",
-			Players:     players,
-		})
+		response = append(response, gameToResponse(g))
 	}
 	writeResponse(w, response)
 	return nil
+}
+
+func gameToResponse(g cah.Game) gameRoomResponse {
+	players := make([]string, len(g.Users))
+	for i := range g.Users {
+		players[i] = g.Users[i].Username
+	}
+	return gameRoomResponse{
+		ID:          g.ID,
+		Owner:       g.Owner.Username,
+		Name:        g.Name,
+		HasPassword: g.Password != "",
+		Players:     players,
+		Phase:       g.State.Phase.String(),
+	}
 }
 
 /*
@@ -112,4 +125,19 @@ func joinGame(w http.ResponseWriter, req *http.Request) error {
 		return err
 	}
 	return nil
+}
+
+// Utils
+
+func gameFromRequest(req *http.Request) (cah.Game, error) {
+	strID := mux.Vars(req)["gameID"]
+	id, err := strconv.Atoi(strID)
+	if err != nil {
+		return cah.Game{}, err
+	}
+	g, err := usecase.Game.ByID(id)
+	if err != nil {
+		return g, fmt.Errorf("Could not get game with id %d", id)
+	}
+	return g, nil
 }

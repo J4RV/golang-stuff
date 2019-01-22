@@ -56,9 +56,9 @@ func TestUserByID(t *testing.T) {
 	}
 	for _, row := range table {
 		u, ok := usecase.ByID(row.id)
-		assert.Equal(t, row.found, ok)
+		assert.Equal(t, row.found, ok, row.id)
 		if ok {
-			assert.Equal(t, row.name, u.Username)
+			assert.Equal(t, row.name, u.Username, row.id)
 		}
 	}
 }

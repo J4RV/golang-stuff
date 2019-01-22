@@ -2,13 +2,14 @@ import './App.css'
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import React, { Component } from 'react'
-import {Route, BrowserRouter as Router, Switch} from 'react-router-dom'
+import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
 
 import AppBar from './AppBar'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Game from './pages/Game'
 import GameCreate from './pages/GameCreate'
 import GameList from './pages/GameList'
+import GameRoom from './pages/GameRoom'
 import LoggedIn from './pages/LoggedIn'
 import { Redirect } from 'react-router'
 import cyan from '@material-ui/core/colors/cyan'
@@ -36,13 +37,14 @@ class App extends Component {
         <CssBaseline />
         <LoggedIn>
           <Switch>
-            <Route path="/" render={() => <Redirect to="/game/open" />} exact />
+            <Route path="/" render={() => <Redirect to="/game/list" />} exact />
             <Route path="/" component={AppBar} />
           </Switch>
-          <Route exact path="/game/create" component={GameCreate} />
-          <Route exact path="/game/open" component={GameList} />
+          <Route path="/game/list/create" component={GameCreate} />
+          <Route path="/game/list" component={GameList} />
+          <Route path="/game/room/:gameID" component={GameRoom} />
           <Route path="/ingame/:stateID" component={Game} />
-        </LoggedIn>        
+        </LoggedIn>
       </MuiThemeProvider>
     </Router>
   }
