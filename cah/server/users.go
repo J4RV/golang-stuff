@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -37,7 +36,7 @@ func processLogin(w http.ResponseWriter, req *http.Request) {
 	u, ok := usecase.User.Login(payload.Username, payload.Password)
 	if !ok {
 		log.Printf("%s tried to login using user '%s'", req.RemoteAddr, payload.Username)
-		http.Error(w, "The username and password you entered did not match our records.", http.StatusForbidden)
+		http.Error(w, "The username and password you entered did not match our records.", http.StatusUnauthorized)
 		return
 	}
 	session, err := cookies.Get(req, sessionid)
@@ -45,7 +44,7 @@ func processLogin(w http.ResponseWriter, req *http.Request) {
 	session.Save(req, w)
 	log.Printf("User %s with id %d just logged in!", u.Username, u.ID)
 	// everything ok, back to index with your brand new session!
-	http.Redirect(w, req, "/", http.StatusFound)
+	writeResponse(w, u)
 }
 
 type registerPayload struct {
@@ -64,15 +63,14 @@ func processRegister(w http.ResponseWriter, req *http.Request) {
 	u, err := usecase.User.Register(payload.Username, payload.Password)
 	if err != nil {
 		log.Printf("%s tried to register using user '%s'", req.RemoteAddr, payload.Username)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 	session, err := cookies.Get(req, sessionid)
 	session.Values[userid] = u.ID
 	session.Save(req, w)
 	log.Printf("User %s with id %d just registered!", u.Username, u.ID)
-	// everything ok, back to index with your brand new session!
-	http.Redirect(w, req, "/", http.StatusFound)
+	writeResponse(w, u)
 }
 
 func processLogout(w http.ResponseWriter, req *http.Request) {
@@ -86,9 +84,12 @@ func processLogout(w http.ResponseWriter, req *http.Request) {
 }
 
 func validCookie(w http.ResponseWriter, req *http.Request) {
-	_, err := userFromSession(req)
-	ok := strconv.FormatBool(err == nil)
-	w.Write([]byte(ok))
+	u, err := userFromSession(req)
+	if err != nil {
+		http.Error(w, "you dont own a valid cookie", http.StatusUnauthorized)
+		return
+	}
+	writeResponse(w, u)
 }
 
 /*

@@ -6,9 +6,12 @@ import Card from '../gamestate/Card'
 import ErrorSnackbar from '../components/ErrorSnackbar'
 import Footer from '../Footer'
 import FormControl from '@material-ui/core/FormControl'
+import { Redirect } from 'react-router'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import axios from 'axios'
+import { connect } from 'react-redux'
+import processLoginResponse from '../actions/processLoginResponse'
 import { withStyles } from '@material-ui/core/styles'
 
 const styles = theme => ({
@@ -48,16 +51,12 @@ class LoginForm extends Component {
       password: this.state.password,
     }
     axios.post(url, payload)
-      .then(this.props.onValidSubmit)
-      .catch(r => {
-        if (r.response) {
-          this.setState({
-            ...this.state,
-            errormsg: r.response.data,
-            disabled: false
-          })
-        }
-      })
+      .then(r => this.props.onSubmitResponse(r))
+      .catch(r => this.setState({
+        ...this.state,
+        errormsg: r.response.data,
+        disabled: false,
+      }))
     return false
   }
 
@@ -115,27 +114,24 @@ class LoginForm extends Component {
 }
 
 class LoggedInControl extends Component {
-  state = {};
-  setValid = (v) => this.setState({ validcookie: v })
-
   componentWillMount() {
     axios.get(validCookieUrl)
-      .then(r => {
-        let v = (r.data === true) || (r.data === "true")
-        this.setValid(v)
-      })
+      .then(r => this.props.processLoginResponse(r))
+      .catch(r => this.props.processLoginResponse(r))
   }
-
   render() {
-    if (this.state.validcookie == null) {
+    const { validCookie, processLoginResponse, classes } = this.props
+    if (validCookie == null) {
       return <div>Loading...</div>
     }
-    if (this.state.validcookie) {
-      return this.props.children
+    if (validCookie) {
+      return <Redirect to="/game/list" />
     }
-    return <LoginForm onValidSubmit={() => this.setValid(true)} classes={this.props.classes} />
+    return <LoginForm onSubmitResponse={processLoginResponse} classes={classes} />
   }
-
 }
 
-export default withStyles(styles)(LoggedInControl)
+export default connect(
+  state => ({ validCookie: state.validCookie }),
+  { processLoginResponse }
+)(withStyles(styles)(LoggedInControl))

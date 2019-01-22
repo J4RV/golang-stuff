@@ -86,7 +86,7 @@ class GameListPage extends Component {
       <Paper className={classes.tableContainer}>
         <GamesTable games={this.state.games} joinGame={this.joinGame} />
       </Paper>
-      <Link to="list/create">
+      <Link to="/game/list/create">
         <Button
           type="button"
           onClick={() => this.setCreatingGame(true)}

@@ -1,5 +1,3 @@
-export let baseUrl = window.location.host
-
 // User
 export const loginUrl = "user/login"
 export const logoutUrl = "user/logout"

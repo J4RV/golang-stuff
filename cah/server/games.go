@@ -31,6 +31,7 @@ type gameRoomResponse struct {
 	HasPassword bool     `json:"hasPassword"`
 	Players     []string `json:"players"`
 	Phase       string   `json:"phase"`
+	StateID     int      `json:"stateID"`
 }
 
 func roomState(w http.ResponseWriter, req *http.Request) error {
@@ -63,6 +64,7 @@ func gameToResponse(g cah.Game) gameRoomResponse {
 		HasPassword: g.Password != "",
 		Players:     players,
 		Phase:       g.State.Phase.String(),
+		StateID:     g.State.ID,
 	}
 }
 

@@ -6,15 +6,16 @@ import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
 
 import AppBar from './AppBar'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import Game from './pages/Game'
 import GameCreate from './pages/GameCreate'
 import GameList from './pages/GameList'
 import GameRoom from './pages/GameRoom'
 import LoggedIn from './pages/LoggedIn'
-import { Redirect } from 'react-router'
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
 import cyan from '@material-ui/core/colors/cyan'
 import grey from '@material-ui/core/colors/grey'
 import red from '@material-ui/core/colors/red'
+import reducer from './reducer'
 
 const theme = createMuiTheme({
   palette: {
@@ -34,17 +35,16 @@ class App extends Component {
   render() {
     return <Router>
       <MuiThemeProvider theme={theme}>
-        <CssBaseline />
-        <LoggedIn>
+        <Provider store={createStore(reducer)}>
+          <CssBaseline />
           <Switch>
-            <Route path="/" render={() => <Redirect to="/game/list" />} exact />
+            <Route exact path="/" component={LoggedIn} />
             <Route path="/" component={AppBar} />
           </Switch>
           <Route path="/game/list/create" component={GameCreate} />
           <Route path="/game/list" component={GameList} />
           <Route path="/game/room/:gameID" component={GameRoom} />
-          <Route path="/ingame/:stateID" component={Game} />
-        </LoggedIn>
+        </Provider>
       </MuiThemeProvider>
     </Router>
   }
