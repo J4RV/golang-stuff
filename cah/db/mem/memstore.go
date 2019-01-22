@@ -4,7 +4,7 @@ import "sync"
 
 type abstractMemStore struct {
 	lastID int
-	sync.RWMutex
+	sync.Mutex
 }
 
 func (s *abstractMemStore) nextID() int {
