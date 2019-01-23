@@ -26,6 +26,7 @@ class GameRoom extends Component {
       return <Game stateID={room.stateID} />
     }
     const imOwner = this.props.username === room.owner
+    const enoughPlayers = room.players.length > 2
     return (
       <div className={this.props.classes.container}>
         <Typography variant="h4" gutterBottom>
@@ -37,12 +38,15 @@ class GameRoom extends Component {
         <Typography gutterBottom>
           Players: {room.players.join(", ")}.
         </Typography>
-        {room.players.length > 2
-          ? <EnoughPlayers imOwner={imOwner} />
+        {enoughPlayers
+          ? <Typography gutterBottom>Waiting for the game creator to start the game</Typography>
           : <Typography gutterBottom>Waiting for more players to join</Typography>}
         <Link to="/game/list">
           <Button>Back to games list</Button>
         </Link>
+        {enoughPlayers && imOwner
+          ? <Button variant="contained" color="primary">Start game</Button>
+          : null}
       </div>
     );
   }
@@ -61,14 +65,6 @@ class GameRoom extends Component {
       })
       .catch(e => window.alert(e)
       )
-  }
-}
-
-const EnoughPlayers = ({ imOwner }) => {
-  if (imOwner) {
-    return <Button variant="contained" color="primary">Start game</Button>
-  } else {
-    return <Typography gutterBottom>Waiting for the game creator to start the game</Typography>
   }
 }
 
