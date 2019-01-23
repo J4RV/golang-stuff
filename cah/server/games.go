@@ -19,7 +19,7 @@ func handleGames(r *mux.Router) {
 	s.Handle("/join", srvHandler(joinGame)).Methods("POST")
 	//s.Handle("/Leave", srvHandler(playCards)).Methods("POST")
 	s.Handle("/start", srvHandler(startGame)).Methods("POST")
-	s.Handle("/available-expansions", srvHandler(startGame)).Methods("GET")
+	s.Handle("/available-expansions", srvHandler(availableExpansions)).Methods("GET")
 }
 
 /*
@@ -172,6 +172,17 @@ func startGame(w http.ResponseWriter, req *http.Request) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func availableExpansions(w http.ResponseWriter, req *http.Request) error {
+	// User is logged
+	_, err := userFromSession(req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusForbidden)
+	}
+	exps := usecase.Card.AvailableExpansions()
+	writeResponse(w, exps)
 	return nil
 }
 

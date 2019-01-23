@@ -2,7 +2,7 @@ import './App.css'
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import React, { Component } from 'react'
-import { Route, BrowserRouter as Router, Redirect } from 'react-router-dom'
+import { Redirect, Route, BrowserRouter as Router } from 'react-router-dom'
 
 import AppBar from './AppBar'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -11,6 +11,7 @@ import GameList from './pages/GameList'
 import GameRoom from './pages/GameRoom'
 import LoggedIn from './pages/LoggedIn'
 import { Provider } from 'react-redux'
+import StartGameForm from './pages/StartGameForm'
 import { createStore } from 'redux'
 import cyan from '@material-ui/core/colors/cyan'
 import grey from '@material-ui/core/colors/grey'
@@ -43,6 +44,7 @@ class App extends Component {
             <Route path="/game/list/create" component={GameCreate} />
             <Route path="/game/list" component={GameList} />
             <Route path="/game/room/:gameID" component={GameRoom} />
+            <StartGameForm />
           </LoggedIn>
         </Provider>
       </MuiThemeProvider>

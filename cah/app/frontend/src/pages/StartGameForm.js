@@ -1,108 +1,61 @@
-import React, { Component } from 'react'
-import { availableExpansionsUrl, startGameUrl } from '../restUrls'
+import React, { Component } from "react"
 
-import Button from '@material-ui/core/Button'
-import DialogActions from '@material-ui/core/DialogActions'
-import ErrorSnackbar from '../components/ErrorSnackbar'
-import FormControl from '@material-ui/core/FormControl';
-import Input from '@material-ui/core/Input';
-import MenuItem from '@material-ui/core/MenuItem';
-import { Redirect } from 'react-router-dom'
-import Select from '@material-ui/core/Select';
-import TextField from '@material-ui/core/TextField'
-import axios from 'axios'
-import { withStyles } from '@material-ui/core/styles'
+import Checkbox from "@material-ui/core/Checkbox"
+import ExpansionsSelect from "../components/ExpansionsSelect"
+import FormControl from "@material-ui/core/FormControl"
+import FormControlLabel from "@material-ui/core/FormControlLabel"
+import { TextField } from "@material-ui/core"
+import Typography from "@material-ui/core/Typography"
+import { startGameUrl } from "../restUrls"
+import { withStyles } from "@material-ui/core/styles"
 
 const styles = theme => ({
-  form: {
-    maxWidth: 360,
+  container: {
     padding: theme.spacing.unit * 2,
-    paddingTop: 0,
+    maxWidth: 480,
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+  title: {
+    textAlign: "center",
+  },
+  form: {
+    marginTop: theme.spacing.unit * 2,
     display: "inline-block",
+    textAlign: "right",
+    width: "100%",
   },
 })
 
-class CreateGameDialog extends Component {
-  state = { expansions: ["Loading..."] }
-
+class StartGameForm extends Component {
   render() {
     const { classes, gameID } = this.props
-    const {expansions} = this.state
-    if (this.state.closed) {
-      return <Redirect to="/" />
-    }
     return (
-      <form className={classes.form} onSubmit={this.handleSubmit} >
-        <input type="hidden" id="gameID" value={gameID} />>
-        <FormControl>
-          <Select
-            multiple
-            displayEmpty
-            value={this.state.name}
-            onChange={this.handleChange}
-            input={<Input id="select-multiple-placeholder" />}
-            renderValue={selected => {
-              if (selected.length === 0) {
-                return <em>Placeholder</em>;
-              }
-
-              return selected.join(', ');
-            }}
-          >
-            {expansions.map(name => (
-              <MenuItem key={name} value={name}>
-                {name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <ErrorSnackbar
-          msg={this.state.errormsg}
-          onClose={() => this.setState({ ...this.state, errormsg: null })}
-        />
-      </form>
+      <div className={classes.container}>
+        <Typography variant="h6" gutterBottom className={classes.title}>
+          Game options
+        </Typography>
+        <form className={classes.form} action={startGameUrl}>
+          <input type="hidden" id="gameID" value={gameID} />
+          <ExpansionsSelect />
+          <FormControl fullWidth margin="normal">
+            <TextField
+              id="handSize"
+              label="Hand size"
+              value={10}
+              type="number"
+            />
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <FormControlLabel
+              control={<Checkbox id="randomFirstCzar" color="primary" />}
+              label="Random first Czar"
+            />
+          </FormControl>
+        </form>
+      </div>
     )
-  }
-
-  componentWillMount() {
-    axios.get(availableExpansionsUrl)
-      .then(r => this.setState({ ...this.state, expansions: r.data }))
-  }
-
-  handleSubmit = (event) => {
-    event.preventDefault() // necessary for firefox, or submitting the form will make the page reload!
-    this.setState({ ...this.state, waitingResponse: true })
-    let payload = {
-      name: this.state.name,
-      password: this.state.password,
-    }
-    axios.post(createGameUrl, payload)
-      .then(this.close)
-      .catch(r => {
-        this.setState({
-          ...this.state,
-          errormsg: r.response.data,
-          waitingResponse: false
-        })
-      })
-    return false
-  }
-
-  close = () => {
-    this.setState({ ...this.state, closed: true })
-  }
-
-  handleChangeName = (event) => {
-    let newState = Object.assign({}, this.state)
-    newState.name = event.target.value.trim()
-    this.setState(newState)
-  }
-
-  handleChangePass = (event) => {
-    let newState = Object.assign({}, this.state)
-    newState.password = event.target.value.trim()
-    this.setState(newState)
   }
 }
 
-export default withStyles(styles)(CreateGameDialog)
+export default withStyles(styles)(StartGameForm)
