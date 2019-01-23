@@ -63,7 +63,8 @@ class CreateGameDialog extends Component {
     )
   }
 
-  handleSubmit = () => {
+  handleSubmit = (event) => {
+    event.preventDefault() // necessary for firefox, or submitting the form will make the page reload!
     this.setState({ ...this.state, waitingResponse: true })
     let payload = {
       name: this.state.name,
@@ -77,8 +78,8 @@ class CreateGameDialog extends Component {
           errormsg: r.response.data,
           waitingResponse: false
         })
-        return false
       })
+    return false
   }
 
   close = () => {
