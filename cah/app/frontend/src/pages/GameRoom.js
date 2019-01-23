@@ -64,8 +64,10 @@ class GameRoom extends Component {
     axios.get(roomStateUrl(gameID))
       .then(r => {
         this.setState({ room: r.data })
-        // this would be much better with websockets
-        window.setTimeout(this.updateState, 5000)
+        if (r.data.phase === "Not started") {
+          // this would be much better with websockets
+          window.setTimeout(this.updateState, 5000)
+        }
       })
       .catch(e => window.alert(e)
       )
