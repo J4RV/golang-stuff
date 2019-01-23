@@ -14,12 +14,11 @@ import (
 var commonPass = "dev"
 var commonPassHash, _ = userPassHash(commonPass)
 
-var usecase cah.UserUsecases
-
-func init() {
+func getUserUsecase() cah.UserUsecases {
 	store := mem.NewUserStore()
-	usecase = NewUserUsecase(store)
+	usecase := NewUserUsecase(store)
 	fixture.PopulateUsers(usecase)
+	return usecase
 }
 
 func TestPassHashNotFailing(t *testing.T) {
@@ -43,6 +42,7 @@ func TestCorrectPass(t *testing.T) {
 }
 
 func TestUserByID(t *testing.T) {
+	usecase := getUserUsecase()
 	var table = []struct {
 		id    int
 		name  string
@@ -64,6 +64,7 @@ func TestUserByID(t *testing.T) {
 }
 
 func TestGetUserByLogin(t *testing.T) {
+	usecase := getUserUsecase()
 	u, ok := usecase.Login("Green", "Green")
 	if !ok {
 		t.Error("Could not login as Green")
