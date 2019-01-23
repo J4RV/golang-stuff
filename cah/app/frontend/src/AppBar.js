@@ -1,14 +1,13 @@
-import React from 'react'
 import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
 import Button from '@material-ui/core/Button'
-import Link from '@material-ui/core/Link'
-import Typography from '@material-ui/core/Typography'
-import ShoppingCart from '@material-ui/icons/ShoppingCart'
 import GitHubIcon from './icons/GitHub'
+import React from 'react'
+import ShoppingCart from '@material-ui/icons/ShoppingCart'
+import Toolbar from '@material-ui/core/Toolbar'
+import Typography from '@material-ui/core/Typography'
+import { logoutUrl } from './restUrls'
 import { withStyles } from '@material-ui/core/styles'
 import withWidth from '@material-ui/core/withWidth'
-import {logoutUrl} from './restUrls'
 
 const styles = theme => ({
   appbar: {
@@ -24,23 +23,23 @@ const styles = theme => ({
   },
 });
 
-function TopAppBar ({title, shortTitle, width, classes}) {
+function TopAppBar({ title, shortTitle, width, classes }) {
   return (
     <div>
       <AppBar position='static' className={classes.appbar} >
         <Toolbar>
-          <Typography variant='h6' color='inherit'className={classes.title} >
+          <Typography variant='h6' color='inherit' className={classes.title} >
             {width === "xs" ? shortTitle : title}
           </Typography>
           <Typography>
-            <Link target="_blank" href="https://github.com/J4RV">
+            <a target="blank" href="https://github.com/J4RV">
               <GitHubIcon className={classes.icon} />
-            </Link>
+            </a>
           </Typography>
-          <Typography> 
-            <Link target="_blank" href="https://store.cardsagainsthumanity.com">
+          <Typography>
+            <a target="blank" href="https://store.cardsagainsthumanity.com">
               <ShoppingCart className={classes.icon} />
-            </Link>
+            </a>
           </Typography>
           <a href={logoutUrl}>
             <Button color='inherit'>Log out</Button>

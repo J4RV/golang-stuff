@@ -37,7 +37,7 @@ class GameRoom extends Component {
         <Typography gutterBottom>
           Players: {room.players.join(", ")}.
         </Typography>
-        <Link to="../list/open">
+        <Link to="../list">
           <Button>Back to games list</Button>
         </Link>
         {room.players.length > 2

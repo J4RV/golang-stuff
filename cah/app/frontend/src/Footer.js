@@ -1,8 +1,7 @@
-import React from 'react'
-import Typography from '@material-ui/core/Typography'
-import ShoppingCart from '@material-ui/icons/ShoppingCart'
 import GitHubIcon from './icons/GitHub'
-import Link from '@material-ui/core/Link'
+import React from 'react'
+import ShoppingCart from '@material-ui/icons/ShoppingCart'
+import Typography from '@material-ui/core/Typography'
 import { withStyles } from '@material-ui/core/styles'
 
 const styles = theme => ({
@@ -16,17 +15,17 @@ const styles = theme => ({
   },
 });
 
-const Footer = ({classes}) => {
+const Footer = ({ classes }) => {
   return <div className={classes.linkContainer}>
     <Typography>
-      <Link target="_blank" href="https://github.com/J4RV">
+      <a target="blank" href="https://github.com/J4RV">
         <GitHubIcon className={classes.icon} />
-      </Link>
+      </a>
     </Typography>
-    <Typography> 
-      <Link target="_blank" href="https://store.cardsagainsthumanity.com">
+    <Typography>
+      <a target="blank" href="https://store.cardsagainsthumanity.com">
         <ShoppingCart className={classes.icon} />
-      </Link>
+      </a>
     </Typography>
   </div>
 }
