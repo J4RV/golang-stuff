@@ -3,9 +3,10 @@ export const PROCESS_LOGIN_RESPONSE = 'PROCESS_LOGIN_RESPONSE'
 export const processLoginReduce = (state, action) => {
   let { response } = action.payload
   if (response.status !== 200) {
-    return {...state, validCookie: false}
+    return { ...state, validCookie: false }
   }
   const userInfo = response.data
+  console.log("login response", userInfo)
   return {
     ...state,
     validCookie: true,

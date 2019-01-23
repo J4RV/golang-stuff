@@ -42,4 +42,6 @@ func populateCards(cardUC cah.CardUsecases) {
 	cardUC.CreateFromFolder("./expansions/kikis", "Kikis")
 	cardUC.CreateFromFolder("./expansions/expansion-1", "The First Expansion")
 	cardUC.CreateFromFolder("./expansions/expansion-2", "The Second Expansion")
+	// to check that it does not break the app
+	cardUC.CreateFromFolder("./expansinos/undefined", "Non existant")
 }

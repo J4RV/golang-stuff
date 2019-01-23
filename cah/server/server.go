@@ -58,6 +58,10 @@ func Start(uc cah.Usecases) {
 
 	//Static files handler
 	router.PathPrefix("/static").Handler(http.FileServer(http.Dir(publicDir)))
+	// Known files. We have to define them one by one since we can't use PathPrefix("/"),
+	// as that would make the NotFoundHandler stop working.
+	router.PathPrefix("/favicon.").Handler(http.FileServer(http.Dir(publicDir)))
+	router.Path("/manifest.json").Handler(http.FileServer(http.Dir(publicDir)))
 
 	StartServer(router)
 }

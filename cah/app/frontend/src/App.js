@@ -2,7 +2,7 @@ import './App.css'
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import React, { Component } from 'react'
-import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
+import { Route, BrowserRouter as Router, Redirect } from 'react-router-dom'
 
 import AppBar from './AppBar'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -37,13 +37,13 @@ class App extends Component {
       <MuiThemeProvider theme={theme}>
         <Provider store={createStore(reducer)}>
           <CssBaseline />
-          <Switch>
-            <Route exact path="/" component={LoggedIn} />
-            <Route path="/" component={AppBar} />
-          </Switch>
-          <Route path="/game/list/create" component={GameCreate} />
-          <Route path="/game/list" component={GameList} />
-          <Route path="/game/room/:gameID" component={GameRoom} />
+          <LoggedIn>
+            <AppBar />
+            <Route exact path="/" render={() => <Redirect to="/game/list" />} />
+            <Route path="/game/list/create" component={GameCreate} />
+            <Route path="/game/list" component={GameList} />
+            <Route path="/game/room/:gameID" component={GameRoom} />
+          </LoggedIn>
         </Provider>
       </MuiThemeProvider>
     </Router>

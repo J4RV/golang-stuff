@@ -1,16 +1,16 @@
 import { Button, Typography } from '@material-ui/core';
+import { Link, Redirect } from 'react-router-dom'
 import React, { Component } from 'react'
 import { joinGameUrl, openGamesUrl } from '../restUrls'
 
-import { Link } from 'react-router-dom'
 import Paper from '@material-ui/core/Paper'
-import { Redirect } from 'react-router'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import axios from 'axios'
+import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import withWidth from '@material-ui/core/withWidth';
 
@@ -37,9 +37,28 @@ const styles = theme => ({
     float: "right",
     marginTop: theme.spacing.unit * 2,
   },
-});
+})
 
-const GamesTable = ({ games, joinGame }) => (
+let PrimaryButton = ({ username, game, joinGame }) => {
+  if (game.players.includes(username)) {
+    return <Link to={`/game/room/${game.id}`}>
+      <Button
+        color="primary"
+        variant="contained">
+        Enter room
+      </Button>
+    </Link>
+  } else {
+    return <Button
+      color="primary"
+      variant="contained"
+      onClick={() => joinGame(game.id)}>
+      Join
+    </Button>
+  }
+}
+
+const GamesTable = ({ games, joinGame, username }) => (
   <Table>
     <TableHead>
       <TableRow>
@@ -58,12 +77,7 @@ const GamesTable = ({ games, joinGame }) => (
           {/*<TableCell align="right">{game.hasPassword ? "Yes" : "No"}</TableCell>*/}
           <TableCell align="right">{game.players.join(", ")}</TableCell>
           <TableCell align="right">
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={() => joinGame(game.id)}>
-              Join
-            </Button>
+            <PrimaryButton game={game} joinGame={joinGame} username={username} />
           </TableCell>
         </TableRow>
       ))}
@@ -75,7 +89,7 @@ class GameListPage extends Component {
   state = { games: [], joinedGame: null };
 
   render() {
-    const { classes } = this.props
+    const { username, classes } = this.props
     if (this.state.joinedGame) {
       return <Redirect to={`room/${this.state.joinedGame}`} />
     }
@@ -84,9 +98,9 @@ class GameListPage extends Component {
         Open games
       </Typography>
       <Paper className={classes.tableContainer}>
-        <GamesTable games={this.state.games} joinGame={this.joinGame} />
+        <GamesTable games={this.state.games} joinGame={this.joinGame} username={username} />
       </Paper>
-      <Link to="/game/list/create">
+      <Link to="game/list/create">
         <Button
           type="button"
           onClick={() => this.setCreatingGame(true)}
@@ -124,4 +138,6 @@ const GameList = (props) => (
   </React.Fragment>
 )
 
-export default withWidth()(withStyles(styles)(GameList))
+export default connect(
+  state => ({ username: state.username })
+)(withWidth()(withStyles(styles)(GameList)))

@@ -37,12 +37,12 @@ class GameRoom extends Component {
         <Typography gutterBottom>
           Players: {room.players.join(", ")}.
         </Typography>
-        <Link to="../list">
-          <Button>Back to games list</Button>
-        </Link>
         {room.players.length > 2
           ? <EnoughPlayers imOwner={imOwner} />
           : <Typography gutterBottom>Waiting for more players to join</Typography>}
+        <Link to="/game/list">
+          <Button>Back to games list</Button>
+        </Link>
       </div>
     );
   }
@@ -50,6 +50,7 @@ class GameRoom extends Component {
   componentWillMount() {
     this.updateState()
   }
+
   updateState = () => {
     const gameID = this.props.match.params.gameID
     axios.get(roomStateUrl(gameID))

@@ -6,12 +6,12 @@ import Card from '../gamestate/Card'
 import ErrorSnackbar from '../components/ErrorSnackbar'
 import Footer from '../Footer'
 import FormControl from '@material-ui/core/FormControl'
-import { Redirect } from 'react-router'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import axios from 'axios'
 import { connect } from 'react-redux'
 import processLoginResponse from '../actions/processLoginResponse'
+import { withRouter } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles'
 
 const styles = theme => ({
@@ -125,13 +125,19 @@ class LoggedInControl extends Component {
       return <div>Loading...</div>
     }
     if (validCookie) {
-      return <Redirect to="/game/list" />
+      return this.props.children
     }
     return <LoginForm onSubmitResponse={processLoginResponse} classes={classes} />
   }
 }
 
-export default connect(
-  state => ({ validCookie: state.validCookie }),
-  { processLoginResponse }
-)(withStyles(styles)(LoggedInControl))
+/*
+using withRouter to prevent connect to block updates
+see: https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/guides/blocked-updates.md
+*/
+export default withRouter(
+  connect(
+    state => ({ validCookie: state.validCookie }),
+    { processLoginResponse }
+  )(withStyles(styles)(LoggedInControl))
+)
