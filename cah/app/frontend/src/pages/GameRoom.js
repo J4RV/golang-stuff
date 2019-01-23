@@ -14,6 +14,9 @@ const styles = theme => ({
     textAlign: "center",
     marginTop: theme.spacing.unit * 2,
   },
+  button: {
+    margin: theme.spacing.unit * 2,
+  },
 });
 
 class GameRoom extends Component {
@@ -25,10 +28,11 @@ class GameRoom extends Component {
     if (room.phase !== "Not started") {
       return <Game stateID={room.stateID} />
     }
-    const imOwner = this.props.username === room.owner
+    const { classes, username } = this.props
+    const imOwner = username === room.owner
     const enoughPlayers = room.players.length > 2
     return (
-      <div className={this.props.classes.container}>
+      <div className={classes.container}>
         <Typography variant="h4" gutterBottom>
           {room.name}
         </Typography>
@@ -42,10 +46,10 @@ class GameRoom extends Component {
           ? <Typography gutterBottom>Waiting for the game creator to start the game</Typography>
           : <Typography gutterBottom>Waiting for more players to join</Typography>}
         <Link to="/game/list">
-          <Button>Back to games list</Button>
+          <Button className={classes.button}>Back to games list</Button>
         </Link>
         {enoughPlayers && imOwner
-          ? <Button variant="contained" color="primary">Start game</Button>
+          ? <Button variant="contained" color="primary" className={classes.button}>Start game</Button>
           : null}
       </div>
     );
