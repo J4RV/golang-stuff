@@ -4,7 +4,7 @@ import Hand from '../gamestate/Hand'
 import PlayersInfo from '../gamestate/PlayersInfo'
 import Table from '../gamestate/Table'
 import axios from 'axios'
-import {gameStateUrl} from '../restUrls'
+import { gameStateUrl } from '../restUrls'
 
 class Game extends Component {
   render() {
@@ -21,7 +21,7 @@ class Game extends Component {
     this.updateState()
   }
   updateState = () => {
-    const stateID = this.props.match.params.stateID
+    const stateID = this.props.stateID
     axios.get(gameStateUrl(stateID))
       .then(r => {
         this.setState(r.data)
@@ -29,7 +29,7 @@ class Game extends Component {
         window.setTimeout(this.updateState, 1000)
       })
       .catch(e => window.alert(e)
-    )
+      )
   }
 }
 

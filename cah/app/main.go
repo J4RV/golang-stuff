@@ -29,11 +29,29 @@ func run() {
 		Card:      usecase.NewCardUsecase(cardStore),
 		User:      usecase.NewUserUsecase(userStore),
 	}
-	gameUsecases := usecase.NewGameUsecase(gameStore, usecases.User)
+	gameUsecases := usecase.NewGameUsecase(gameStore, usecases.User, usecases.GameState)
 	usecases.Game = gameUsecases
 	fixture.PopulateUsers(usecases.User)
+	createTestGames(usecases)
 	populateCards(usecases.Card)
 	server.Start(usecases)
+}
+
+// For quick prototyping
+
+func createTestGames(usecase cah.Usecases) {
+	users := getTestUsers(usecase)
+	usecase.Game.Create(users[1], "A long and descriptive game name", "")
+	usecase.Game.Create(users[0], "Amo a juga", "1234")
+}
+
+func getTestUsers(usecase cah.Usecases) []cah.User {
+	users := make([]cah.User, 4)
+	for i := 0; i < 4; i++ {
+		u, _ := usecase.User.ByID(i + 1)
+		users[i] = u
+	}
+	return users
 }
 
 func populateCards(cardUC cah.CardUsecases) {

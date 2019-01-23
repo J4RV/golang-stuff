@@ -45,7 +45,6 @@ func parseFlags() {
 
 func Start(uc cah.Usecases) {
 	usecase = uc
-	createTestGame()
 
 	router := mux.NewRouter()
 	//Any non found paths should redirect to index. React-router will handle those.

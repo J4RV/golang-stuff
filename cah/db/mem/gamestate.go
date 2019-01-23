@@ -34,7 +34,7 @@ func (store *stateMemStore) ByID(id int) (cah.GameState, error) {
 func (store *stateMemStore) byID(id int) (cah.GameState, error) {
 	g, ok := store.games[id]
 	if !ok {
-		return *g, fmt.Errorf("No game found with ID %d", id)
+		return cah.GameState{}, fmt.Errorf("No game found with ID %d", id)
 	}
 	return *g, nil
 }

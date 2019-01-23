@@ -44,39 +44,6 @@ func (control stateController) ByID(id int) (cah.GameState, error) {
 	return control.store.ByID(id)
 }
 
-func playersDraw(s *cah.GameState) {
-	for _, p := range s.Players {
-		for len(p.Hand) < s.HandSize {
-			p.Hand = append(p.Hand, s.DrawWhite())
-		}
-	}
-}
-
-func (control stateController) Start(p []*cah.Player, g cah.GameState, opts ...cah.Option) (cah.GameState, error) {
-	if g.Phase != cah.NotStarted {
-		return g, fmt.Errorf("Tried to start the game but it has already started; current phase: '%s'", g.Phase)
-	}
-	if p == nil || len(p) < 3 {
-		return g, fmt.Errorf("Wrong players argument: '%v'. Cannot be nil and the minimum amount of players is 3", p)
-	}
-
-	ret := g.Clone()
-	ret.Players = p
-	applyOptions(&ret, opts...)
-
-	ret, err := control.putBlackCardInPlay(g)
-	if err != nil {
-		return g, err
-	}
-
-	playersDraw(&ret)
-	err = control.store.Update(ret)
-	if err != nil {
-		return g, err
-	}
-	return ret, nil
-}
-
 func (control stateController) End(g cah.GameState) (cah.GameState, error) {
 	if g.Phase == cah.Finished {
 		return g, errors.New("Tried to end a game but it has already finished")
@@ -87,23 +54,6 @@ func (control stateController) End(g cah.GameState) (cah.GameState, error) {
 	if err != nil {
 		return g, err
 	}
-	return ret, nil
-}
-
-func (control stateController) putBlackCardInPlay(g cah.GameState) (cah.GameState, error) {
-	if g.BlackCardInPlay != nilBlackCard {
-		return g, errors.New("Tried to put a black card in play but there is already a black card in play")
-	}
-	if g.Phase == cah.Finished {
-		return g, errors.New("Tried to put a black card in play but the game has already finished")
-	}
-	if len(g.BlackDeck) == 0 {
-		return g, errorEmptyBlackDeck{}
-	}
-	ret := g.Clone()
-	ret.BlackCardInPlay = ret.BlackDeck[0]
-	ret.BlackDeck = ret.BlackDeck[1:]
-	ret.Phase = cah.SinnersPlaying
 	return ret, nil
 }
 
@@ -132,7 +82,7 @@ func (control stateController) GiveBlackCardToWinner(wID int, g cah.GameState) (
 		ret, err = control.End(ret)
 		return ret, err
 	}
-	ret, err = control.putBlackCardInPlay(ret)
+	ret, err = putBlackCardInPlay(ret)
 	if err != nil {
 		_, ok := err.(*errorEmptyBlackDeck)
 		if !ok {
@@ -202,6 +152,31 @@ func (_ stateController) AllSinnersPlayedTheirCards(s cah.GameState) bool {
 		}
 	}
 	return true
+}
+
+func playersDraw(s *cah.GameState) {
+	for _, p := range s.Players {
+		for len(p.Hand) < s.HandSize {
+			p.Hand = append(p.Hand, s.DrawWhite())
+		}
+	}
+}
+
+func putBlackCardInPlay(g cah.GameState) (cah.GameState, error) {
+	if g.BlackCardInPlay != nilBlackCard {
+		return g, errors.New("Tried to put a black card in play but there is already a black card in play")
+	}
+	if g.Phase == cah.Finished {
+		return g, errors.New("Tried to put a black card in play but the game has already finished")
+	}
+	if len(g.BlackDeck) == 0 {
+		return g, errorEmptyBlackDeck{}
+	}
+	ret := g.Clone()
+	ret.BlackCardInPlay = ret.BlackDeck[0]
+	ret.BlackDeck = ret.BlackDeck[1:]
+	ret.Phase = cah.SinnersPlaying
+	return ret, nil
 }
 
 func (_ stateController) nextCzar(s cah.GameState) (cah.GameState, error) {

@@ -5,6 +5,7 @@ import React from 'react'
 import ShoppingCart from '@material-ui/icons/ShoppingCart'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
+import { connect } from 'react-redux'
 import { logoutUrl } from './restUrls'
 import { withStyles } from '@material-ui/core/styles'
 import withWidth from '@material-ui/core/withWidth'
@@ -23,13 +24,16 @@ const styles = theme => ({
   },
 });
 
-function TopAppBar({ title, shortTitle, width, classes }) {
+function TopAppBar({ username, title, shortTitle, width, classes }) {
   return (
     <div>
       <AppBar position='static' className={classes.appbar} >
         <Toolbar>
           <Typography variant='h6' color='inherit' className={classes.title} >
             {width === "xs" ? shortTitle : title}
+          </Typography>
+          <Typography variant='h6' color='inherit' >
+            {username}
           </Typography>
           <Typography>
             <a target="blank" href="https://github.com/J4RV">
@@ -50,4 +54,6 @@ function TopAppBar({ title, shortTitle, width, classes }) {
   )
 }
 
-export default withWidth()(withStyles(styles)(TopAppBar))
+export default connect(
+  state => ({ username: state.username }),
+)(withWidth()(withStyles(styles)(TopAppBar)))

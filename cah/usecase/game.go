@@ -9,14 +9,16 @@ import (
 )
 
 type gameController struct {
-	store cah.GameStore
-	users cah.UserUsecases
+	store  cah.GameStore
+	users  cah.UserUsecases
+	states cah.GameStateUsecases
 }
 
-func NewGameUsecase(store cah.GameStore, uuc cah.UserUsecases) *gameController {
+func NewGameUsecase(store cah.GameStore, uuc cah.UserUsecases, gsu cah.GameStateUsecases) *gameController {
 	return &gameController{
-		store: store,
-		users: uuc,
+		store:  store,
+		users:  uuc,
+		states: gsu,
 	}
 }
 
@@ -58,4 +60,32 @@ func (control gameController) UserJoins(user cah.User, game cah.Game) error {
 	}
 	game.Users = append(game.Users, user)
 	return control.store.Update(game)
+}
+
+func (control gameController) Start(g cah.Game, opts ...cah.Option) error {
+	if len(g.Users) < 3 {
+		return errors.New("The minimum amount of players to start a game is 3")
+	}
+	s := g.State
+	if s.ID != 0 {
+		return fmt.Errorf("Tried to start a game but it already has a state. State ID '%d'", s.ID)
+	}
+	state := control.states.NewGameState()
+	players := make([]*cah.Player, len(g.Users))
+	for i, u := range g.Users {
+		players[i] = cah.NewPlayer(u)
+	}
+	state.Players = players
+	applyOptions(&state, opts...)
+	state, err := putBlackCardInPlay(state)
+	if err != nil {
+		return err
+	}
+	playersDraw(&state)
+	g.State = state
+	err = control.store.Update(g)
+	if err != nil {
+		return err
+	}
+	return nil
 }

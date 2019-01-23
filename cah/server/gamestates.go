@@ -209,6 +209,23 @@ func writeResponse(w http.ResponseWriter, obj interface{}) {
 	}
 }
 
+func playerIndex(g cah.GameState, u cah.User) (int, error) {
+	for i, p := range g.Players {
+		if p.User.ID == u.ID {
+			return i, nil
+		}
+	}
+	return -1, errors.New("You are not playing this game")
+}
+
+func player(g cah.GameState, u cah.User) (*cah.Player, error) {
+	i, err := playerIndex(g, u)
+	if err != nil {
+		return &cah.Player{}, errors.New("You are not playing this game")
+	}
+	return g.Players[i], nil
+}
+
 func gameStateFromRequest(req *http.Request) (cah.GameState, error) {
 	strID := mux.Vars(req)["gameStateID"]
 	id, err := strconv.Atoi(strID)

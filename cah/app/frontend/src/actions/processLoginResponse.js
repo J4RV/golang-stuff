@@ -6,7 +6,6 @@ export const processLoginReduce = (state, action) => {
     return { ...state, validCookie: false }
   }
   const userInfo = response.data
-  console.log("login response", userInfo)
   return {
     ...state,
     validCookie: true,

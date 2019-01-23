@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import Button from '@material-ui/core/Button'
 import Game from './Game'
 import { Link } from 'react-router-dom'
+import StartGameButton from '../components/StartGameButton'
 import Typography from '@material-ui/core/Typography'
 import axios from 'axios'
 import { connect } from 'react-redux'
@@ -15,7 +16,7 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 2,
   },
   button: {
-    margin: theme.spacing.unit * 2,
+    margin: theme.spacing.unit,
   },
 });
 
@@ -29,17 +30,16 @@ class GameRoom extends Component {
       return <Game stateID={room.stateID} />
     }
     const { classes, username } = this.props
-    const imOwner = username === room.owner
     const enoughPlayers = room.players.length > 2
     return (
       <div className={classes.container}>
         <Typography variant="h4" gutterBottom>
           {room.name}
         </Typography>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h6" gutterBottom>
           Creator: {room.owner}.
         </Typography>
-        <Typography gutterBottom>
+        <Typography variant="h6" gutterBottom>
           Players: {room.players.join(", ")}.
         </Typography>
         {enoughPlayers
@@ -48,8 +48,8 @@ class GameRoom extends Component {
         <Link to="/game/list">
           <Button className={classes.button}>Back to games list</Button>
         </Link>
-        {enoughPlayers && imOwner
-          ? <Button variant="contained" color="primary" className={classes.button}>Start game</Button>
+        {enoughPlayers && room.owner === username
+          ? <StartGameButton gameID={room.id} className={classes.button} />
           : null}
       </div>
     );

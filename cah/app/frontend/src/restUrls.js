@@ -14,3 +14,4 @@ export const openGamesUrl = "game/list-open"
 export const createGameUrl = "game/create"
 export const joinGameUrl = "game/join"
 export const roomStateUrl = (gameID) => `game/${gameID}/room-state`
+export const startGameUrl = `game/start`

@@ -11,7 +11,6 @@ type GameStateUsecases interface {
 	//FetchOpen() []Game
 	NewGameState() GameState
 	Options() GameOptions
-	Start(p []*Player, g GameState, opts ...Option) (GameState, error)
 	GiveBlackCardToWinner(wId int, g GameState) (GameState, error)
 	PlayWhiteCards(p int, cs []int, g GameState) (GameState, error)
 	AllSinnersPlayedTheirCards(g GameState) bool

@@ -17,6 +17,7 @@ func handleGames(r *mux.Router) {
 	s.Handle("/list-open", srvHandler(openGames)).Methods("GET")
 	s.Handle("/create", srvHandler(createGame)).Methods("POST")
 	s.Handle("/join", srvHandler(joinGame)).Methods("POST")
+	s.Handle("/start", srvHandler(startGame)).Methods("POST")
 	//s.Handle("/Leave", srvHandler(playCards)).Methods("POST")
 }
 
@@ -123,6 +124,46 @@ func joinGame(w http.ResponseWriter, req *http.Request) error {
 		return err
 	}
 	err = usecase.Game.UserJoins(u, g)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+/*
+JOIN GAME
+*/
+
+type startGamePayload struct {
+	ID int `json:"id"`
+}
+
+func startGame(w http.ResponseWriter, req *http.Request) error {
+	// User is logged
+	u, err := userFromSession(req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusForbidden)
+	}
+	// Decode user's payload
+	var payload startGamePayload
+	decoder := json.NewDecoder(req.Body)
+	err = decoder.Decode(&payload)
+	if err != nil {
+		return errors.New("Misconstructed payload")
+	}
+	g, err := usecase.Game.ByID(payload.ID)
+	if err != nil {
+		return err
+	}
+	if g.Owner != u {
+		return errors.New("Only the game owner can start the game")
+	}
+	err = usecase.Game.Start(g,
+		usecase.GameState.Options().RandomStartingCzar(),
+		usecase.GameState.Options().BlackDeck(usecase.Card.AllBlacks()),
+		usecase.GameState.Options().WhiteDeck(usecase.Card.AllWhites()),
+		usecase.GameState.Options().HandSize(15),
+	)
 	if err != nil {
 		return err
 	}

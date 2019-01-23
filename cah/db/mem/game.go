@@ -56,6 +56,13 @@ func (store *gameMemStore) ByStatePhase(p cah.Phase) []cah.Game {
 func (store *gameMemStore) Update(g cah.Game) error {
 	store.Lock()
 	defer store.Unlock()
+	currG, ok := store.games[g.ID]
+	if !ok {
+		return fmt.Errorf("No game found with ID %d", g.ID)
+	}
 	store.games[g.ID] = g
+	if !currG.State.Equal(g.State) {
+		store.stateStore.Update(g.State)
+	}
 	return nil
 }

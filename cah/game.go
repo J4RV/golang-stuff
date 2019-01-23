@@ -12,6 +12,7 @@ type GameUsecases interface {
 	ByID(int) (Game, error)
 	AllOpen() []Game
 	UserJoins(User, Game) error
+	Start(Game, ...Option) error
 	//Start(gameID int, options ...Option) error
 }
 
