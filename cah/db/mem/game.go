@@ -3,7 +3,6 @@ package mem
 import (
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/j4rv/golang-stuff/cah"
 )
@@ -47,7 +46,6 @@ func (store *gameMemStore) ByStatePhase(p cah.Phase) []cah.Game {
 	defer store.Unlock()
 	ret := []cah.Game{}
 	for _, g := range store.games {
-		log.Println("Game: ", g)
 		if g.State.Phase == p {
 			ret = append(ret, g)
 		}

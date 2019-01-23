@@ -9,19 +9,11 @@ type GameStateStore interface {
 type GameStateUsecases interface {
 	ByID(id int) (GameState, error)
 	//FetchOpen() []Game
-	NewGameState() GameState
-	Options() GameOptions
+	Create() GameState
 	GiveBlackCardToWinner(wId int, g GameState) (GameState, error)
 	PlayWhiteCards(p int, cs []int, g GameState) (GameState, error)
 	AllSinnersPlayedTheirCards(g GameState) bool
 	End(g GameState) (GameState, error)
-}
-
-type GameOptions interface {
-	WhiteDeck(wd []WhiteCard) Option
-	BlackDeck(bd []BlackCard) Option
-	HandSize(size int) Option
-	RandomStartingCzar() Option
 }
 
 type GameState struct {
@@ -35,8 +27,6 @@ type GameState struct {
 	DiscardPile     []WhiteCard `json:"discardPile" db:"discardPile"`
 	HandSize        int         `json:"handSize" db:"handSize"`
 }
-
-type Option func(s *GameState)
 
 func (s *GameState) DrawWhite() WhiteCard {
 	ret := s.WhiteDeck[0]

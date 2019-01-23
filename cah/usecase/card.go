@@ -27,6 +27,18 @@ func (cc cardController) AllWhites() []cah.WhiteCard {
 	return cc.store.AllWhites()
 }
 
+func (cc cardController) ExpansionWhites(exps ...string) []cah.WhiteCard {
+	return cc.store.ExpansionWhites(exps...)
+}
+
+func (cc cardController) ExpansionBlacks(exps ...string) []cah.BlackCard {
+	return cc.store.ExpansionBlacks(exps...)
+}
+
+func (cc cardController) AvailableExpansions() []string {
+	return cc.store.AvailableExpansions()
+}
+
 // CreateFromReaders creates and stores cards from two readers.
 // The reader should provide a card per line. A line can contain "\n"s for card line breaks.
 // Lines containing only whitespace are ignored

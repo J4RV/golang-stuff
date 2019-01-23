@@ -17,8 +17,9 @@ func handleGames(r *mux.Router) {
 	s.Handle("/list-open", srvHandler(openGames)).Methods("GET")
 	s.Handle("/create", srvHandler(createGame)).Methods("POST")
 	s.Handle("/join", srvHandler(joinGame)).Methods("POST")
-	s.Handle("/start", srvHandler(startGame)).Methods("POST")
 	//s.Handle("/Leave", srvHandler(playCards)).Methods("POST")
+	s.Handle("/start", srvHandler(startGame)).Methods("POST")
+	s.Handle("/available-expansions", srvHandler(startGame)).Methods("GET")
 }
 
 /*
@@ -135,7 +136,10 @@ JOIN GAME
 */
 
 type startGamePayload struct {
-	ID int `json:"id"`
+	ID              int      `json:"id"`
+	Expansions      []string `json:"expansions,omitempty"`
+	HandSize        uint8    `json:"handSize,omitempty"`
+	RandomFirstCzar bool     `json:"randomFirstCzar,omitempty"`
 }
 
 func startGame(w http.ResponseWriter, req *http.Request) error {
@@ -158,11 +162,12 @@ func startGame(w http.ResponseWriter, req *http.Request) error {
 	if g.Owner != u {
 		return errors.New("Only the game owner can start the game")
 	}
-	err = usecase.Game.Start(g,
-		usecase.GameState.Options().RandomStartingCzar(),
-		usecase.GameState.Options().BlackDeck(usecase.Card.AllBlacks()),
-		usecase.GameState.Options().WhiteDeck(usecase.Card.AllWhites()),
-		usecase.GameState.Options().HandSize(15),
+	state := usecase.GameState.Create()
+	err = usecase.Game.Start(g, state,
+		usecase.Game.Options().RandomStartingCzar(),
+		usecase.Game.Options().BlackDeck(usecase.Card.ExpansionBlacks("The First Expansion")),
+		usecase.Game.Options().WhiteDeck(usecase.Card.ExpansionWhites("The First Expansion")),
+		usecase.Game.Options().HandSize(15),
 	)
 	if err != nil {
 		return err

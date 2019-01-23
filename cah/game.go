@@ -12,7 +12,8 @@ type GameUsecases interface {
 	ByID(int) (Game, error)
 	AllOpen() []Game
 	UserJoins(User, Game) error
-	Start(Game, ...Option) error
+	Start(Game, GameState, ...Option) error
+	Options() GameOptions
 	//Start(gameID int, options ...Option) error
 }
 
@@ -26,3 +27,12 @@ type Game struct {
 	State    GameState
 	StateID  int
 }
+
+type GameOptions interface {
+	WhiteDeck([]WhiteCard) Option
+	BlackDeck([]BlackCard) Option
+	HandSize(size int) Option
+	RandomStartingCzar() Option
+}
+
+type Option func(s *GameState)

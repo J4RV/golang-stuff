@@ -15,3 +15,4 @@ export const createGameUrl = "game/create"
 export const joinGameUrl = "game/join"
 export const roomStateUrl = (gameID) => `game/${gameID}/room-state`
 export const startGameUrl = `game/start`
+export const availableExpansionsUrl = `game/available-expansions`

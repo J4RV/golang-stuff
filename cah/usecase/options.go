@@ -7,11 +7,9 @@ import (
 	"github.com/j4rv/golang-stuff/cah"
 )
 
-func (control stateController) Options() cah.GameOptions {
-	return control.options
+type Options struct {
+	cards cah.CardUsecases
 }
-
-type Options struct{}
 
 func applyOptions(s *cah.GameState, opts ...cah.Option) {
 	for _, opt := range opts {
@@ -25,17 +23,17 @@ func (_ Options) HandSize(size int) cah.Option {
 	}
 }
 
-func (_ Options) BlackDeck(bd []cah.BlackCard) cah.Option {
-	return func(s *cah.GameState) {
-		s.BlackDeck = bd
-		shuffleB(&s.BlackDeck)
-	}
-}
-
 func (_ Options) WhiteDeck(wd []cah.WhiteCard) cah.Option {
 	return func(s *cah.GameState) {
 		s.WhiteDeck = wd
 		shuffleW(&s.WhiteDeck)
+	}
+}
+
+func (_ Options) BlackDeck(bd []cah.BlackCard) cah.Option {
+	return func(s *cah.GameState) {
+		s.BlackDeck = bd
+		shuffleB(&s.BlackDeck)
 	}
 }
 

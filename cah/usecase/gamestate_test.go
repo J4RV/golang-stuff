@@ -4,10 +4,17 @@ import (
 	"testing"
 
 	"github.com/j4rv/golang-stuff/cah"
+	"github.com/j4rv/golang-stuff/cah/db/mem"
 	"github.com/stretchr/testify/assert"
 )
 
 var control = stateController{}
+
+func getStateUsecase() cah.GameStateUsecases {
+	store := mem.NewGameStateStore()
+	usecase := NewGameStateUsecase(store)
+	return usecase
+}
 
 func TestNextCzar(t *testing.T) {
 	assert := assert.New(t)

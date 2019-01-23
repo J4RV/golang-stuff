@@ -17,15 +17,14 @@ func (e errorEmptyBlackDeck) Error() string {
 }
 
 type stateController struct {
-	store   cah.GameStateStore
-	options Options
+	store cah.GameStateStore
 }
 
 func NewGameStateUsecase(store cah.GameStateStore) *stateController {
 	return &stateController{store: store}
 }
 
-func (control stateController) NewGameState() cah.GameState {
+func (control stateController) Create() cah.GameState {
 	ret := cah.GameState{
 		Players:     []*cah.Player{},
 		HandSize:    10,

@@ -9,16 +9,13 @@ import (
 )
 
 type gameController struct {
-	store  cah.GameStore
-	users  cah.UserUsecases
-	states cah.GameStateUsecases
+	store   cah.GameStore
+	options Options
 }
 
-func NewGameUsecase(store cah.GameStore, uuc cah.UserUsecases, gsu cah.GameStateUsecases) *gameController {
+func NewGameUsecase(store cah.GameStore) *gameController {
 	return &gameController{
-		store:  store,
-		users:  uuc,
-		states: gsu,
+		store: store,
 	}
 }
 
@@ -26,10 +23,6 @@ func (control gameController) Create(owner cah.User, name, pass string) error {
 	trimmed := strings.TrimSpace(name)
 	if trimmed == "" {
 		return errors.New("A game name cannot be blank")
-	}
-	owner, ok := control.users.ByID(owner.ID)
-	if !ok {
-		return fmt.Errorf("No user find with owner ID %d", owner.ID)
 	}
 	game := cah.Game{
 		Owner:  owner,
@@ -62,7 +55,7 @@ func (control gameController) UserJoins(user cah.User, game cah.Game) error {
 	return control.store.Update(game)
 }
 
-func (control gameController) Start(g cah.Game, opts ...cah.Option) error {
+func (control gameController) Start(g cah.Game, state cah.GameState, opts ...cah.Option) error {
 	if len(g.Users) < 3 {
 		return errors.New("The minimum amount of players to start a game is 3")
 	}
@@ -70,7 +63,6 @@ func (control gameController) Start(g cah.Game, opts ...cah.Option) error {
 	if s.ID != 0 {
 		return fmt.Errorf("Tried to start a game but it already has a state. State ID '%d'", s.ID)
 	}
-	state := control.states.NewGameState()
 	players := make([]*cah.Player, len(g.Users))
 	for i, u := range g.Users {
 		players[i] = cah.NewPlayer(u)
@@ -88,4 +80,8 @@ func (control gameController) Start(g cah.Game, opts ...cah.Option) error {
 		return err
 	}
 	return nil
+}
+
+func (control gameController) Options() cah.GameOptions {
+	return control.options
 }

@@ -28,9 +28,8 @@ func run() {
 		GameState: usecase.NewGameStateUsecase(stateStore),
 		Card:      usecase.NewCardUsecase(cardStore),
 		User:      usecase.NewUserUsecase(userStore),
+		Game:      usecase.NewGameUsecase(gameStore),
 	}
-	gameUsecases := usecase.NewGameUsecase(gameStore, usecases.User, usecases.GameState)
-	usecases.Game = gameUsecases
 	fixture.PopulateUsers(usecases.User)
 	createTestGames(usecases)
 	populateCards(usecases.Card)
