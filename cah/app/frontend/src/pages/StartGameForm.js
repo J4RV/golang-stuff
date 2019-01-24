@@ -15,14 +15,11 @@ const styles = theme => ({
     maxWidth: 480,
     marginLeft: "auto",
     marginRight: "auto",
-  },
-  title: {
-    textAlign: "center",
+    textAlign: "left",
   },
   form: {
     marginTop: theme.spacing.unit * 2,
     display: "inline-block",
-    textAlign: "right",
     width: "100%",
   },
 })
@@ -32,13 +29,13 @@ class StartGameForm extends Component {
     const { classes, gameID } = this.props
     return (
       <div className={classes.container}>
-        <Typography variant="h6" gutterBottom className={classes.title}>
+        <Typography variant="h6" gutterBottom>
           Game options
         </Typography>
         <form className={classes.form} action={startGameUrl} method="post">
           <input type="hidden" id="gameID" name="gameID" value={gameID} />
           <ExpansionsSelect />
-          <FormControl fullWidth margin="normal">
+          <FormControl required fullWidth margin="normal">
             <TextField
               id="handSize"
               name="handSize"
@@ -50,7 +47,7 @@ class StartGameForm extends Component {
           <FormControl fullWidth margin="normal">
             <FormControlLabel
               control={<Checkbox id="randomFirstCzar" name="randomFirstCzar" color="primary" value={true} />}
-              label="Random first Czar"
+              label="First Czar chosen randomly"
             />
           </FormControl>
         </form>

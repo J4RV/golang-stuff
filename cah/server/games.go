@@ -182,10 +182,10 @@ func optionsFromCreateRequest(req *http.Request) ([]cah.Option, error) {
 	blacks := usecase.Card.ExpansionBlacks(expansions...)
 	whites := usecase.Card.ExpansionWhites(expansions...)
 	if len(blacks) < minBlacks {
-		return ret, fmt.Errorf("Not enough black cards to play a game. Please select more expansions. Current amount of black cards selected: %d", len(blacks))
+		return ret, fmt.Errorf("Not enough black cards to play a game. Please select more expansions. Current amount of black cards selected %d, minimum: %d", len(blacks), minBlacks)
 	}
 	if len(whites) < minWhites {
-		return ret, fmt.Errorf("Not enough white cards to play a game. Please select more expansions. Current amount of white cards selected: %d", len(whites))
+		return ret, fmt.Errorf("Not enough white cards to play a game. Please select more expansions. Current amount of white cards selected %d, minimum: %d", len(whites), minWhites)
 	}
 	ret = append(ret, usecase.Game.Options().BlackDeck(blacks))
 	ret = append(ret, usecase.Game.Options().WhiteDeck(whites))

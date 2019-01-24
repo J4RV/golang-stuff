@@ -2,7 +2,6 @@ import React, { Component } from "react"
 
 import Chip from "@material-ui/core/Chip"
 import FormControl from "@material-ui/core/FormControl"
-import Input from "@material-ui/core/Input"
 import InputLabel from "@material-ui/core/InputLabel"
 import MenuItem from "@material-ui/core/MenuItem"
 import Select from "@material-ui/core/Select"

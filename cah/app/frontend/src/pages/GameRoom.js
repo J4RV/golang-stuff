@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 
-import Button from '@material-ui/core/Button'
 import Game from './Game'
-import { Link } from 'react-router-dom'
 import StartGameButton from '../components/StartGameButton'
+import BackToGameListButton from '../components/BackToGameListButton'
 import StartGameForm from './StartGameForm';
 import Typography from '@material-ui/core/Typography'
 import axios from 'axios'
@@ -50,9 +49,7 @@ class GameRoom extends Component {
         {imOwner
           ? <StartGameForm gameID={room.id} />
           : null}
-        <Link to="/game/list">
-          <Button className={classes.button}>Back to games list</Button>
-        </Link>
+        <BackToGameListButton className={classes.button} />
         {enoughPlayers && imOwner
           ? <StartGameButton gameID={room.id} className={classes.button} />
           : null}
