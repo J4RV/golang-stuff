@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -21,6 +22,11 @@ func handleGames(r *mux.Router) {
 	s.Handle("/start", srvHandler(startGame)).Methods("POST")
 	s.Handle("/available-expansions", srvHandler(availableExpansions)).Methods("GET")
 }
+
+const minWhites = 40
+const minBlacks = 8
+const minHandSize = 5
+const maxHandSize = 30
 
 /*
 OPEN GAMES LIST
@@ -135,44 +141,66 @@ func joinGame(w http.ResponseWriter, req *http.Request) error {
 JOIN GAME
 */
 
-type startGamePayload struct {
-	ID              int      `json:"id"`
-	Expansions      []string `json:"expansions,omitempty"`
-	HandSize        uint8    `json:"handSize,omitempty"`
-	RandomFirstCzar bool     `json:"randomFirstCzar,omitempty"`
-}
-
 func startGame(w http.ResponseWriter, req *http.Request) error {
 	// User is logged
 	u, err := userFromSession(req)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusForbidden)
 	}
-	// Decode user's payload
-	var payload startGamePayload
-	decoder := json.NewDecoder(req.Body)
-	err = decoder.Decode(&payload)
+	req.ParseForm()
+	log.Println(req.Form) // print information on server side.
+	gameID, err := intFromForm("gameID", req.Form)
 	if err != nil {
-		return errors.New("Misconstructed payload")
+		return err
 	}
-	g, err := usecase.Game.ByID(payload.ID)
+	g, err := usecase.Game.ByID(gameID)
 	if err != nil {
 		return err
 	}
 	if g.Owner != u {
 		return errors.New("Only the game owner can start the game")
 	}
+	opts, err := optionsFromCreateRequest(req)
+	if err != nil {
+		return err
+	}
 	state := usecase.GameState.Create()
-	err = usecase.Game.Start(g, state,
-		usecase.Game.Options().RandomStartingCzar(),
-		usecase.Game.Options().BlackDeck(usecase.Card.ExpansionBlacks("The First Expansion")),
-		usecase.Game.Options().WhiteDeck(usecase.Card.ExpansionWhites("The First Expansion")),
-		usecase.Game.Options().HandSize(15),
-	)
+	err = usecase.Game.Start(g, state, opts...)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func optionsFromCreateRequest(req *http.Request) ([]cah.Option, error) {
+	ret := []cah.Option{}
+	// EXPANSIONS
+	expansions, ok := req.Form["selectedExpansions"]
+	if !ok || expansions == nil {
+		return ret, errors.New("You need to select at least one valid expansion set")
+	}
+	blacks := usecase.Card.ExpansionBlacks(expansions...)
+	whites := usecase.Card.ExpansionWhites(expansions...)
+	if len(blacks) < minBlacks {
+		return ret, fmt.Errorf("Not enough black cards to play a game. Please select more expansions. Current amount of black cards selected: %d", len(blacks))
+	}
+	if len(whites) < minWhites {
+		return ret, fmt.Errorf("Not enough white cards to play a game. Please select more expansions. Current amount of white cards selected: %d", len(whites))
+	}
+	ret = append(ret, usecase.Game.Options().BlackDeck(blacks))
+	ret = append(ret, usecase.Game.Options().WhiteDeck(whites))
+	// HAND SIZE
+	handSize, err := intFromForm("handSize", req.Form)
+	if err != nil || handSize < minHandSize || handSize > maxHandSize {
+		return ret, fmt.Errorf("Wrong hand size. It has to be an integer between %d and %d (both included). Got: '%d'", minHandSize, maxHandSize, handSize)
+	}
+	ret = append(ret, usecase.Game.Options().HandSize(handSize))
+	// RANDOM FIRST CZAR?
+	randomFirstCzar, err := boolFromForm("randomFirstCzar", req.Form)
+	if err == nil && randomFirstCzar {
+		ret = append(ret, usecase.Game.Options().RandomStartingCzar())
+	}
+	return ret, nil
 }
 
 func availableExpansions(w http.ResponseWriter, req *http.Request) error {

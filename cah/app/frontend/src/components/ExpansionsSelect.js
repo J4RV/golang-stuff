@@ -13,6 +13,7 @@ import { withStyles } from "@material-ui/core/styles"
 const styles = theme => ({
   select: {
     width: "100%",
+    minHeight: 36,
   },
   chips: {
     display: "flex",
@@ -47,13 +48,19 @@ class ExpansionsSelect extends Component {
     const { selected, expansions } = this.state
     return (
       <FormControl required className={classes.select}>
-        <InputLabel htmlFor="selectedExpansions">Expansions</InputLabel>
+        <select multiple hidden id="selectedExpansions" name="selectedExpansions">
+          {selected.map(name => (
+            <option selected key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </select>
+        <InputLabel>Expansions</InputLabel>
         <Select
           multiple
           displayEmpty
           value={selected}
           onChange={this.handleChangeSelect}
-          input={<Input id="selectedExpansions" />}
           renderValue={selected => (
             <div className={classes.chips}>
               {selected.map(value => (
@@ -74,9 +81,10 @@ class ExpansionsSelect extends Component {
   }
 
   handleChangeSelect = event => {
+    console.log(event.target.value)
     this.setState({
       ...this.state,
-      selected: event.target.checked,
+      selected: event.target.value,
     })
   }
 

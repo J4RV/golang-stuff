@@ -35,20 +35,21 @@ class StartGameForm extends Component {
         <Typography variant="h6" gutterBottom className={classes.title}>
           Game options
         </Typography>
-        <form className={classes.form} action={startGameUrl}>
-          <input type="hidden" id="gameID" value={gameID} />
+        <form className={classes.form} action={startGameUrl} method="post">
+          <input type="hidden" id="gameID" name="gameID" value={gameID} />
           <ExpansionsSelect />
           <FormControl fullWidth margin="normal">
             <TextField
               id="handSize"
+              name="handSize"
               label="Hand size"
-              value={10}
+              defaultValue={10}
               type="number"
             />
           </FormControl>
           <FormControl fullWidth margin="normal">
             <FormControlLabel
-              control={<Checkbox id="randomFirstCzar" color="primary" />}
+              control={<Checkbox id="randomFirstCzar" name="randomFirstCzar" color="primary" value={true} />}
               label="Random first Czar"
             />
           </FormControl>

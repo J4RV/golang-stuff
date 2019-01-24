@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button'
 import Game from './Game'
 import { Link } from 'react-router-dom'
 import StartGameButton from '../components/StartGameButton'
+import StartGameForm from './StartGameForm';
 import Typography from '@material-ui/core/Typography'
 import axios from 'axios'
 import { connect } from 'react-redux'
@@ -31,6 +32,7 @@ class GameRoom extends Component {
     }
     const { classes, username } = this.props
     const enoughPlayers = room.players.length > 2
+    const imOwner = room.owner === username
     return (
       <div className={classes.container}>
         <Typography variant="h4" gutterBottom>
@@ -45,10 +47,13 @@ class GameRoom extends Component {
         {enoughPlayers
           ? <Typography gutterBottom>Waiting for the game creator to start the game</Typography>
           : <Typography gutterBottom>Waiting for more players to join</Typography>}
+        {imOwner
+          ? <StartGameForm gameID={room.id} />
+          : null}
         <Link to="/game/list">
           <Button className={classes.button}>Back to games list</Button>
         </Link>
-        {enoughPlayers && room.owner === username
+        {enoughPlayers && imOwner
           ? <StartGameButton gameID={room.id} className={classes.button} />
           : null}
       </div>
