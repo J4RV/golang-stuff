@@ -34,12 +34,10 @@ const MenuProps = {
   },
 }
 
-const DEFAULT_EXPANSION = "Base-UK"
-
 class ExpansionsSelect extends Component {
   state = {
     expansions: ["Loading..."],
-    selected: [DEFAULT_EXPANSION],
+    selected: [],
   }
 
   render() {
@@ -80,11 +78,12 @@ class ExpansionsSelect extends Component {
   }
 
   handleChangeSelect = event => {
-    console.log(event.target.value)
+    const newValue = event.target.value
     this.setState({
       ...this.state,
-      selected: event.target.value,
+      selected: newValue,
     })
+    this.props.onSelectedChange(newValue)
   }
 
   componentWillMount() {

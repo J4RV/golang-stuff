@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 
-import Game from './Game'
-import StartGameButton from '../components/StartGameButton'
 import BackToGameListButton from '../components/BackToGameListButton'
+import Game from './Game'
 import StartGameForm from './StartGameForm';
 import Typography from '@material-ui/core/Typography'
 import axios from 'axios'
@@ -37,22 +36,18 @@ class GameRoom extends Component {
         <Typography variant="h4" gutterBottom>
           {room.name}
         </Typography>
-        <Typography variant="h6" gutterBottom>
+        {enoughPlayers
+          ? <Typography variant="h6" gutterBottom>Waiting for the game creator to start the game</Typography>
+          : <Typography variant="h6" gutterBottom>Waiting for more players to join</Typography>}
+        <Typography>
           Creator: {room.owner}.
         </Typography>
-        <Typography variant="h6" gutterBottom>
+        <Typography gutterBottom>
           Players: {room.players.join(", ")}.
         </Typography>
-        {enoughPlayers
-          ? <Typography gutterBottom>Waiting for the game creator to start the game</Typography>
-          : <Typography gutterBottom>Waiting for more players to join</Typography>}
         {imOwner
-          ? <StartGameForm gameID={room.id} />
-          : null}
-        <BackToGameListButton className={classes.button} />
-        {enoughPlayers && imOwner
-          ? <StartGameButton gameID={room.id} className={classes.button} />
-          : null}
+          ? <StartGameForm gameID={room.id} enoughPlayers={enoughPlayers} />
+          : <BackToGameListButton className={classes.button} />}
       </div>
     );
   }
