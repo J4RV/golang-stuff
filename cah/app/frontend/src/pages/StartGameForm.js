@@ -9,6 +9,8 @@ import FormControlLabel from "@material-ui/core/FormControlLabel"
 import { TextField } from "@material-ui/core"
 import Typography from "@material-ui/core/Typography"
 import axios from "axios";
+import { connect } from "react-redux"
+import pushError from "../actions/pushError"
 import { startGameUrl } from "../restUrls"
 import { withStyles } from "@material-ui/core/styles"
 
@@ -94,7 +96,7 @@ class StartGameForm extends Component {
     if (this.props.enoughPlayers) {
       console.log("Starting game with options", this.state)
       axios.post(startGameUrl, this.state)
-        .catch(e => window.alert(e.response.data))
+        .catch(e => this.props.pushError(e))
     } else {
       console.error("Tried to start a game without enough players")
     }
@@ -112,4 +114,7 @@ class StartGameForm extends Component {
   }
 }
 
-export default withStyles(styles)(StartGameForm)
+export default connect(
+  () => { },
+  { pushError }
+)(withStyles(styles)(StartGameForm))

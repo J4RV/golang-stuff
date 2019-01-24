@@ -3,11 +3,12 @@ import React, { Component } from 'react'
 import Button from '@material-ui/core/Button'
 import Card from './Card'
 import Check from '@material-ui/icons/Check'
-import ErrorSnackbar from '../components/ErrorSnackbar'
 import Fab from '@material-ui/core/Fab'
 import Typography from '@material-ui/core/Typography'
 import axios from 'axios'
-import {playCardsUrl} from '../restUrls'
+import { connect } from "react-redux"
+import { playCardsUrl } from '../restUrls'
+import pushError from "../actions/pushError"
 import withWidth from '@material-ui/core/withWidth'
 
 let PlayCardsButton = ({ isCzar, width, playCards }) => {
@@ -71,10 +72,6 @@ class Hand extends Component {
         <div style={{ marginTop: "2rem" }}>
           <PlayCardsButton playCards={this.playCards} isCzar={this.isCzar()} />
         </div>
-        <ErrorSnackbar
-          msg={this.state.errormsg}
-          onClose={() => this.setState({...this.state, errormsg: null})}
-        />
       </div>
     )
   }
@@ -101,8 +98,11 @@ class Hand extends Component {
       cardIndexes: this.state.cardIndexes
     }).then(r => {
       this.setState({ cardIndexes: [] })
-    }).catch(r => this.setState({...this.state, errormsg: r.response.data}))
+    }).catch(r => this.props.pushError(r))
   }
 }
 
-export default withWidth()(Hand)
+export default connect(
+  () => { },
+  { pushError }
+)(withWidth()(Hand))

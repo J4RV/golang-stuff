@@ -4,7 +4,9 @@ import Hand from '../gamestate/Hand'
 import PlayersInfo from '../gamestate/PlayersInfo'
 import Table from '../gamestate/Table'
 import axios from 'axios'
+import { connect } from "react-redux"
 import { gameStateUrl } from '../restUrls'
+import pushError from "../actions/pushError"
 
 class Game extends Component {
   render() {
@@ -28,9 +30,9 @@ class Game extends Component {
         // this would be much better with websockets
         window.setTimeout(this.updateState, 1000)
       })
-      .catch(e => window.alert(e)
+      .catch(e => this.props.pushError(e)
       )
   }
 }
 
-export default Game
+export default connect(() => { }, { pushError })(Game)

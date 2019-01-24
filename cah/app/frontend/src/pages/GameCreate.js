@@ -4,7 +4,6 @@ import Button from '@material-ui/core/Button'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogTitle from '@material-ui/core/DialogTitle'
-import ErrorSnackbar from '../components/ErrorSnackbar'
 import { Redirect } from 'react-router-dom'
 import TextField from '@material-ui/core/TextField'
 import axios from 'axios'
@@ -54,10 +53,6 @@ class CreateGameDialog extends Component {
               disabled={this.state.waitingResponse}
             >Create Game</Button>
           </DialogActions>
-          <ErrorSnackbar
-            msg={this.state.errormsg}
-            onClose={() => this.setState({ ...this.state, errormsg: null })}
-          />
         </form>
       </Dialog>
     )

@@ -2,7 +2,9 @@ import Card from './Card'
 import React from 'react'
 import Typography from '@material-ui/core/Typography'
 import axios from 'axios'
-import {chooseWinnerUrl} from '../restUrls'
+import { chooseWinnerUrl } from '../restUrls'
+import { connect } from "react-redux"
+import pushError from "../actions/pushError"
 import { withStyles } from '@material-ui/core/styles'
 
 const styles = theme => ({
@@ -16,7 +18,7 @@ const styles = theme => ({
 const handleOnClick = (stateID, winnerID) => {
   axios.post(chooseWinnerUrl(stateID), {
     winner: winnerID
-  }).catch(r => window.alert(r.response.data)) // We'll need prettier things
+  }).catch(r => this.props.pushError(r))
 }
 
 const PlayerWhiteCardsPlayed = ({ stateID, play, isCzar, classes }) => {
@@ -38,11 +40,11 @@ const WhiteCardsPlayed = ({ state, classes }) => {
         Czar choosing winner...
       </Typography>
       {state.sinnerPlays.map((sp) =>
-        <PlayerWhiteCardsPlayed 
+        <PlayerWhiteCardsPlayed
           stateID={state.id}
-          play={sp} 
-          isCzar={isCzar} 
-          classes={classes} 
+          play={sp}
+          isCzar={isCzar}
+          classes={classes}
         />)}
     </React.Fragment>
   } else {
@@ -52,4 +54,7 @@ const WhiteCardsPlayed = ({ state, classes }) => {
   }
 }
 
-export default withStyles(styles)(WhiteCardsPlayed)
+export default connect(
+  () => { },
+  { pushError }
+)(withStyles(styles)(WhiteCardsPlayed))

@@ -11,6 +11,7 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import axios from 'axios'
 import { connect } from 'react-redux'
+import pushError from '../actions/pushError'
 import { withStyles } from '@material-ui/core/styles'
 import withWidth from '@material-ui/core/withWidth';
 
@@ -120,24 +121,19 @@ class GameListPage extends Component {
       .then(r => {
         this.setState({ ...this.state, games: r.data })
       })
-      .catch(e => window.alert(e.response.data))
+      .catch(e => this.props.pushError(e))
   }
 
   joinGame = (gameID) => {
     axios.post(joinGameUrl, { id: gameID })
       .then(this.setState({ ...this.state, joinedGame: gameID }))
-      .catch(e => window.alert(e.response.data))
+      .catch(e => this.props.pushError(e))
   }
 
   setCreatingGame = (value) => this.setState({ ...this.state, creatingGame: value })
 }
 
-const GameList = (props) => (
-  <React.Fragment>
-    <GameListPage {...props} />
-  </React.Fragment>
-)
-
 export default connect(
-  state => ({ username: state.username })
-)(withWidth()(withStyles(styles)(GameList)))
+  state => ({ username: state.username }),
+  { pushError }
+)(withWidth()(withStyles(styles)(GameListPage)))

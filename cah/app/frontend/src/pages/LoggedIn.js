@@ -3,7 +3,6 @@ import { loginUrl, registerUrl, validCookieUrl } from "../restUrls"
 
 import Button from "@material-ui/core/Button"
 import Card from "../gamestate/Card"
-import ErrorSnackbar from "../components/ErrorSnackbar"
 import Footer from "../Footer"
 import FormControl from "@material-ui/core/FormControl"
 import TextField from "@material-ui/core/TextField"
@@ -11,7 +10,7 @@ import Typography from "@material-ui/core/Typography"
 import axios from "axios"
 import { connect } from "react-redux"
 import processLoginResponse from "../actions/processLoginResponse"
-import { withRouter } from "react-router-dom"
+import pushError from "../actions/pushError"
 import { withStyles } from "@material-ui/core/styles"
 
 const styles = theme => ({
@@ -53,13 +52,13 @@ class LoginForm extends Component {
     axios
       .post(url, payload)
       .then(r => this.props.onSubmitResponse(r))
-      .catch(r =>
+      .catch(r => {
         this.setState({
           ...this.state,
-          errormsg: r.response.data,
           disabled: false,
         })
-      )
+        this.props.onError(r.response.data)
+      })
     return false
   }
 
@@ -120,10 +119,6 @@ class LoginForm extends Component {
               Register
             </Button>
           </FormControl>
-          <ErrorSnackbar
-            msg={this.state.errormsg}
-            onClose={() => this.setState({ ...this.state, errormsg: null })}
-          />
           <Footer />
         </form>
       </div>
@@ -139,7 +134,7 @@ class LoggedInControl extends Component {
       .catch(r => this.props.processLoginResponse(r))
   }
   render() {
-    const { validCookie, processLoginResponse, classes } = this.props
+    const { validCookie, processLoginResponse, pushError, classes } = this.props
     if (validCookie == null) {
       return <div>Loading...</div>
     }
@@ -147,7 +142,7 @@ class LoggedInControl extends Component {
       return this.props.children
     }
     return (
-      <LoginForm onSubmitResponse={processLoginResponse} classes={classes} />
+      <LoginForm onSubmitResponse={processLoginResponse} onError={pushError} classes={classes} />
     )
   }
 }
@@ -156,9 +151,7 @@ class LoggedInControl extends Component {
 using withRouter to prevent connect to block updates
 see: https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/guides/blocked-updates.md
 */
-export default withRouter(
-  connect(
-    state => ({ validCookie: state.validCookie }),
-    { processLoginResponse }
-  )(withStyles(styles)(LoggedInControl))
-)
+export default connect(
+  state => ({ validCookie: state.validCookie }),
+  { processLoginResponse, pushError }
+)(withStyles(styles)(LoggedInControl))

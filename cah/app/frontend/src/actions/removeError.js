@@ -2,7 +2,10 @@ export const REMOVE_ERROR = 'REMOVE_ERROR'
 
 export const removeErrorReduce = (state, action) => {
   let { index } = action.payload
-  return { ...state, errors: state.errors.splice(index, 1) }
+  console.log("Removing error at index", index)
+  let newValue = [...state.errors]
+  newValue.splice(index, 1)
+  return { ...state, errors: newValue }
 }
 
 export default (index) => ({

@@ -6,6 +6,7 @@ import StartGameForm from './StartGameForm';
 import Typography from '@material-ui/core/Typography'
 import axios from 'axios'
 import { connect } from 'react-redux'
+import pushError from "../actions/pushError"
 import { roomStateUrl } from '../restUrls'
 import { withStyles } from '@material-ui/core/styles'
 
@@ -66,11 +67,11 @@ class GameRoom extends Component {
           window.setTimeout(this.updateState, 5000)
         }
       })
-      .catch(e => window.alert(e)
-      )
+      .catch(e => this.props.pushError(e))
   }
 }
 
 export default connect(
-  state => ({ username: state.username })
+  state => ({ username: state.username }),
+  { pushError }
 )(withStyles(styles)(GameRoom))
