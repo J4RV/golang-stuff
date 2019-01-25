@@ -9,18 +9,41 @@ import axios from 'axios'
 import { connect } from "react-redux"
 import { playCardsUrl } from '../restUrls'
 import pushError from "../actions/pushError"
+import { withStyles } from '@material-ui/core/styles'
 import withWidth from '@material-ui/core/withWidth'
 
-let PlayCardsButton = ({ isCzar, width, playCards }) => {
-  if (isCzar) {
-    return null
-  }
+const styles = theme => ({
+  hand: {
+    maxWidth: 800,
+    boxShadow: theme.shadows[8],
+    background: "#0004",
+    padding: theme.spacing.unit,
+    paddingTop: theme.spacing.unit * 2,
+    marginLeft: "auto",
+    marginRight: "auto",
+    textAlign: "center",
+  },
+  cardsInHand: {
+    textAlign: "center",
+  },
+  largeScreenButton: {
+    marginTop: "2rem",
+  },
+  smallScreenButton: {
+    position: "fixed",
+    right: 8,
+    bottom: 8
+  },
+})
+
+let PlayCardsButton = ({ classes, width, playCards }) => {
   if (width === "sm" || width === "xs") {
     return <Fab
       aria-label="Play selected cards"
       color="primary"
       onClick={playCards}
-      style={{ position: "fixed", right: 8, bottom: 8 }}>
+      classes={classes.smallScreenButton}
+    >
       <Check />
     </Fab>
   } else {
@@ -28,6 +51,7 @@ let PlayCardsButton = ({ isCzar, width, playCards }) => {
       variant="contained"
       color="primary"
       onClick={playCards}
+      classes={classes.largeScreenButton}
     >
       Play cards
     </Button>
@@ -53,11 +77,11 @@ class Hand extends Component {
   state = { cardIndexes: [], errormsg: null }
 
   render() {
-    const gamestate = this.props.state
+    const { gamestate, classes } = this.props
     return (
-      <div className="cah-hand">
+      <div className={classes.hand}>
         <CardsToPlay state={gamestate} />
-        <div className="cah-hand-cards">
+        <div className={classes.cardsInHand}>
           {gamestate.myPlayer.hand.map((c, i) =>
             <Card
               {...c}
@@ -69,19 +93,23 @@ class Hand extends Component {
             />
           )}
         </div>
-        <div style={{ marginTop: "2rem" }}>
-          <PlayCardsButton playCards={this.playCards} isCzar={this.isCzar()} />
-        </div>
+        {this.canPlayCards()
+          ? <PlayCardsButton playCards={this.playCards} classes={classes} />
+          : <div className={classes.largeScreenButton} />}
       </div>
     )
   }
 
-  isCzar = () => {
-    return this.props.state.currentCzarID === this.props.state.myPlayer.id
+  canPlayCards = () => {
+    const gamestate = this.props.gamestate
+    console.log(gamestate)
+    const isCzar = gamestate.currentCzarID === gamestate.myPlayer.id
+    const validPhase = gamestate.phase === "Sinners playing their cards"
+    return !isCzar && validPhase
   }
 
   handleCardClick = (i) => {
-    if (this.isCzar()) {
+    if (!this.canPlayCards()) {
       return
     }
     let newList = this.state.cardIndexes.slice()
@@ -94,7 +122,8 @@ class Hand extends Component {
   }
 
   playCards = () => {
-    axios.post(playCardsUrl(this.props.state.id), {
+    const gamestate = this.props.gamestate
+    axios.post(playCardsUrl(gamestate.id), {
       cardIndexes: this.state.cardIndexes
     }).then(r => {
       this.setState({ cardIndexes: [] })
@@ -105,4 +134,4 @@ class Hand extends Component {
 export default connect(
   () => { },
   { pushError }
-)(withWidth()(Hand))
+)(withWidth()(withStyles(styles)(Hand)))

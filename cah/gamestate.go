@@ -38,6 +38,10 @@ func (s GameState) CurrCzar() *Player {
 	return s.Players[s.CurrCzarIndex]
 }
 
+func (s GameState) IsCurrCzar(u User) bool {
+	return s.CurrCzar().User.ID == u.ID
+}
+
 func (s GameState) Equal(other GameState) bool {
 	// First we check very identifiable fields like ID or names
 	if s.ID != other.ID {

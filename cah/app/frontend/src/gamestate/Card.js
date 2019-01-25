@@ -1,27 +1,37 @@
 import React from 'react'
 import { withStyles } from '@material-ui/core/styles'
+import withWidth from '@material-ui/core/withWidth'
 
 const styles = theme => ({
   card: {
     position: "relative",
     display: "inline-block",
     padding: theme.spacing.unit,
-    borderRadius: 10,
-    textAlign: "center",
-    fontFamily: '"Open Sans", "Roboto", "Helvetica", "Arial", sans-serif',
-    fontWeight: "800",
-    verticalAlign: "top",
-    transition: "transform ease-in-out .5s",
-    transformOrigin: "50% 80%",
-  },
-  inHand: {
-    margin: "0 0 -10px 0",
-  },
-  text: {
     width: "8rem",
     height: "10rem",
-    fontSize: "0.8rem",
+    borderRadius: 10,
+    textAlign: "center",
+    verticalAlign: "top",
+    //transition: "transform ease-in-out .5s",
+    transformOrigin: "50% 80%",
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing.unit * 0.5,
+      width: "6.4rem",
+      height: "8rem",
+      borderRadius: 8,
+    }
+  },
+  inHand: {
+    margin: "0 0 -8px 0",
+  },
+  text: {
+    fontFamily: '"Open Sans", "Roboto", "Helvetica", "Arial", sans-serif',
+    fontWeight: "600",
+    fontSize: ".8rem",
     whiteSpace: "pre-wrap",
+    [theme.breakpoints.down('sm')]: {
+      fontSize: ".64rem",
+    }
   },
   black: {
     color: theme.palette.blackcard.text,
@@ -33,11 +43,15 @@ const styles = theme => ({
   },
   expansion: {
     position: "absolute",
-    fontSize: "0.6rem",
     bottom: theme.spacing.unit,
     right: theme.spacing.unit * 2,
     marginLeft: theme.spacing.unit,
     color: theme.palette.expansion,
+    fontSize: ".8em",
+    textAlign: "right",
+    [theme.breakpoints.down('sm')]: {
+      right: theme.spacing.unit,
+    }
   },
   inTable: {
     boxShadow: theme.shadows[1],
@@ -62,12 +76,12 @@ class Card extends React.Component {
     const colorClass = isBlack ? classes.black : classes.white
     return <div
       style={{ transform: `rotate(${this.state.rotation}deg)`, ...style }}
-      className={`${classes.card} ${colorClass} ${shadowClass}    
+      className={`${classes.card} ${classes.text} ${colorClass} ${shadowClass}    
         ${inHand ? classes.inHand : ""}
         ${className ? className : ""}`}
       {...rest}
     >
-      <div className={classes.text}>{text}</div>
+      <div >{text}</div>
       <div className={classes.expansion}>{expansion}</div>
     </div>
   }
@@ -83,4 +97,4 @@ class Card extends React.Component {
   }
 }
 
-export default withStyles(styles)(Card)
+export default withWidth()(withStyles(styles)(Card))

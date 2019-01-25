@@ -1,5 +1,4 @@
 import AppBar from '@material-ui/core/AppBar'
-import Button from '@material-ui/core/Button'
 import GitHubIcon from './icons/GitHub'
 import Menu from './components/Menu';
 import React from 'react'
@@ -7,7 +6,6 @@ import ShoppingCart from '@material-ui/icons/ShoppingCart'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import { connect } from 'react-redux'
-import { logoutUrl } from './restUrls'
 import { withStyles } from '@material-ui/core/styles'
 import withWidth from '@material-ui/core/withWidth'
 

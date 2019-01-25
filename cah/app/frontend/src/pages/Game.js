@@ -15,7 +15,7 @@ class Game extends Component {
       <div className="cah-game">
         <PlayersInfo state={this.state} />
         <Table state={this.state} />
-        <Hand state={this.state} />
+        <Hand gamestate={this.state} />
       </div>
     );
   }

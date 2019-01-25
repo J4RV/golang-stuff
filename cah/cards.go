@@ -23,7 +23,7 @@ type CardUsecases interface {
 }
 
 type Card struct {
-	ID        int    `json:"id" db:"id"`
+	ID        int    `json:"-" db:"id"`
 	Text      string `json:"text" db:"text"`
 	Expansion string `json:"expansion" db:"expansion"`
 }

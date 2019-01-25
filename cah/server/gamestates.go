@@ -23,7 +23,7 @@ GET GAME STATE
 */
 
 type playerInfo struct {
-	ID               int             `json:"id"`
+	//ID               int             `json:"id"`
 	Name             string          `json:"name"`
 	HandSize         int             `json:"handSize"`
 	WhiteCardsInPlay int             `json:"whiteCardsInPlay"`
@@ -45,7 +45,7 @@ type sinnerPlay struct {
 
 type gameStateResponse struct {
 	ID              int             `json:"id"`
-	Phase           int             `json:"phase"`
+	Phase           string          `json:"phase"`
 	Players         []playerInfo    `json:"players"`
 	CurrCzarID      int             `json:"currentCzarID"`
 	BlackCardInPlay cah.BlackCard   `json:"blackCardInPlay"`
@@ -69,7 +69,7 @@ func gameStateForUser(w http.ResponseWriter, req *http.Request) error {
 	}
 	response := gameStateResponse{
 		ID:              game.ID,
-		Phase:           int(game.Phase),
+		Phase:           game.Phase.String(),
 		Players:         playersInfoFromGame(game),
 		CurrCzarID:      game.Players[game.CurrCzarIndex].User.ID,
 		BlackCardInPlay: game.BlackCardInPlay,
@@ -91,7 +91,7 @@ func playersInfoFromGame(game cah.GameState) []playerInfo {
 
 func newPlayerInfo(p cah.Player) playerInfo {
 	return playerInfo{
-		ID:               p.User.ID,
+		//ID:               p.User.ID,
 		Name:             p.User.Username,
 		HandSize:         len(p.Hand),
 		WhiteCardsInPlay: len(p.WhiteCardsInPlay),
@@ -114,6 +114,9 @@ func sinnerPlaysFromGame(game cah.GameState) []sinnerPlay {
 	}
 	ret := make([]sinnerPlay, len(game.Players))
 	for i, p := range game.Players {
+		if game.IsCurrCzar(p.User) {
+			continue
+		}
 		ret[i] = sinnerPlay{
 			ID:         p.User.ID,
 			WhiteCards: p.WhiteCardsInPlay,
