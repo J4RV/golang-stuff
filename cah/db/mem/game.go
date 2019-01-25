@@ -41,13 +41,16 @@ func (store *gameMemStore) ByID(id int) (cah.Game, error) {
 	return g, nil
 }
 
-func (store *gameMemStore) ByStatePhase(p cah.Phase) []cah.Game {
+func (store *gameMemStore) ByStatePhase(phases ...cah.Phase) []cah.Game {
 	store.Lock()
 	defer store.Unlock()
 	ret := []cah.Game{}
 	for _, g := range store.games {
-		if g.State.Phase == p {
-			ret = append(ret, g)
+		for _, p := range phases {
+			if g.State.Phase == p {
+				ret = append(ret, g)
+				break
+			}
 		}
 	}
 	return ret

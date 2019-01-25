@@ -3,7 +3,7 @@ package cah
 type GameStore interface {
 	Create(Game) error
 	ByID(int) (Game, error)
-	ByStatePhase(Phase) []Game
+	ByStatePhase(...Phase) []Game
 	Update(Game) error
 }
 
@@ -11,6 +11,7 @@ type GameUsecases interface {
 	Create(owner User, name, pass string) error
 	ByID(int) (Game, error)
 	AllOpen() []Game
+	InProgressForUser(User) []Game
 	UserJoins(User, Game) error
 	Start(Game, GameState, ...Option) error
 	Options() GameOptions

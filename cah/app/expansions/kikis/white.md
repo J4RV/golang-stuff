@@ -22,5 +22,5 @@ Pelu explaining all the benefits of polyamory.
 Carlito begging for food.
 Nachos con carne y queso de las piletas.
 Gibraltar's monkey toys screaming.
-Being a Pokèmon Go tryhard.
+Being a Pokémon Go tryhard.
 Rule 34 of Thanos.

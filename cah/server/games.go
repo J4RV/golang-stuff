@@ -16,6 +16,7 @@ func handleGames(r *mux.Router) {
 	s := r.PathPrefix("/game").Subrouter()
 	s.Handle("/{gameID}/room-state", srvHandler(roomState)).Methods("GET")
 	s.Handle("/list-open", srvHandler(openGames)).Methods("GET")
+	s.Handle("/list-in-progress", srvHandler(inProgressGames)).Methods("GET")
 	s.Handle("/create", srvHandler(createGame)).Methods("POST")
 	s.Handle("/join", srvHandler(joinGame)).Methods("POST")
 	//s.Handle("/Leave", srvHandler(playCards)).Methods("POST")
@@ -54,6 +55,20 @@ func roomState(w http.ResponseWriter, req *http.Request) error {
 func openGames(w http.ResponseWriter, req *http.Request) error {
 	response := []gameRoomResponse{}
 	for _, g := range usecase.Game.AllOpen() {
+		response = append(response, gameToResponse(g))
+	}
+	writeResponse(w, response)
+	return nil
+}
+
+func inProgressGames(w http.ResponseWriter, req *http.Request) error {
+	// User is logged
+	u, err := userFromSession(req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusForbidden)
+	}
+	response := []gameRoomResponse{}
+	for _, g := range usecase.Game.InProgressForUser(u) {
 		response = append(response, gameToResponse(g))
 	}
 	writeResponse(w, response)

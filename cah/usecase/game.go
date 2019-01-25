@@ -45,6 +45,20 @@ func (control gameController) AllOpen() []cah.Game {
 	return control.store.ByStatePhase(cah.NotStarted)
 }
 
+func (control gameController) InProgressForUser(user cah.User) []cah.Game {
+	gamesInProgress := control.store.ByStatePhase(cah.SinnersPlaying, cah.CzarChoosingWinner)
+	ret := []cah.Game{}
+	for _, ipg := range gamesInProgress {
+		for _, u := range ipg.Users {
+			if u.ID == user.ID {
+				ret = append(ret, ipg)
+				break
+			}
+		}
+	}
+	return ret
+}
+
 func (control gameController) UserJoins(user cah.User, game cah.Game) error {
 	for _, u := range game.Users {
 		if u.ID == user.ID {

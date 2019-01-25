@@ -1,6 +1,7 @@
 import AppBar from '@material-ui/core/AppBar'
 import Button from '@material-ui/core/Button'
 import GitHubIcon from './icons/GitHub'
+import Menu from './components/Menu';
 import React from 'react'
 import ShoppingCart from '@material-ui/icons/ShoppingCart'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -18,22 +19,25 @@ const styles = theme => ({
   title: {
     flexGrow: 1,
   },
+  user: {
+    margin: theme.spacing.unit,
+  },
   icon: {
     margin: theme.spacing.unit,
     color: theme.palette.grey[50],
   },
-});
+})
 
 function TopAppBar({ username, title, shortTitle, width, classes }) {
   return (
     <div>
       <AppBar position='static' className={classes.appbar} >
         <Toolbar>
+          <Typography variant='h6' color='inherit' className={classes.user} >
+            {username}
+          </Typography>
           <Typography variant='h6' color='inherit' className={classes.title} >
             {width === "xs" ? shortTitle : title}
-          </Typography>
-          <Typography variant='h6' color='inherit' >
-            {username}
           </Typography>
           <Typography>
             <a target="blank" href="https://github.com/J4RV">
@@ -45,9 +49,7 @@ function TopAppBar({ username, title, shortTitle, width, classes }) {
               <ShoppingCart className={classes.icon} />
             </a>
           </Typography>
-          <a href={logoutUrl}>
-            <Button color='inherit'>Log out</Button>
-          </a>
+          <Menu />
         </Toolbar>
       </AppBar>
     </div>
