@@ -7,6 +7,7 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
+import Typography from "@material-ui/core/Typography"
 import axios from 'axios'
 import { connect } from 'react-redux'
 import { joinGameUrl } from '../restUrls'
@@ -44,25 +45,30 @@ class GamesTable extends Component {
     }
     const { username } = this.props
     const { games } = this.state
+    if (games.length === 0) {
+      return <Typography variant="h6" align="center">
+        No games found
+      </Typography>
+    }
     return (
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell align="right">Name</TableCell>
-            <TableCell align="right">Owner</TableCell>
+            <TableCell align="left">Name</TableCell>
+            <TableCell align="center">Owner</TableCell>
             {/*<TableCell align="right">Has password</TableCell>*/}
-            <TableCell align="right">Current players</TableCell>
-            <TableCell />
+            <TableCell align="left">Current players</TableCell>
+            <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {games.map(game => (
             <TableRow key={game.id}>
-              <TableCell align="right">{game.name}</TableCell>
-              <TableCell align="right">{game.owner}</TableCell>
+              <TableCell align="left">{game.name}</TableCell>
+              <TableCell align="center">{game.owner}</TableCell>
               {/*<TableCell align="right">{game.hasPassword ? "Yes" : "No"}</TableCell>*/}
-              <TableCell align="right">{game.players.join(", ")}</TableCell>
-              <TableCell align="right">
+              <TableCell align="left">{game.players.join(", ")}</TableCell>
+              <TableCell align="center">
                 <PrimaryButton game={game} joinGame={this.joinGame} username={username} />
               </TableCell>
             </TableRow>

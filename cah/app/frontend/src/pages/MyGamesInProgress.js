@@ -22,7 +22,7 @@ const styles = theme => ({
     },
   },
   tableContainer: {
-    minWidth: 800,
+    overflowX: 'auto',
   },
   title: {
     textAlign: "center",

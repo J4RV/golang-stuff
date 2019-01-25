@@ -16,14 +16,13 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 3,
     marginLeft: "auto",
     marginRight: "auto",
-    overflowX: 'auto',
     padding: theme.spacing.unit * 2,
     [theme.breakpoints.down('sm')]: {
       padding: theme.spacing.unit,
     },
   },
   tableContainer: {
-    minWidth: 800,
+    overflowX: 'auto',
   },
   title: {
     textAlign: "center",
