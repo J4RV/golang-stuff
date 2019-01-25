@@ -7,26 +7,6 @@
   position: relative;
 }
 
-.cah-hand-cards {
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-}
-
-.cah-hand {  
-  background: #0006;
-  margin: 16px;
-  padding: 16px;
-  padding-top: 24px;
-  border-radius: 4px;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 0;
-  text-align: center;
-}
-
 .cah-table {
   text-align: center;
 }
