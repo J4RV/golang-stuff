@@ -13,10 +13,11 @@ import axios from 'axios'
 import { connect } from 'react-redux'
 import { joinGameUrl } from '../restUrls'
 import pushError from '../actions/pushError'
-import { withStyles } from '@material-ui/core/styles'
+
+/*import { withStyles } from '@material-ui/core/styles'
 
 const styles = theme => ({
-})
+})*/
 
 const PrimaryButton = ({ username, game, joinGame }) => {
   if (game.players.includes(username)) {
