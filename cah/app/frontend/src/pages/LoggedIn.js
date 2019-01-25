@@ -3,6 +3,7 @@ import { loginUrl, registerUrl, validCookieUrl } from "../restUrls"
 
 import Button from "@material-ui/core/Button"
 import Card from "../gamestate/Card"
+import CircularProgress from '@material-ui/core/CircularProgress'
 import Footer from "../Footer"
 import FormControl from "@material-ui/core/FormControl"
 import TextField from "@material-ui/core/TextField"
@@ -136,7 +137,7 @@ class LoggedInControl extends Component {
   render() {
     const { validCookie, processLoginResponse, pushError, classes } = this.props
     if (validCookie == null) {
-      return <div>Loading...</div>
+      return <CircularProgress />
     }
     if (validCookie) {
       return this.props.children

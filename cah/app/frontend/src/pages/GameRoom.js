@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 
 import BackToGameListButton from '../components/BackToGameListButton'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import Game from './Game'
 import StartGameForm from './StartGameForm';
 import Typography from '@material-ui/core/Typography'
@@ -18,18 +19,21 @@ const styles = theme => ({
   button: {
     margin: theme.spacing.unit,
   },
+  loading: {
+    margin: theme.spacing.unit,
+  },
 });
 
 class GameRoom extends Component {
   render() {
+    const { classes, username } = this.props
     if (this.state == null) {
-      return <Typography variant="h5" gutterBottom>Now loading...</Typography>
+      return <CircularProgress className={classes.loading} />
     }
     const { room } = this.state
     if (room.phase !== "Not started") {
       return <Game stateID={room.stateID} />
     }
-    const { classes, username } = this.props
     const enoughPlayers = room.players.length > 2
     const imOwner = room.owner === username
     return (
