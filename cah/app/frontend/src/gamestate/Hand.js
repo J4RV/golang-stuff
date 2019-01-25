@@ -25,14 +25,15 @@ const styles = theme => ({
   },
   cardsInHand: {
     textAlign: "center",
+    paddingBottom: 8, // Inverse of card's negative top margin
   },
   largeScreenButton: {
-    marginTop: "2rem",
+    marginTop: theme.spacing.unit,
   },
   smallScreenButton: {
     position: "fixed",
-    right: 8,
-    bottom: 8
+    right: theme.spacing.unit,
+    bottom: theme.spacing.unit,
   },
 })
 
@@ -42,7 +43,7 @@ let PlayCardsButton = ({ classes, width, playCards }) => {
       aria-label="Play selected cards"
       color="primary"
       onClick={playCards}
-      classes={classes.smallScreenButton}
+      className={classes.smallScreenButton}
     >
       <Check />
     </Fab>
@@ -51,7 +52,7 @@ let PlayCardsButton = ({ classes, width, playCards }) => {
       variant="contained"
       color="primary"
       onClick={playCards}
-      classes={classes.largeScreenButton}
+      className={classes.largeScreenButton}
     >
       Play cards
     </Button>
@@ -95,7 +96,7 @@ class Hand extends Component {
         </div>
         {this.canPlayCards()
           ? <PlayCardsButton playCards={this.playCards} classes={classes} />
-          : <div className={classes.largeScreenButton} />}
+          : null}
       </div>
     )
   }
