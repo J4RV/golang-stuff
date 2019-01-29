@@ -23,7 +23,7 @@ GET GAME STATE
 */
 
 type playerInfo struct {
-	//ID               int             `json:"id"`
+	ID               int             `json:"id"`
 	Name             string          `json:"name"`
 	HandSize         int             `json:"handSize"`
 	WhiteCardsInPlay int             `json:"whiteCardsInPlay"`
@@ -91,7 +91,7 @@ func playersInfoFromGame(game cah.GameState) []playerInfo {
 
 func newPlayerInfo(p cah.Player) playerInfo {
 	return playerInfo{
-		//ID:               p.User.ID,
+		ID:               p.User.ID,
 		Name:             p.User.Username,
 		HandSize:         len(p.Hand),
 		WhiteCardsInPlay: len(p.WhiteCardsInPlay),

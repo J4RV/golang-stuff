@@ -37,7 +37,7 @@ const WhiteCardsPlayed = ({ state, classes }) => {
   if (state.sinnerPlays.length > 0) {
     return <React.Fragment>
       <Typography variant='h6' gutterBottom>
-        Czar choosing winner...
+        {isCzar ? "Choose the winner" : "Czar choosing winner..."}
       </Typography>
       {state.sinnerPlays.map((sp) =>
         <PlayerWhiteCardsPlayed
@@ -48,9 +48,12 @@ const WhiteCardsPlayed = ({ state, classes }) => {
         />)}
     </React.Fragment>
   } else {
-    return <Typography variant='h6' gutterBottom>
-      Waiting for players...
-    </Typography>
+    return (
+      <Typography variant='h6' gutterBottom>
+        {isCzar ? <p>You are the Czar!</p> : null}
+        Waiting for all players to play their cards...
+      </Typography>
+    )
   }
 }
 

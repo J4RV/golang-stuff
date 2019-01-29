@@ -13,9 +13,9 @@ class Game extends Component {
     if (this.state == null) return null;
     return (
       <div className="cah-game">
-        <PlayersInfo state={this.state} />
         <Table state={this.state} />
         <Hand gamestate={this.state} />
+        <PlayersInfo state={this.state} />
       </div>
     );
   }

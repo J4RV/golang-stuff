@@ -103,7 +103,6 @@ class Hand extends Component {
 
   canPlayCards = () => {
     const gamestate = this.props.gamestate
-    console.log(gamestate)
     const isCzar = gamestate.currentCzarID === gamestate.myPlayer.id
     const validPhase = gamestate.phase === "Sinners playing their cards"
     return !isCzar && validPhase

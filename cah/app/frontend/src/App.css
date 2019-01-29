@@ -10,18 +10,3 @@
 .cah-table {
   text-align: center;
 }
-
-.cah-playersinfo {
-  display: flex;
-  position: fixed;
-  right: 8px;
-  top: 72px;
-}
-
-.cah-playerinfo {
-  background: #EEE8;
-  color: #111;
-  margin: 4px;
-  padding: 4px;
-  border-radius: 3px;
-}

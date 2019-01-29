@@ -62,7 +62,7 @@ class GamesTable extends Component {
             <TableCell align="left">Name</TableCell>
             <TableCell align="center">Owner</TableCell>
             {/*<TableCell align="right">Has password</TableCell>*/}
-            <TableCell align="left">Current players</TableCell>
+            {/*<TableCell align="left">Current players</TableCell>*/}
             <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -72,7 +72,7 @@ class GamesTable extends Component {
               <TableCell align="left">{game.name}</TableCell>
               <TableCell align="center">{game.owner}</TableCell>
               {/*<TableCell align="right">{game.hasPassword ? "Yes" : "No"}</TableCell>*/}
-              <TableCell align="left">{game.players.join(", ")}</TableCell>
+              {/*<TableCell align="left">{game.players.join(", ")}</TableCell>*/}
               <TableCell align="center">
                 <PrimaryButton game={game} joinGame={this.joinGame} username={username} />
               </TableCell>

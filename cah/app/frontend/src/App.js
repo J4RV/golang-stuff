@@ -37,7 +37,7 @@ const RealApp = withRouter(() => (
   <WithErrors>
     <LoggedIn>
       <AppBar />
-      <Route exact path="/" render={() => <Redirect to="/game/list/my-games-in-progress" />} />
+      <Route exact path="/" render={() => <Redirect to="/game/list/open" />} />
       <Route path="/game/list/create" component={GameCreate} />
       <Route path="/game/list/my-games-in-progress" component={MyGamesInProgress} />
       <Route path="/game/list/open" component={OpenGames} />

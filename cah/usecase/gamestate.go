@@ -119,10 +119,13 @@ func (control stateController) PlayWhiteCards(p int, cs []int, g cah.GameState) 
 	if p == g.CurrCzarIndex {
 		return g, errors.New("The Czar cannot play white cards")
 	}
-	if len(cs)+len(g.Players[p].WhiteCardsInPlay) > g.BlackCardInPlay.BlanksAmount {
+	if len(g.Players[p].WhiteCardsInPlay) != 0 {
+		return g, errors.New("You played your card(s) already")
+	}
+	if len(cs) != g.BlackCardInPlay.BlanksAmount {
 		return g, fmt.Errorf("Invalid amount of white cards to play, expected %d but got %d",
 			g.BlackCardInPlay.BlanksAmount,
-			len(cs)+len(g.Players[p].WhiteCardsInPlay))
+			len(cs))
 	}
 	ret := g.Clone()
 	player := ret.Players[p]
