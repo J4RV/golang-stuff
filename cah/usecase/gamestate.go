@@ -78,16 +78,11 @@ func (control stateController) GiveBlackCardToWinner(wID int, g cah.GameState) (
 	}
 	ret, _ = control.nextCzar(ret)
 	if (len(ret.BlackDeck)) == 0 {
-		ret, err = control.End(ret)
-		return ret, err
+		return control.End(ret)
 	}
 	ret, err = putBlackCardInPlay(ret)
 	if err != nil {
-		_, ok := err.(*errorEmptyBlackDeck)
-		if !ok {
-			return g, err
-		}
-		ret, _ = control.End(ret)
+		return g, err
 	}
 	playersDraw(&ret)
 	err = control.store.Update(ret)

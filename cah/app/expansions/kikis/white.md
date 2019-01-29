@@ -1,12 +1,12 @@
-Ore no Imōto ga Konna ni Kawaii Wake ga Nai, also known as Oreimo.
-Kirino holding a chocolate heart.
 Kikis.
 UNO, the card game.
-Un polla vieja.
+Un pollavieja.
 Unga unga unga!
 Doing cosplay.
 El cráter.
 Gordo cheese fries for breakfast.
+Ore no Imōto ga Konna ni Kawaii Wake ga Nai, also known as Oreimo.
+Kirino holding a chocolate heart.
 My Little Pony.
 Bojack Horseman.
 Miraculous Ladybug.
@@ -24,3 +24,11 @@ Nachos con carne y queso de las piletas.
 Gibraltar's monkey toys screaming.
 Being a Pokémon Go tryhard.
 Rule 34 of Thanos.
+emosido engañado
+La carita sonriente.
+El niño que se ahogaba en la piscina.
+Tony's Vanilla Ice Cream.
+Los escopetazos de cinco.
+Watching School Days.
+The Communist Manifesto.
+Los José Joaquines.

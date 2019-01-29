@@ -35,4 +35,4 @@ class Game extends Component {
   }
 }
 
-export default connect(() => { }, { pushError })(Game)
+export default connect(null, { pushError })(Game)

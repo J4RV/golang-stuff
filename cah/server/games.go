@@ -24,7 +24,7 @@ func handleGames(r *mux.Router) {
 	s.Handle("/available-expansions", srvHandler(availableExpansions)).Methods("GET")
 }
 
-const minWhites = 40
+const minWhites = 34
 const minBlacks = 8
 const minHandSize = 5
 const maxHandSize = 30
