@@ -30,35 +30,17 @@ func (store *cardStore) CreateBlack(text, exp string, blanks int) error {
 }
 
 func (store *cardStore) AllWhites() ([]cah.WhiteCard, error) {
-	rows, err := db.Query(`SELECT * FROM white_card`)
-	if err != nil {
-		return nil, err
-	}
 	res := []cah.WhiteCard{}
-	for rows.Next() {
-		wc := cah.WhiteCard{}
-		err = rows.Scan(&wc.ID, &wc.Text, &wc.Expansion)
-		if err != nil {
-			return res, err
-		}
-		res = append(res, wc)
+	if err := db.Select(&res, "SELECT * FROM white_card"); err != nil {
+		return res, err
 	}
 	return res, nil
 }
 
 func (store *cardStore) AllBlacks() ([]cah.BlackCard, error) {
-	rows, err := db.Query(`SELECT * FROM black_card`)
-	if err != nil {
-		return nil, err
-	}
 	res := []cah.BlackCard{}
-	for rows.Next() {
-		bc := cah.BlackCard{}
-		err = rows.Scan(&bc.ID, &bc.Text, &bc.Expansion, &bc.Blanks)
-		if err != nil {
-			return res, err
-		}
-		res = append(res, bc)
+	if err := db.Select(&res, "SELECT * FROM black_card"); err != nil {
+		return res, err
 	}
 	return res, nil
 }

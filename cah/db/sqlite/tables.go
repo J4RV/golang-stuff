@@ -1,37 +1,28 @@
 package sqlite
 
 import (
-	"database/sql"
 	"fmt"
+	"strings"
 )
 
 func createTable(table string, columns []string) {
-	var createTableStatement string
-	createTableStatement = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (`, table)
-	for _, column := range columns {
-		createTableStatement += column + ","
+	if len(columns) == 0 {
+		panic("createTable method is for tables with at least one column")
 	}
-	// remove last comma
-	createTableStatement = createTableStatement[:len(createTableStatement)-1]
-	createTableStatement += ");"
-	statement, err := db.Prepare(createTableStatement)
-	panicIfErr(err)
-	_, err = statement.Exec()
-	panicIfErr(err)
+	// Using Sprintf since this internal method does not use user inputs
+	statement := fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (%s INTEGER PRIMARY KEY AUTOINCREMENT,%s);", table, table, strings.Join(columns, ","))
+	db.MustExec(statement)
 }
 
 func createIndex(table, column string) {
 	indexName := fmt.Sprintf("%s_%s", table, column)
+	// Using Sprintf since this internal method does not use user inputs
 	createIndexStatement := fmt.Sprintf("CREATE INDEX IF NOT EXISTS %s ON %s(%s);", indexName, table, column)
-	statement, err := db.Prepare(createIndexStatement)
-	panicIfErr(err)
-	_, err = statement.Exec()
-	panicIfErr(err)
+	db.MustExec(createIndexStatement)
 }
 
-func createTableWhiteCard(db *sql.DB) {
+func createTableWhiteCard() {
 	createTable("white_card", []string{
-		"white_card INTEGER PRIMARY KEY AUTOINCREMENT",
 		"text TEXT",
 		"expansion TEXT",
 		"CHECK(text <> '' AND expansion <> '')",
@@ -39,9 +30,8 @@ func createTableWhiteCard(db *sql.DB) {
 	createIndex("white_card", "expansion")
 }
 
-func createTableBlackCard(db *sql.DB) {
+func createTableBlackCard() {
 	createTable("black_card", []string{
-		"black_card INTEGER PRIMARY KEY AUTOINCREMENT",
 		"text TEXT",
 		"expansion TEXT",
 		"blanks INTEGER",

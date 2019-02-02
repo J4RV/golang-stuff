@@ -1,24 +1,24 @@
 package sqlite
 
 import (
-	"database/sql"
-
 	// driver for sqlite3
+
+	"github.com/jmoiron/sqlx"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var db *sql.DB
+var db *sqlx.DB
 
-func initDB(dbFileName string) *sql.DB {
+func InitDB(dbFileName string) {
 	var err error
-	db, err = sql.Open("sqlite3", dbFileName)
-	if err != nil {
-		panic(err)
-	}
-	return db
+	db, err = sqlx.Open("sqlite3", dbFileName)
+	panicIfErr(err)
+	err = db.Ping()
+	panicIfErr(err)
 }
 
-func createTables(db *sql.DB) {
-	createTableWhiteCard(db)
-	createTableBlackCard(db)
+func CreateTables() {
+	createTableWhiteCard()
+	createTableBlackCard()
 }

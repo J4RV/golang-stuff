@@ -1,19 +1,14 @@
 package sqlite
 
 import (
-	"os"
 	"testing"
 )
 
 func setup(t *testing.T) (*cardStore, func()) {
-	initDB("cah_db_card.test.db")
-	createTables(db)
+	InitDB(":memory:")
+	CreateTables()
 	return NewCardStore(), func() {
 		db.Close()
-		err := os.Remove("cah_db_card.test.db")
-		if err != nil {
-			panic(err)
-		}
 	}
 }
 
