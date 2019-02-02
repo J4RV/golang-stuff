@@ -100,7 +100,7 @@ func giveBlackCardToWinnerChecks(w int, s cah.GameState) error {
 		if i == s.CurrCzarIndex {
 			continue
 		}
-		if len(p.WhiteCardsInPlay) != s.BlackCardInPlay.BlanksAmount {
+		if len(p.WhiteCardsInPlay) != s.BlackCardInPlay.Blanks {
 			return errors.New("Not all sinners have played their cards")
 		}
 	}
@@ -117,9 +117,9 @@ func (control stateController) PlayWhiteCards(p int, cs []int, g cah.GameState) 
 	if len(g.Players[p].WhiteCardsInPlay) != 0 {
 		return g, errors.New("You played your card(s) already")
 	}
-	if len(cs) != g.BlackCardInPlay.BlanksAmount {
+	if len(cs) != g.BlackCardInPlay.Blanks {
 		return g, fmt.Errorf("Invalid amount of white cards to play, expected %d but got %d",
-			g.BlackCardInPlay.BlanksAmount,
+			g.BlackCardInPlay.Blanks,
 			len(cs))
 	}
 	ret := g.Clone()
@@ -144,7 +144,7 @@ func (_ stateController) AllSinnersPlayedTheirCards(s cah.GameState) bool {
 		if i == s.CurrCzarIndex {
 			continue
 		}
-		if len(p.WhiteCardsInPlay) != s.BlackCardInPlay.BlanksAmount {
+		if len(p.WhiteCardsInPlay) != s.BlackCardInPlay.Blanks {
 			return false
 		}
 	}

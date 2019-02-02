@@ -1,10 +1,6 @@
 package sqlite
 
 import (
-	"errors"
-	"fmt"
-	"strings"
-
 	"github.com/j4rv/golang-stuff/cah"
 )
 
@@ -16,32 +12,21 @@ func NewCardStore() *cardStore {
 }
 
 func (store *cardStore) CreateWhite(text, exp string) error {
-	trimmedText, trimmedExp := strings.TrimSpace(text), strings.TrimSpace(exp)
-	if trimmedText == "" || trimmedExp == "" {
-		return errors.New("Text and expansion cannot be empty")
-	}
 	statement, err := db.Prepare(`INSERT INTO white_card (text, expansion) VALUES (?, ?)`)
 	if err != nil {
 		return err
 	}
-	statement.Exec(trimmedText, trimmedExp)
-	return nil
+	_, err = statement.Exec(text, exp)
+	return err
 }
 
 func (store *cardStore) CreateBlack(text, exp string, blanks int) error {
-	trimmedText, trimmedExp := strings.TrimSpace(text), strings.TrimSpace(exp)
-	if trimmedText == "" || trimmedExp == "" {
-		return errors.New("Text and expansion cannot be empty")
-	}
-	if blanks < 1 {
-		return errors.New("Blanks should be at least 1")
-	}
 	statement, err := db.Prepare(`INSERT INTO black_card (text, expansion, blanks) VALUES (?, ?, ?)`)
 	if err != nil {
 		return err
 	}
-	statement.Exec(trimmedText, trimmedExp, blanks)
-	return nil
+	_, err = statement.Exec(text, exp, blanks)
+	return err
 }
 
 func (store *cardStore) AllWhites() ([]cah.WhiteCard, error) {
@@ -52,26 +37,33 @@ func (store *cardStore) AllWhites() ([]cah.WhiteCard, error) {
 	res := []cah.WhiteCard{}
 	for rows.Next() {
 		wc := cah.WhiteCard{}
-		rows.Scan(&wc.ID, &wc.Text, &wc.Expansion)
-		fmt.Println("Found white card", wc)
+		err = rows.Scan(&wc.ID, &wc.Text, &wc.Expansion)
+		if err != nil {
+			return res, err
+		}
 		res = append(res, wc)
 	}
 	return res, nil
 }
 
-/*
-func (store *cardStore) AllBlacks() []cah.BlackCard {
-	store.Lock()
-	defer store.Unlock()
-	ret := []cah.BlackCard{}
-	for _, blackCards := range store.blackCards {
-		for _, blackCard := range blackCards {
-			ret = append(ret, blackCard)
-		}
+func (store *cardStore) AllBlacks() ([]cah.BlackCard, error) {
+	rows, err := db.Query(`SELECT * FROM black_card`)
+	if err != nil {
+		return nil, err
 	}
-	return ret
+	res := []cah.BlackCard{}
+	for rows.Next() {
+		bc := cah.BlackCard{}
+		err = rows.Scan(&bc.ID, &bc.Text, &bc.Expansion, &bc.Blanks)
+		if err != nil {
+			return res, err
+		}
+		res = append(res, bc)
+	}
+	return res, nil
 }
 
+/*
 func (store *cardStore) ExpansionWhites(exps ...string) []cah.WhiteCard {
 	store.Lock()
 	defer store.Unlock()

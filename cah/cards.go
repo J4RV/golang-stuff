@@ -22,17 +22,15 @@ type CardUsecases interface {
 	AvailableExpansions() []string
 }
 
-type Card struct {
-	ID        int    `json:"-" db:"id"`
+type WhiteCard struct {
+	ID        int    `json:"-" db:"white_card"`
 	Text      string `json:"text" db:"text"`
 	Expansion string `json:"expansion" db:"expansion"`
 }
 
-type WhiteCard struct {
-	Card
-}
-
 type BlackCard struct {
-	Card
-	BlanksAmount int `json:"blanksAmount" db:"blanksAmount"`
+	ID        int    `json:"-" db:"black_card"`
+	Text      string `json:"text" db:"text"`
+	Expansion string `json:"expansion" db:"expansion"`
+	Blanks    int    `json:"blanks" db:"blanks"`
 }

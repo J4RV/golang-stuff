@@ -9,19 +9,16 @@ import (
 
 var db *sql.DB
 
-func initDB(dbFileName string) {
+func initDB(dbFileName string) *sql.DB {
 	var err error
 	db, err = sql.Open("sqlite3", dbFileName)
 	if err != nil {
 		panic(err)
 	}
-	createTables()
+	return db
 }
 
-func createTables() {
-	statement, err := db.Prepare(createTablesScript)
-	if err != nil {
-		panic(err)
-	}
-	statement.Exec()
+func createTables(db *sql.DB) {
+	createTableWhiteCard(db)
+	createTableBlackCard(db)
 }

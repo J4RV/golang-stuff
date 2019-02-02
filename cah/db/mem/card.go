@@ -22,38 +22,42 @@ func NewCardStore() *cardMemStore {
 }
 
 func (store *cardMemStore) CreateWhite(t, e string) error {
+	if len(t) == 0 {
+		return errors.New("Card text cannot be empty")
+	}
+	if len(t) > 120 {
+		return errors.New("Card text cannot be longer than 120")
+	}
 	store.Lock()
 	defer store.Unlock()
 	c := cah.WhiteCard{}
 	c.ID = store.nextID()
 	c.Text = t
 	c.Expansion = e
-	err := validateCard(c.Card)
-	if err != nil {
-		return err
-	}
 	store.whiteCards[e] = append(store.whiteCards[e], c)
 	return nil
 }
 
 func (store *cardMemStore) CreateBlack(t, e string, blanks int) error {
-	store.Lock()
-	defer store.Unlock()
+	if len(t) == 0 {
+		return errors.New("Card text cannot be empty")
+	}
+	if len(t) > 120 {
+		return errors.New("Card text cannot be longer than 120")
+	}
 	if blanks < 1 {
 		return errors.New("Black cards need to have at least 1 blank")
 	}
 	if blanks > 5 {
 		return fmt.Errorf("Black cards blanks maximum is five, but got %d", blanks)
 	}
+	store.Lock()
+	defer store.Unlock()
 	c := cah.BlackCard{}
 	c.ID = store.nextID()
 	c.Text = t
 	c.Expansion = e
-	c.BlanksAmount = blanks
-	err := validateCard(c.Card)
-	if err != nil {
-		return err
-	}
+	c.Blanks = blanks
 	store.blackCards[e] = append(store.blackCards[e], c)
 	return nil
 }
@@ -122,14 +126,4 @@ func (store *cardMemStore) AvailableExpansions() []string {
 		i++
 	}
 	return keys
-}
-
-func validateCard(c cah.Card) error {
-	if len(c.Text) == 0 {
-		return errors.New("Card text cannot be empty")
-	}
-	if len(c.Text) > 120 {
-		return errors.New("Card text cannot be longer than 120")
-	}
-	return nil
 }
