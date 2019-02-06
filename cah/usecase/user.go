@@ -25,8 +25,8 @@ func (uc userController) Register(name, pass string) (cah.User, error) {
 	if pass == "" {
 		return cah.User{}, errors.New("Password cannot be empty.")
 	}
-	_, ok := uc.store.ByName(name)
-	if ok {
+	_, err := uc.store.ByName(name)
+	if err == nil {
 		return cah.User{}, errors.New("That username already exists. Please try another.")
 	}
 	passHash, err := userPassHash(pass)
@@ -39,13 +39,14 @@ func (uc userController) Register(name, pass string) (cah.User, error) {
 }
 
 func (uc userController) ByID(id int) (cah.User, bool) {
-	return uc.store.ByID(id)
+	u, err := uc.store.ByID(id)
+	return u, err == nil
 }
 
 func (uc userController) Login(name, pass string) (cah.User, bool) {
 	trimmedName := strings.TrimSpace(name)
-	u, ok := uc.store.ByName(trimmedName)
-	if !ok {
+	u, err := uc.store.ByName(trimmedName)
+	if err != nil {
 		return cah.User{}, false
 	}
 	if !userCorrectPass(pass, u.Password) {

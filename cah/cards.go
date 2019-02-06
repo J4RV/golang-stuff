@@ -5,11 +5,11 @@ import "io"
 type CardStore interface {
 	CreateWhite(text, expansion string) error
 	CreateBlack(text, expansion string, blanks int) error
-	AllWhites() []WhiteCard
-	AllBlacks() []BlackCard
-	ExpansionWhites(...string) []WhiteCard
-	ExpansionBlacks(...string) []BlackCard
-	AvailableExpansions() []string
+	AllWhites() ([]WhiteCard, error)
+	AllBlacks() ([]BlackCard, error)
+	ExpansionWhites(...string) ([]WhiteCard, error)
+	ExpansionBlacks(...string) ([]BlackCard, error)
+	AvailableExpansions() ([]string, error)
 }
 
 type CardUsecases interface {

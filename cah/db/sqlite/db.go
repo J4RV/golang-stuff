@@ -1,10 +1,9 @@
 package sqlite
 
 import (
-	// driver for sqlite3
-
 	"github.com/jmoiron/sqlx"
 
+	// driver for sqlite3
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -21,4 +20,5 @@ func InitDB(dbFileName string) {
 func CreateTables() {
 	createTableWhiteCard()
 	createTableBlackCard()
+	createTableUser()
 }

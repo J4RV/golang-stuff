@@ -20,23 +20,33 @@ func NewCardUsecase(store cah.CardStore) *cardController {
 }
 
 func (cc cardController) AllBlacks() []cah.BlackCard {
-	return cc.store.AllBlacks()
+	res, err := cc.store.AllBlacks()
+	checkErr(err, "cardController.AllBlacks")
+	return res
 }
 
 func (cc cardController) AllWhites() []cah.WhiteCard {
-	return cc.store.AllWhites()
+	res, err := cc.store.AllWhites()
+	checkErr(err, "cardController.AllWhites")
+	return res
 }
 
 func (cc cardController) ExpansionWhites(exps ...string) []cah.WhiteCard {
-	return cc.store.ExpansionWhites(exps...)
+	res, err := cc.store.ExpansionWhites(exps...)
+	checkErr(err, "cardController.ExpansionWhites")
+	return res
 }
 
 func (cc cardController) ExpansionBlacks(exps ...string) []cah.BlackCard {
-	return cc.store.ExpansionBlacks(exps...)
+	res, err := cc.store.ExpansionBlacks(exps...)
+	checkErr(err, "cardController.ExpansionBlacks")
+	return res
 }
 
 func (cc cardController) AvailableExpansions() []string {
-	return cc.store.AvailableExpansions()
+	res, err := cc.store.AvailableExpansions()
+	checkErr(err, "cardController.AvailableExpansions")
+	return res
 }
 
 // CreateFromReaders creates and stores cards from two readers.

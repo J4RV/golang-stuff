@@ -23,7 +23,7 @@ func (store *userMemStore) Create(username, password string) (cah.User, error) {
 	user := cah.User{}
 	user.Username = username
 	user.Password = password
-	user.Creation = time.Now()
+	user.CreatedAt = time.Now()
 	user.ID = store.nextID()
 	store.users[user.ID] = &user
 	return user, nil

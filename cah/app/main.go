@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/j4rv/golang-stuff/cah"
-	db "github.com/j4rv/golang-stuff/cah/db/mem"
+	db "github.com/j4rv/golang-stuff/cah/db/sqlite"
 	"github.com/j4rv/golang-stuff/cah/server"
 	"github.com/j4rv/golang-stuff/cah/usecase"
 	"github.com/j4rv/golang-stuff/cah/usecase/fixture"
