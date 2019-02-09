@@ -56,23 +56,25 @@ func (cc cardController) CreateFromReaders(wdat, bdat io.Reader, expansionName s
 	// Create cards from files
 	var err error
 	err = doEveryLine(wdat, func(t string) {
-		if strings.TrimSpace(t) == "" {
+		text := strings.TrimSpace(t)
+		if text == "" || string([]rune(text)[0]) == "#" {
 			return
 		}
-		cc.store.CreateWhite(t, expansionName)
+		cc.store.CreateWhite(text, expansionName)
 	})
 	if err != nil {
 		return err
 	}
 	err = doEveryLine(bdat, func(t string) {
-		if strings.TrimSpace(t) == "" {
+		text := strings.TrimSpace(t)
+		if text == "" || string([]rune(text)[0]) == "#" {
 			return
 		}
 		blanks := strings.Count(t, "_")
 		if blanks == 0 {
 			blanks = 1
 		}
-		cc.store.CreateBlack(t, expansionName, blanks)
+		cc.store.CreateBlack(text, expansionName, blanks)
 	})
 	log.Println("Successfully loaded cards from expansion " + expansionName)
 	return err
