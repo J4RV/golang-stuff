@@ -18,7 +18,6 @@ func NewUserUsecase(store cah.UserStore) *userController {
 }
 
 func (uc userController) Register(name, pass string) (cah.User, error) {
-	log.Println("Entering User usercase :: Register")
 	trimmedName := strings.TrimSpace(name)
 	if trimmedName == "" {
 		return cah.User{}, errors.New("Username cannot be empty.")

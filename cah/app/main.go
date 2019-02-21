@@ -32,9 +32,11 @@ func run() {
 		User:      usecase.NewUserUsecase(userStore),
 		Game:      usecase.NewGameUsecase(gameStore),
 	}
-	fixture.PopulateUsers(usecases.User)
 	populateCards(usecases.Card)
+
+	fixture.PopulateUsers(usecases.User)
 	createTestGames(usecases)
+
 	server.Start(usecases)
 }
 

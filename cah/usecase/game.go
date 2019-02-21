@@ -61,7 +61,7 @@ func (control gameController) InProgressForUser(user cah.User) []cah.Game {
 }
 
 func (control gameController) UserJoins(user cah.User, game cah.Game) error {
-	log.Println("User joins game", user.ID, game.ID)
+	log.Printf("User '%s' joins game '%s'\n", user.Username, game.Name)
 	for _, u := range game.Users {
 		if u.ID == user.ID {
 			return nil // don't add the user if they already joined

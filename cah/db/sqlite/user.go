@@ -1,8 +1,6 @@
 package sqlite
 
 import (
-	"log"
-
 	"github.com/j4rv/golang-stuff/cah"
 )
 
@@ -13,7 +11,6 @@ func NewUserStore() *userStore {
 }
 
 func (store *userStore) Create(username, password string) (cah.User, error) {
-	log.Println("Entering User sqlite store :: Create")
 	var user cah.User
 	_, err := db.Exec(`INSERT INTO user (username, password) VALUES (?, ?)`,
 		username, password)
