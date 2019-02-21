@@ -16,3 +16,4 @@
 
 # Not interested in log files
 *.log
+*.sqlite3
