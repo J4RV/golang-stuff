@@ -11,10 +11,12 @@ type userMemStore struct {
 	users map[int]*cah.User
 }
 
-func NewUserStore() *userMemStore {
-	return &userMemStore{
-		users: make(map[int]*cah.User),
-	}
+var userStore = &userMemStore{
+	users: make(map[int]*cah.User),
+}
+
+func GetUserStore() *userMemStore {
+	return userStore
 }
 
 func (store *userMemStore) Create(username, password string) (cah.User, error) {
@@ -23,7 +25,7 @@ func (store *userMemStore) Create(username, password string) (cah.User, error) {
 	user := cah.User{}
 	user.Username = username
 	user.Password = password
-	user.Creation = time.Now()
+	user.CreatedAt = time.Now()
 	user.ID = store.nextID()
 	store.users[user.ID] = &user
 	return user, nil

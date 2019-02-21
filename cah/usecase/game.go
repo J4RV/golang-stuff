@@ -3,6 +3,7 @@ package usecase
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/j4rv/golang-stuff/cah"
@@ -60,6 +61,7 @@ func (control gameController) InProgressForUser(user cah.User) []cah.Game {
 }
 
 func (control gameController) UserJoins(user cah.User, game cah.Game) error {
+	log.Printf("User '%s' joins game '%s'\n", user.Username, game.Name)
 	for _, u := range game.Users {
 		if u.ID == user.ID {
 			return nil // don't add the user if they already joined
@@ -71,7 +73,7 @@ func (control gameController) UserJoins(user cah.User, game cah.Game) error {
 
 func (control gameController) Start(g cah.Game, state cah.GameState, opts ...cah.Option) error {
 	if len(g.Users) < 3 {
-		return errors.New("The minimum amount of players to start a game is 3")
+		return fmt.Errorf("The minimum amount of players to start a game is 3, got: %d", len(g.Users))
 	}
 	s := g.State
 	if s.ID != 0 {

@@ -30,8 +30,8 @@ type Game struct {
 }
 
 type GameOptions interface {
-	WhiteDeck([]WhiteCard) Option
-	BlackDeck([]BlackCard) Option
+	WhiteDeck([]*WhiteCard) Option
+	BlackDeck([]*BlackCard) Option
 	HandSize(size int) Option
 	RandomStartingCzar() Option
 }

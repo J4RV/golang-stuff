@@ -10,9 +10,9 @@ import (
 
 func TestPlayer_ExtractCardFromHand(t *testing.T) {
 	p := Player{}
-	c1 := WhiteCard{Card{Text: "A"}}
-	c2 := WhiteCard{Card{Text: "B"}}
-	c3 := WhiteCard{Card{Text: "C"}}
+	c1 := WhiteCard{Text: "A"}
+	c2 := WhiteCard{Text: "B"}
+	c3 := WhiteCard{Text: "C"}
 	p.Hand = []WhiteCard{c1, c2, c3}
 
 	_, err := p.ExtractCardFromHand(-1)
@@ -62,7 +62,7 @@ func TestPlayer_ExtractCardsFromHand(t *testing.T) {
 func getWhiteCardsFixture(amount int) []WhiteCard {
 	ret := make([]WhiteCard, amount)
 	for i := 0; i < amount; i++ {
-		ret[i] = WhiteCard{Card{Text: fmt.Sprintf("White card fixture (%d)", i)}}
+		ret[i] = WhiteCard{Text: fmt.Sprintf("White card fixture (%d)", i)}
 	}
 	return ret
 }

@@ -7,11 +7,13 @@
 *.so
 *.dylib
 
-# Test binary, build with `go test -c`
+# Test files
 *.test
+*.test.db
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
 # Not interested in log files
 *.log
+*.sqlite3

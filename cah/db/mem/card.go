@@ -10,82 +10,94 @@ import (
 
 type cardMemStore struct {
 	abstractMemStore
-	whiteCards map[string][]cah.WhiteCard
-	blackCards map[string][]cah.BlackCard
+	whiteCards map[string][]*cah.WhiteCard
+	blackCards map[string][]*cah.BlackCard
 }
 
-func NewCardStore() *cardMemStore {
-	return &cardMemStore{
-		whiteCards: make(map[string][]cah.WhiteCard),
-		blackCards: make(map[string][]cah.BlackCard),
-	}
+var cardStore = &cardMemStore{
+	whiteCards: map[string][]*cah.WhiteCard{},
+	blackCards: map[string][]*cah.BlackCard{},
+}
+
+func GetCardStore() *cardMemStore {
+	return cardStore
 }
 
 func (store *cardMemStore) CreateWhite(t, e string) error {
+	if len(t) == 0 {
+		return errors.New("Card text cannot be empty")
+	}
+	if len(t) > 120 {
+		return errors.New("Card text cannot be longer than 120")
+	}
+	if len(e) == 0 {
+		return errors.New("Expansion cannot be empty")
+	}
 	store.Lock()
 	defer store.Unlock()
-	c := cah.WhiteCard{}
+	c := &cah.WhiteCard{}
 	c.ID = store.nextID()
 	c.Text = t
 	c.Expansion = e
-	err := validateCard(c.Card)
-	if err != nil {
-		return err
-	}
 	store.whiteCards[e] = append(store.whiteCards[e], c)
 	return nil
 }
 
 func (store *cardMemStore) CreateBlack(t, e string, blanks int) error {
-	store.Lock()
-	defer store.Unlock()
+	if len(t) == 0 {
+		return errors.New("Card text cannot be empty")
+	}
+	if len(t) > 120 {
+		return errors.New("Card text cannot be longer than 120")
+	}
+	if len(e) == 0 {
+		return errors.New("Expansion cannot be empty")
+	}
 	if blanks < 1 {
 		return errors.New("Black cards need to have at least 1 blank")
 	}
 	if blanks > 5 {
 		return fmt.Errorf("Black cards blanks maximum is five, but got %d", blanks)
 	}
-	c := cah.BlackCard{}
+	store.Lock()
+	defer store.Unlock()
+	c := &cah.BlackCard{}
 	c.ID = store.nextID()
 	c.Text = t
 	c.Expansion = e
-	c.BlanksAmount = blanks
-	err := validateCard(c.Card)
-	if err != nil {
-		return err
-	}
+	c.Blanks = blanks
 	store.blackCards[e] = append(store.blackCards[e], c)
 	return nil
 }
 
-func (store *cardMemStore) AllWhites() []cah.WhiteCard {
+func (store *cardMemStore) AllWhites() ([]*cah.WhiteCard, error) {
 	store.Lock()
 	defer store.Unlock()
-	ret := []cah.WhiteCard{}
+	ret := []*cah.WhiteCard{}
 	for _, whiteCards := range store.whiteCards {
 		for _, whiteCard := range whiteCards {
 			ret = append(ret, whiteCard)
 		}
 	}
-	return ret
+	return ret, nil
 }
 
-func (store *cardMemStore) AllBlacks() []cah.BlackCard {
+func (store *cardMemStore) AllBlacks() ([]*cah.BlackCard, error) {
 	store.Lock()
 	defer store.Unlock()
-	ret := []cah.BlackCard{}
+	ret := []*cah.BlackCard{}
 	for _, blackCards := range store.blackCards {
 		for _, blackCard := range blackCards {
 			ret = append(ret, blackCard)
 		}
 	}
-	return ret
+	return ret, nil
 }
 
-func (store *cardMemStore) ExpansionWhites(exps ...string) []cah.WhiteCard {
+func (store *cardMemStore) ExpansionWhites(exps ...string) ([]*cah.WhiteCard, error) {
 	store.Lock()
 	defer store.Unlock()
-	ret := []cah.WhiteCard{}
+	ret := []*cah.WhiteCard{}
 	for _, exp := range exps {
 		cards, ok := store.whiteCards[exp]
 		if !ok {
@@ -94,13 +106,13 @@ func (store *cardMemStore) ExpansionWhites(exps ...string) []cah.WhiteCard {
 		}
 		ret = append(ret, cards...)
 	}
-	return ret
+	return ret, nil
 }
 
-func (store *cardMemStore) ExpansionBlacks(exps ...string) []cah.BlackCard {
+func (store *cardMemStore) ExpansionBlacks(exps ...string) ([]*cah.BlackCard, error) {
 	store.Lock()
 	defer store.Unlock()
-	ret := []cah.BlackCard{}
+	ret := []*cah.BlackCard{}
 	for _, exp := range exps {
 		cards, ok := store.blackCards[exp]
 		if !ok {
@@ -109,10 +121,10 @@ func (store *cardMemStore) ExpansionBlacks(exps ...string) []cah.BlackCard {
 		}
 		ret = append(ret, cards...)
 	}
-	return ret
+	return ret, nil
 }
 
-func (store *cardMemStore) AvailableExpansions() []string {
+func (store *cardMemStore) AvailableExpansions() ([]string, error) {
 	store.Lock()
 	defer store.Unlock()
 	keys := make([]string, len(store.whiteCards))
@@ -121,15 +133,5 @@ func (store *cardMemStore) AvailableExpansions() []string {
 		keys[i] = expansion
 		i++
 	}
-	return keys
-}
-
-func validateCard(c cah.Card) error {
-	if len(c.Text) == 0 {
-		return errors.New("Card text cannot be empty")
-	}
-	if len(c.Text) > 120 {
-		return errors.New("Card text cannot be longer than 120")
-	}
-	return nil
+	return keys, nil
 }

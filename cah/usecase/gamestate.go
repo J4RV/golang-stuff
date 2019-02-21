@@ -8,7 +8,7 @@ import (
 	"github.com/j4rv/golang-stuff/cah"
 )
 
-var nilBlackCard = cah.BlackCard{}
+var nilBlackCard = &cah.BlackCard{}
 
 type errorEmptyBlackDeck struct{}
 
@@ -26,11 +26,12 @@ func NewGameStateUsecase(store cah.GameStateStore) *stateController {
 
 func (control stateController) Create() cah.GameState {
 	ret := cah.GameState{
-		Players:     []*cah.Player{},
-		HandSize:    10,
-		DiscardPile: []cah.WhiteCard{},
-		WhiteDeck:   []cah.WhiteCard{},
-		BlackDeck:   []cah.BlackCard{},
+		Players:         []*cah.Player{},
+		HandSize:        10,
+		DiscardPile:     []*cah.WhiteCard{},
+		WhiteDeck:       []*cah.WhiteCard{},
+		BlackDeck:       []*cah.BlackCard{},
+		BlackCardInPlay: nilBlackCard,
 	}
 	ret, err := control.store.Create(ret)
 	if err != nil {
@@ -74,7 +75,7 @@ func (control stateController) GiveBlackCardToWinner(wID int, g cah.GameState) (
 	winner.Points = append(winner.Points, ret.BlackCardInPlay)
 	ret.BlackCardInPlay = nilBlackCard
 	for _, p := range g.Players {
-		p.WhiteCardsInPlay = []cah.WhiteCard{}
+		p.WhiteCardsInPlay = []*cah.WhiteCard{}
 	}
 	ret, _ = control.nextCzar(ret)
 	if (len(ret.BlackDeck)) == 0 {
@@ -100,7 +101,7 @@ func giveBlackCardToWinnerChecks(w int, s cah.GameState) error {
 		if i == s.CurrCzarIndex {
 			continue
 		}
-		if len(p.WhiteCardsInPlay) != s.BlackCardInPlay.BlanksAmount {
+		if len(p.WhiteCardsInPlay) != s.BlackCardInPlay.Blanks {
 			return errors.New("Not all sinners have played their cards")
 		}
 	}
@@ -117,9 +118,9 @@ func (control stateController) PlayWhiteCards(p int, cs []int, g cah.GameState) 
 	if len(g.Players[p].WhiteCardsInPlay) != 0 {
 		return g, errors.New("You played your card(s) already")
 	}
-	if len(cs) != g.BlackCardInPlay.BlanksAmount {
+	if len(cs) != g.BlackCardInPlay.Blanks {
 		return g, fmt.Errorf("Invalid amount of white cards to play, expected %d but got %d",
-			g.BlackCardInPlay.BlanksAmount,
+			g.BlackCardInPlay.Blanks,
 			len(cs))
 	}
 	ret := g.Clone()
@@ -144,7 +145,7 @@ func (_ stateController) AllSinnersPlayedTheirCards(s cah.GameState) bool {
 		if i == s.CurrCzarIndex {
 			continue
 		}
-		if len(p.WhiteCardsInPlay) != s.BlackCardInPlay.BlanksAmount {
+		if len(p.WhiteCardsInPlay) != s.BlackCardInPlay.Blanks {
 			return false
 		}
 	}
