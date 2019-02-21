@@ -23,14 +23,14 @@ func (_ Options) HandSize(size int) cah.Option {
 	}
 }
 
-func (_ Options) WhiteDeck(wd []cah.WhiteCard) cah.Option {
+func (_ Options) WhiteDeck(wd []*cah.WhiteCard) cah.Option {
 	return func(s *cah.GameState) {
 		s.WhiteDeck = wd
 		shuffleW(&s.WhiteDeck)
 	}
 }
 
-func (_ Options) BlackDeck(bd []cah.BlackCard) cah.Option {
+func (_ Options) BlackDeck(bd []*cah.BlackCard) cah.Option {
 	return func(s *cah.GameState) {
 		s.BlackDeck = bd
 		shuffleB(&s.BlackDeck)
@@ -47,7 +47,7 @@ func (_ Options) RandomStartingCzar() cah.Option {
 	}
 }
 
-func shuffleB(cards *[]cah.BlackCard) {
+func shuffleB(cards *[]*cah.BlackCard) {
 	if cards == nil {
 		return
 	}
@@ -56,7 +56,7 @@ func shuffleB(cards *[]cah.BlackCard) {
 	}
 }
 
-func shuffleW(cards *[]cah.WhiteCard) {
+func shuffleW(cards *[]*cah.WhiteCard) {
 	if cards == nil {
 		return
 	}

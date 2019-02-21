@@ -9,15 +9,15 @@ import (
 
 type gameMemStore struct {
 	abstractMemStore
-	stateStore cah.GameStateStore
-	games      map[int]cah.Game
+	games map[int]cah.Game
 }
 
-func NewGameStore(ss cah.GameStateStore) *gameMemStore {
-	return &gameMemStore{
-		stateStore: ss,
-		games:      map[int]cah.Game{},
-	}
+var gameStore = &gameMemStore{
+	games: map[int]cah.Game{},
+}
+
+func GetGameStore() *gameMemStore {
+	return gameStore
 }
 
 func (store *gameMemStore) Create(g cah.Game) error {
@@ -65,7 +65,7 @@ func (store *gameMemStore) Update(g cah.Game) error {
 	}
 	store.games[g.ID] = g
 	if !currG.State.Equal(g.State) {
-		store.stateStore.Update(g.State)
+		stateStore.Update(g.State)
 	}
 	return nil
 }

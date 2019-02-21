@@ -10,15 +10,13 @@ import (
 var db *sqlx.DB
 
 func InitDB(dbFileName string) {
-	var err error
-	db, err = sqlx.Open("sqlite3", dbFileName)
-	panicIfErr(err)
-	err = db.Ping()
-	panicIfErr(err)
+	db = sqlx.MustOpen("sqlite3", dbFileName)
+	if db.Ping() != nil {
+		panic("DB did not answer ping")
+	}
+	CreateTables()
 }
 
 func CreateTables() {
-	createTableWhiteCard()
-	createTableBlackCard()
 	createTableUser()
 }

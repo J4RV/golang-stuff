@@ -5,20 +5,20 @@ import "io"
 type CardStore interface {
 	CreateWhite(text, expansion string) error
 	CreateBlack(text, expansion string, blanks int) error
-	AllWhites() ([]WhiteCard, error)
-	AllBlacks() ([]BlackCard, error)
-	ExpansionWhites(...string) ([]WhiteCard, error)
-	ExpansionBlacks(...string) ([]BlackCard, error)
+	AllWhites() ([]*WhiteCard, error)
+	AllBlacks() ([]*BlackCard, error)
+	ExpansionWhites(...string) ([]*WhiteCard, error)
+	ExpansionBlacks(...string) ([]*BlackCard, error)
 	AvailableExpansions() ([]string, error)
 }
 
 type CardUsecases interface {
 	CreateFromReaders(wdat, bdat io.Reader, expansionName string) error
 	CreateFromFolder(folderPath, expansionName string) error
-	AllWhites() []WhiteCard
-	AllBlacks() []BlackCard
-	ExpansionWhites(...string) []WhiteCard
-	ExpansionBlacks(...string) []BlackCard
+	AllWhites() []*WhiteCard
+	AllBlacks() []*BlackCard
+	ExpansionWhites(...string) []*WhiteCard
+	ExpansionBlacks(...string) []*BlackCard
 	AvailableExpansions() []string
 }
 

@@ -17,18 +17,18 @@ type GameStateUsecases interface {
 }
 
 type GameState struct {
-	ID              int         `json:"id" db:"id"`
-	Phase           Phase       `json:"phase" db:"phase"`
-	Players         []*Player   `json:"players" db:"players"`
-	BlackDeck       []BlackCard `json:"blackDeck" db:"blackDeck"`
-	WhiteDeck       []WhiteCard `json:"whiteDeck" db:"whiteDeck"`
-	CurrCzarIndex   int         `json:"currentCzarIndex" db:"currentCzarIndex"`
-	BlackCardInPlay BlackCard   `json:"blackCardInPlay" db:"blackCardInPlay"`
-	DiscardPile     []WhiteCard `json:"discardPile" db:"discardPile"`
-	HandSize        int         `json:"handSize" db:"handSize"`
+	ID              int          `json:"id" db:"id"`
+	Phase           Phase        `json:"phase" db:"phase"`
+	Players         []*Player    `json:"players" db:"players"`
+	BlackDeck       []*BlackCard `json:"blackDeck" db:"blackDeck"`
+	WhiteDeck       []*WhiteCard `json:"whiteDeck" db:"whiteDeck"`
+	CurrCzarIndex   int          `json:"currentCzarIndex" db:"currentCzarIndex"`
+	BlackCardInPlay *BlackCard   `json:"blackCardInPlay" db:"blackCardInPlay"`
+	DiscardPile     []*WhiteCard `json:"discardPile" db:"discardPile"`
+	HandSize        int          `json:"handSize" db:"handSize"`
 }
 
-func (s *GameState) DrawWhite() WhiteCard {
+func (s *GameState) DrawWhite() *WhiteCard {
 	ret := s.WhiteDeck[0]
 	s.WhiteDeck = s.WhiteDeck[1:]
 	return ret
@@ -87,9 +87,9 @@ func (s GameState) Clone() GameState {
 		BlackCardInPlay: s.BlackCardInPlay,
 		HandSize:        s.HandSize,
 		Players:         make([]*Player, len(s.Players)),
-		BlackDeck:       make([]BlackCard, len(s.BlackDeck)),
-		WhiteDeck:       make([]WhiteCard, len(s.WhiteDeck)),
-		DiscardPile:     make([]WhiteCard, len(s.DiscardPile)),
+		BlackDeck:       make([]*BlackCard, len(s.BlackDeck)),
+		WhiteDeck:       make([]*WhiteCard, len(s.WhiteDeck)),
+		DiscardPile:     make([]*WhiteCard, len(s.DiscardPile)),
 	}
 	copy(res.Players, s.Players)
 	copy(res.BlackDeck, s.BlackDeck)

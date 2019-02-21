@@ -12,7 +12,7 @@ func getStateFixture(playernames []string) cah.GameState {
 	return cah.GameState{
 		BlackDeck:   getBlackCardsFixture(20),
 		WhiteDeck:   getWhiteCardsFixture(40),
-		DiscardPile: []cah.WhiteCard{},
+		DiscardPile: []*cah.WhiteCard{},
 		Players:     p,
 	}
 }
@@ -22,10 +22,4 @@ var states = []struct {
 	players                    []string
 }{
 	{40, 20, []string{"Player1", "Player2", "Player3"}},
-}
-
-func PopulateStates(s cah.GameStateUsecases) {
-	/*for _, u := range users {
-		s.NewGameState
-	}*/
 }

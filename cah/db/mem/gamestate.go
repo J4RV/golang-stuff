@@ -11,10 +11,12 @@ type stateMemStore struct {
 	games map[int]*cah.GameState
 }
 
-func NewGameStateStore() *stateMemStore {
-	return &stateMemStore{
-		games: make(map[int]*cah.GameState),
-	}
+var stateStore = &stateMemStore{
+	games: make(map[int]*cah.GameState),
+}
+
+func GetGameStateStore() *stateMemStore {
+	return stateStore
 }
 
 func (store *stateMemStore) Create(g cah.GameState) (cah.GameState, error) {

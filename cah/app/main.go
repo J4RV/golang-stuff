@@ -5,7 +5,8 @@ import (
 	"time"
 
 	"github.com/j4rv/golang-stuff/cah"
-	db "github.com/j4rv/golang-stuff/cah/db/sqlite"
+	"github.com/j4rv/golang-stuff/cah/db/mem"
+	"github.com/j4rv/golang-stuff/cah/db/sqlite"
 	"github.com/j4rv/golang-stuff/cah/server"
 	"github.com/j4rv/golang-stuff/cah/usecase"
 	"github.com/j4rv/golang-stuff/cah/usecase/fixture"
@@ -20,10 +21,11 @@ func main() {
 }
 
 func run() {
-	stateStore := db.NewGameStateStore()
-	gameStore := db.NewGameStore(stateStore)
-	cardStore := db.NewCardStore()
-	userStore := db.NewUserStore()
+	sqlite.InitDB("database.sqlite3")
+	stateStore := mem.GetGameStateStore()
+	gameStore := mem.GetGameStore()
+	cardStore := mem.GetCardStore()
+	userStore := sqlite.NewUserStore()
 	usecases := cah.Usecases{
 		GameState: usecase.NewGameStateUsecase(stateStore),
 		Card:      usecase.NewCardUsecase(cardStore),

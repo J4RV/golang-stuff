@@ -8,7 +8,7 @@ import (
 	"github.com/j4rv/golang-stuff/cah"
 )
 
-var nilBlackCard = cah.BlackCard{}
+var nilBlackCard = &cah.BlackCard{}
 
 type errorEmptyBlackDeck struct{}
 
@@ -26,11 +26,12 @@ func NewGameStateUsecase(store cah.GameStateStore) *stateController {
 
 func (control stateController) Create() cah.GameState {
 	ret := cah.GameState{
-		Players:     []*cah.Player{},
-		HandSize:    10,
-		DiscardPile: []cah.WhiteCard{},
-		WhiteDeck:   []cah.WhiteCard{},
-		BlackDeck:   []cah.BlackCard{},
+		Players:         []*cah.Player{},
+		HandSize:        10,
+		DiscardPile:     []*cah.WhiteCard{},
+		WhiteDeck:       []*cah.WhiteCard{},
+		BlackDeck:       []*cah.BlackCard{},
+		BlackCardInPlay: nilBlackCard,
 	}
 	ret, err := control.store.Create(ret)
 	if err != nil {
@@ -74,7 +75,7 @@ func (control stateController) GiveBlackCardToWinner(wID int, g cah.GameState) (
 	winner.Points = append(winner.Points, ret.BlackCardInPlay)
 	ret.BlackCardInPlay = nilBlackCard
 	for _, p := range g.Players {
-		p.WhiteCardsInPlay = []cah.WhiteCard{}
+		p.WhiteCardsInPlay = []*cah.WhiteCard{}
 	}
 	ret, _ = control.nextCzar(ret)
 	if (len(ret.BlackDeck)) == 0 {

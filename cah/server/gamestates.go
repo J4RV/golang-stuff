@@ -3,7 +3,6 @@ package server
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -44,14 +43,13 @@ type sinnerPlay struct {
 }
 
 type gameStateResponse struct {
-	ID              int             `json:"id"`
-	Phase           string          `json:"phase"`
-	Players         []playerInfo    `json:"players"`
-	CurrCzarID      int             `json:"currentCzarID"`
-	BlackCardInPlay cah.BlackCard   `json:"blackCardInPlay"`
-	SinnerPlays     []sinnerPlay    `json:"sinnerPlays"`
-	DiscardPile     []cah.WhiteCard `json:"discardPile"`
-	MyPlayer        fullPlayerInfo  `json:"myPlayer"`
+	ID              int            `json:"id"`
+	Phase           string         `json:"phase"`
+	Players         []playerInfo   `json:"players"`
+	CurrCzarID      int            `json:"currentCzarID"`
+	BlackCardInPlay cah.BlackCard  `json:"blackCardInPlay"`
+	SinnerPlays     []sinnerPlay   `json:"sinnerPlays"`
+	MyPlayer        fullPlayerInfo `json:"myPlayer"`
 }
 
 func gameStateForUser(w http.ResponseWriter, req *http.Request) error {
@@ -72,9 +70,8 @@ func gameStateForUser(w http.ResponseWriter, req *http.Request) error {
 		Phase:           game.Phase.String(),
 		Players:         playersInfoFromGame(game),
 		CurrCzarID:      game.Players[game.CurrCzarIndex].User.ID,
-		BlackCardInPlay: game.BlackCardInPlay,
+		BlackCardInPlay: *game.BlackCardInPlay,
 		SinnerPlays:     sinnerPlaysFromGame(game),
-		DiscardPile:     game.DiscardPile,
 		MyPlayer:        newFullPlayerInfo(*p),
 	}
 	writeResponse(w, response)
@@ -95,7 +92,7 @@ func newPlayerInfo(p cah.Player) playerInfo {
 		Name:             p.User.Username,
 		HandSize:         len(p.Hand),
 		WhiteCardsInPlay: len(p.WhiteCardsInPlay),
-		Points:           p.Points,
+		Points:           dereferenceBlackCards(p.Points),
 	}
 }
 
@@ -103,8 +100,8 @@ func newFullPlayerInfo(player cah.Player) fullPlayerInfo {
 	return fullPlayerInfo{
 		ID:               player.User.ID,
 		Name:             player.User.Username,
-		Hand:             player.Hand,
-		WhiteCardsInPlay: player.WhiteCardsInPlay,
+		Hand:             dereferenceWhiteCards(player.Hand),
+		WhiteCardsInPlay: dereferenceWhiteCards(player.WhiteCardsInPlay),
 	}
 }
 
@@ -119,7 +116,7 @@ func sinnerPlaysFromGame(game cah.GameState) []sinnerPlay {
 		}
 		ret[i] = sinnerPlay{
 			ID:         p.User.ID,
-			WhiteCards: p.WhiteCardsInPlay,
+			WhiteCards: dereferenceWhiteCards(p.WhiteCardsInPlay),
 		}
 	}
 	return ret
@@ -201,16 +198,6 @@ func playCards(w http.ResponseWriter, req *http.Request) error {
 }
 
 // Utils
-
-func writeResponse(w http.ResponseWriter, obj interface{}) {
-	j, err := json.Marshal(obj)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	} else {
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintf(w, "%s", j)
-	}
-}
 
 func playerIndex(g cah.GameState, u cah.User) (int, error) {
 	for i, p := range g.Players {

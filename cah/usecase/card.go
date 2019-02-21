@@ -19,25 +19,25 @@ func NewCardUsecase(store cah.CardStore) *cardController {
 	return &cardController{store: store}
 }
 
-func (cc cardController) AllBlacks() []cah.BlackCard {
+func (cc cardController) AllBlacks() []*cah.BlackCard {
 	res, err := cc.store.AllBlacks()
 	checkErr(err, "cardController.AllBlacks")
 	return res
 }
 
-func (cc cardController) AllWhites() []cah.WhiteCard {
+func (cc cardController) AllWhites() []*cah.WhiteCard {
 	res, err := cc.store.AllWhites()
 	checkErr(err, "cardController.AllWhites")
 	return res
 }
 
-func (cc cardController) ExpansionWhites(exps ...string) []cah.WhiteCard {
+func (cc cardController) ExpansionWhites(exps ...string) []*cah.WhiteCard {
 	res, err := cc.store.ExpansionWhites(exps...)
 	checkErr(err, "cardController.ExpansionWhites")
 	return res
 }
 
-func (cc cardController) ExpansionBlacks(exps ...string) []cah.BlackCard {
+func (cc cardController) ExpansionBlacks(exps ...string) []*cah.BlackCard {
 	res, err := cc.store.ExpansionBlacks(exps...)
 	checkErr(err, "cardController.ExpansionBlacks")
 	return res
