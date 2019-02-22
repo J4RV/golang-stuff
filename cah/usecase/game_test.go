@@ -6,7 +6,6 @@ import (
 )
 
 func getGameUsecase() cah.GameUsecases {
-	stateStore := mem.NewGameStateStore()
-	store := mem.NewGameStore(stateStore)
+	store := mem.GetGameStore()
 	return NewGameUsecase(store)
 }

@@ -34,9 +34,10 @@ func getPlayerFixture(name string) *cah.Player {
 
 func getStateFixture() cah.GameState {
 	return cah.GameState{
-		BlackDeck:   getBlackCardsFixture(20),
-		WhiteDeck:   getWhiteCardsFixture(40),
-		DiscardPile: []*cah.WhiteCard{},
+		BlackDeck:       getBlackCardsFixture(20),
+		WhiteDeck:       getWhiteCardsFixture(40),
+		DiscardPile:     []*cah.WhiteCard{},
+		BlackCardInPlay: nilBlackCard,
 		Players: []*cah.Player{
 			getPlayerFixture("Player1"),
 			getPlayerFixture("Player2"),

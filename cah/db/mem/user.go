@@ -1,6 +1,7 @@
 package mem
 
 import (
+	"errors"
 	"time"
 
 	"github.com/j4rv/golang-stuff/cah"
@@ -31,23 +32,23 @@ func (store *userMemStore) Create(username, password string) (cah.User, error) {
 	return user, nil
 }
 
-func (store *userMemStore) ByID(id int) (cah.User, bool) {
+func (store *userMemStore) ByID(id int) (cah.User, error) {
 	store.Lock()
 	defer store.Unlock()
 	u, ok := store.users[id]
 	if !ok {
-		return cah.User{}, false
+		return cah.User{}, errors.New("User not found")
 	}
-	return *u, true
+	return *u, nil
 }
 
-func (store *userMemStore) ByName(name string) (cah.User, bool) {
+func (store *userMemStore) ByName(name string) (cah.User, error) {
 	store.Lock()
 	defer store.Unlock()
 	for _, u := range store.users {
 		if u.Username == name {
-			return *u, true
+			return *u, nil
 		}
 	}
-	return cah.User{}, false
+	return cah.User{}, errors.New("User not found")
 }

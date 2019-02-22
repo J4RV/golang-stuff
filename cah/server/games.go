@@ -215,7 +215,7 @@ func optionsFromCreateRequest(payload startGamePayload) ([]cah.Option, error) {
 	// HAND SIZE
 	handS := payload.HandSize
 	if handS < minHandSize || handS > maxHandSize {
-		return ret, fmt.Errorf("Hand size needs to be a number between %d and %d (both included).", minHandSize)
+		return ret, fmt.Errorf("Hand size needs to be a number between %d and %d (both included).", minHandSize, maxHandSize)
 	}
 	ret = append(ret, usecase.Game.Options().HandSize(handS))
 	// RANDOM FIRST CZAR?

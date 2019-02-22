@@ -6,23 +6,21 @@ import (
 	"github.com/j4rv/golang-stuff/cah/db/mem/fixture"
 )
 
-var store = NewUserStore()
-
 func init() {
-	fixture.PopulateUsers(store)
+	fixture.PopulateUsers(userStore)
 }
 
 func TestGetUserByID(t *testing.T) {
-	u, ok := store.ByID(1)
-	if !ok {
+	u, err := userStore.ByID(1)
+	if err != nil {
 		t.Error("Did not find user with id 1")
 	} else {
 		if u.Username != "Red" && u.ID == 1 {
 			t.Fatal("GetUserByID is horribly broken")
 		}
 	}
-	u, ok = store.ByID(999)
-	if ok {
+	u, err = userStore.ByID(999)
+	if err == nil {
 		t.Error("Found an user with id 999 but expected none")
 	}
 }

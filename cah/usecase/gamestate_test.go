@@ -11,7 +11,7 @@ import (
 var control = stateController{}
 
 func getStateUsecase() cah.GameStateUsecases {
-	store := mem.NewGameStateStore()
+	store := mem.GetGameStateStore()
 	usecase := NewGameStateUsecase(store)
 	return usecase
 }
