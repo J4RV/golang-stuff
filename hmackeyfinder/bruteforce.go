@@ -22,8 +22,6 @@ func bruteforce(messageBytes, hashcodeBytes []byte) {
 
 func tryBlock(messageBytes, hashcodeBytes []byte, block uint8) {
 	log.Println("Brute-forcing block:", block)
-	defer log.Println("The key is not in block:", block)
-
 	for x := 0; x <= 255; x++ {
 		for y := 0; y <= 255; y++ {
 			for z := 0; z <= 255; z++ {
@@ -37,6 +35,7 @@ func tryBlock(messageBytes, hashcodeBytes []byte, block uint8) {
 			}
 		}
 	}
+	log.Println("The key is not in block:", block)
 }
 
 func checkMAC(message, messageMAC, key []byte) bool {
