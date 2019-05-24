@@ -1,83 +1,91 @@
-package hmackeyfinder
+package main
 
 import (
 	"crypto/hmac"
 	"crypto/sha1"
 	"encoding/hex"
+	"flag"
 	"log"
-	"os"
+	"math/rand"
+	"runtime"
 	"time"
 )
 
-var done chan bool
-var guard chan bool
+var done = make(chan struct{}, 1)
+var blocks = make(chan uint8, 256)
 
 var messageBytes []byte
 var hashcodeBytes []byte
 
-var rangeOfUint8 = [256]uint8{}
-
-func init() {
-	file, err := os.OpenFile("info.log", os.O_CREATE|os.O_APPEND, 0644)
-	if err != nil {
-		log.Fatal(err)
-	} else {
-		log.SetOutput(file)
-	}
-}
-
-func init() {
-	for i := range rangeOfUint8 {
-		rangeOfUint8[i] = uint8(i)
-	}
-	if !Config.SearchInOrder {
-		rangeOfUint8 = Shuffle(rangeOfUint8)
-	}
-	done = make(chan bool)
-	guard = make(chan bool, Config.MaxGoroutines)
-	messageBytes = []byte(Config.Message)
-	hashcodeBytes, _ = hex.DecodeString(Config.Hashcode)
-}
-
 func main() {
-	log.Println("Starting with", Config.MaxGoroutines, "max goroutines")
-	log.Println("messageBytes:", messageBytes)
-	log.Println("hashcodeBytes:", hashcodeBytes)
+	parseFlagsAndInitGlobals()
 
 	start := time.Now().Unix()
-	go tryAllPossibilities(messageBytes, hashcodeBytes)
+	bruteforce(messageBytes, hashcodeBytes)
 	<-done
-	log.Println("Total time:", (time.Now().Unix() - start), "seconds")
+
+	log.Println("Total time:", time.Now().Unix()-start, "seconds")
 }
 
-func tryAllPossibilities(messageBytes, hashcodeBytes []byte) {
-	var x uint8
-	for _, x = range rangeOfUint8 {
-		go func(x uint8) {
-			tryBlock(messageBytes, hashcodeBytes, x)
-			<-guard
-		}(x)
-		guard <- true
+func parseFlagsAndInitGlobals() {
+	var messageInput, hashcodeInput string
+	var randomOrder bool
+	var err error
+
+	flag.BoolVar(&randomOrder, "randomOrder", false, "Set to true if you want to brute force search 'in order'.")
+	flag.StringVar(&messageInput, "message", "341567891 487654 500", "The message fits the provided hashcode with a particular key. Default: 341567891 487654 500")
+	flag.StringVar(&hashcodeInput, "hashcode", "f3c2ae334dc98a387601c85ef83c77360943023a", "The hashcode of the message calculated with an unknown key. Default: f3c2ae334dc98a387601c85ef83c77360943023a")
+	flag.Parse()
+
+	fillBlocks(randomOrder)
+	messageBytes = []byte(messageInput)
+	hashcodeBytes, err = hex.DecodeString(hashcodeInput)
+	if err != nil {
+		panic(err)
+	}
+
+	log.Println("Value of messageBytes:", messageBytes)
+	log.Println("Value of hashcodeBytes:", hashcodeBytes)
+}
+
+func fillBlocks(randomOrder bool) {
+	if randomOrder {
+		log.Println("Filling blocks channel in a random order")
+		for _, randI := range shuffled() {
+			blocks <- randI
+		}
+	} else {
+		log.Println("Filling blocks channel with [0,255]")
+		for i := 0; i < 256; i++ {
+			blocks <- uint8(i)
+		}
+	}
+}
+
+func bruteforce(messageBytes, hashcodeBytes []byte) {
+	for i := 0; i < runtime.NumCPU(); i++ {
+		log.Println("Creating worker nº", i)
+		go func() {
+			for {
+				block := <-blocks
+				tryBlock(messageBytes, hashcodeBytes, block)
+			}
+		}()
 	}
 }
 
 func tryBlock(messageBytes, hashcodeBytes []byte, block uint8) {
-	log.Println("Started block:", block)
-	defer log.Println("Finished block:", block)
+	log.Println("Brute-forcing block:", block)
+	defer log.Println("The key is not in block:", block)
 
-	// Probably not the cleanest way to do it...
-	var y, z, w uint8
-	for _, y = range rangeOfUint8 {
-		for _, z = range rangeOfUint8 {
-			for _, w = range rangeOfUint8 {
-				key := []byte{block, y, z, w}
-				isValid := CheckMAC(
-					messageBytes,
-					hashcodeBytes,
-					key)
+	for x := 0; x <= 255; x++ {
+		for y := 0; y <= 255; y++ {
+			for z := 0; z <= 255; z++ {
+				key := []byte{block, uint8(x), uint8(y), uint8(z)}
+				isValid := checkMAC(messageBytes, hashcodeBytes, key)
 				if isValid {
-					log.Println("Valid key: ", key, hex.EncodeToString(key))
-					done <- true
+					log.Println("Found valid key: ", key, hex.EncodeToString(key))
+					done <- struct{}{}
 					return
 				}
 			}
@@ -85,10 +93,23 @@ func tryBlock(messageBytes, hashcodeBytes []byte, block uint8) {
 	}
 }
 
-/*CheckMAC checks that the messageMAC is correct*/
-func CheckMAC(message, messageMAC, key []byte) bool {
+func checkMAC(message, messageMAC, key []byte) bool {
 	mac := hmac.New(sha1.New, key)
 	mac.Write(message)
-	expectedMAC := mac.Sum(nil)
-	return hmac.Equal(messageMAC, expectedMAC)
+	expected := mac.Sum(nil)
+	return hmac.Equal(messageMAC, expected)
+}
+
+func shuffled() [256]uint8 {
+	var slice [256]uint8
+	for i := 0; i < 256; i++ {
+		slice[i] = uint8(i)
+	}
+	seed := rand.NewSource(time.Now().UnixNano())
+	rng := rand.New(seed)
+	for i := 256; i > 0; i-- {
+		randi := rng.Intn(i)
+		slice[i-1], slice[randi] = slice[randi], slice[i-1]
+	}
+	return slice
 }
