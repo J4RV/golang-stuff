@@ -1,0 +1,3 @@
+ - [ ] FLAGS: Accept the point array from a flag
+ - [ ] FLAGS: Implement multiple approximation functions
+ - [ ] FLAGS: Let the user choose the result path for the image.
