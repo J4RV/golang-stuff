@@ -1,0 +1,45 @@
+package approximations
+
+import (
+	"fmt"
+)
+
+type cubes struct {
+	a, b, c, d float64
+}
+
+func (c *cubes) Calc(x float64) float64 {
+	sq := x * x
+	return c.a + c.b*x + c.c*sq + c.d*x*sq
+}
+
+func (c *cubes) Mutation(temp float64) Cell {
+	res := *c
+	res.mutate(mutationArray(4))
+	return &res
+}
+
+func (c *cubes) Fitness(points *[]Point) float64 {
+	var sum float64
+	for _, p := range *points {
+		sum += p.aproxError(c)
+	}
+	return sum
+}
+
+func (c *cubes) String() string {
+	return fmt.Sprintf("%.3f + x*%.3f + (x^2)*%.3f + (x^3)*%.3f\n", c.a, c.b, c.c, c.d)
+}
+
+func (c *cubes) New() Cell {
+	res := *c
+	res.mutate(initialArray(4))
+	return &res
+}
+
+func (c *cubes) mutate(mutation []float64) {
+	c.a += mutation[0]
+	c.b += mutation[1]
+	c.c += mutation[2]
+	c.d += mutation[3]
+}
