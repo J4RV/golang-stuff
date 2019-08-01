@@ -17,18 +17,14 @@ func (c *sines2) Calc(x float64) float64 {
 	return c.y + x*c.z + math.Sin(x*c.a1+c.a2)*c.a3 + math.Sin(x*c.b1+c.b2)*c.b3
 }
 
-func (c *sines2) Mutation(temp float64) Cell {
-	new := *c
-	new.mutate(mutationArray(8))
-	return &new
-}
-
-func (c *sines2) Fitness(points *[]Point) float64 {
-	var sum float64
-	for _, p := range *points {
-		sum += p.aproxError(c)
+func (c *sines2) Mutation(temp float64, out *Cell) {
+	res, ok := (*out).(*sines2)
+	if !ok {
+		panic("Mutation error")
 	}
-	return sum
+	*res = *c
+	(*res).mutate(*mutationArray(8, temp))
+	*out = res
 }
 
 func (c *sines2) String() string {
@@ -39,9 +35,9 @@ func (c *sines2) String() string {
 	)
 }
 
-func (c *sines2) New() Cell {
+func (c *sines2) New(cfg Config) Cell {
 	new := *c
-	new.mutate(initialArray(8))
+	new.mutate(*initialArray(8, cfg.initialTemp))
 	return &new
 }
 

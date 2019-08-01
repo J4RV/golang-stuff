@@ -16,4 +16,8 @@
 
 # Not interested in log files
 *.log
+
 *.sqlite3
+
+**/.idea/workspace.xml
+**/.idea/tasks.xml

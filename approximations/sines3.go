@@ -14,21 +14,21 @@ type sines3 struct {
 }
 
 func (c *sines3) Calc(x float64) float64 {
-	return c.y + x*c.z + math.Sin(x*c.a1+c.a2)*c.a3 + math.Sin(x*c.b1+c.b2)*c.b3 + math.Sin(x*c.c1+c.c2)*c.c3
+	return c.y +
+		x*c.z +
+		math.Sin(x*c.a1+c.a2)*c.a3 +
+		math.Sin(x*c.b1+c.b2)*c.b3 +
+		math.Sin(x*c.c1+c.c2)*c.c3
 }
 
-func (c *sines3) Mutation(temp float64) Cell {
-	new := *c
-	new.mutate(mutationArray(11))
-	return &new
-}
-
-func (c *sines3) Fitness(points *[]Point) float64 {
-	var sum float64
-	for _, p := range *points {
-		sum += p.aproxError(c)
+func (c *sines3) Mutation(temp float64, out *Cell) {
+	res, ok := (*out).(*sines3)
+	if !ok {
+		panic("Mutation error")
 	}
-	return sum
+	*res = *c
+	(*res).mutate(*mutationArray(11, temp))
+	*out = res
 }
 
 func (c *sines3) String() string {
@@ -40,9 +40,9 @@ func (c *sines3) String() string {
 	)
 }
 
-func (c *sines3) New() Cell {
+func (c *sines3) New(cfg Config) Cell {
 	new := *c
-	new.mutate(initialArray(11))
+	new.mutate(*initialArray(11, cfg.initialTemp))
 	return &new
 }
 

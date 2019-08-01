@@ -13,27 +13,23 @@ func (c *cubes) Calc(x float64) float64 {
 	return c.a + c.b*x + c.c*sq + c.d*x*sq
 }
 
-func (c *cubes) Mutation(temp float64) Cell {
-	res := *c
-	res.mutate(mutationArray(4))
-	return &res
-}
-
-func (c *cubes) Fitness(points *[]Point) float64 {
-	var sum float64
-	for _, p := range *points {
-		sum += p.aproxError(c)
+func (c *cubes) Mutation(temp float64, out *Cell) {
+	res, ok := (*out).(*cubes)
+	if !ok {
+		panic("Mutation error")
 	}
-	return sum
+	*res = *c
+	(*res).mutate(*mutationArray(4, temp))
+	*out = res
 }
 
 func (c *cubes) String() string {
 	return fmt.Sprintf("%.3f + x*%.3f + (x^2)*%.3f + (x^3)*%.3f\n", c.a, c.b, c.c, c.d)
 }
 
-func (c *cubes) New() Cell {
+func (c *cubes) New(cfg Config) Cell {
 	res := *c
-	res.mutate(initialArray(4))
+	res.mutate(*initialArray(4, cfg.initialTemp))
 	return &res
 }
 

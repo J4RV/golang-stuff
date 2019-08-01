@@ -18,19 +18,26 @@ import (
 
 var fileRegex *regexp.Regexp
 var containsFilter string
+var ignoreCasing bool
 
 func main() {
 	var fileRegexStr string
 	var verbose bool
-	flag.StringVar(&fileRegexStr, "nameRgx", "^.*$", "Files which filenames don't pass this Regex will be discarded")
-	flag.StringVar(&containsFilter, "contains", "", "Only files that contains the input text in a single line will be logged")
-	flag.BoolVar(&verbose, "v", false, "Verbose (more logging)")
+	flag.StringVar(&fileRegexStr, "n", "^.*$", "Name regex: files which filenames don't pass this Regex will be discarded")
+	flag.StringVar(&containsFilter, "c", "", "Contains: only files that contains the input text in a single line will be logged")
+	flag.BoolVar(&verbose, "v", false, "Verbose: more logging")
+	flag.BoolVar(&ignoreCasing, "i", false, "Ignore casing")
 	flag.Parse()
+
 	if verbose {
 		log.SetLevel(log.ALL)
 	} else {
 		log.SetLevel(log.INFO)
 	}
+	if ignoreCasing {
+		containsFilter = strings.ToLower(containsFilter)
+	}
+
 	fileRegex = regexp.MustCompile(fileRegexStr)
 	execute()
 }
@@ -39,6 +46,7 @@ func execute() {
 	stopTimer := stopwatch.Start()
 	log.Info("Searching...")
 	files := traverseAndReturnFilePaths(".")
+	log.Info("Files that passed the filter:", len(files))
 	log.Info("Printing filenames:")
 	for f := range files {
 		fmt.Println("\t./" + f)
@@ -50,7 +58,7 @@ func execute() {
 func traverseAndReturnFilePaths(dirPath string) chan string {
 	log.Info("Traversing the directory recursively and locating files...")
 	files := traverseAndReturnFilenamesChan(dirPath)
-	log.Info("Found", len(*files), "files")
+	log.Info("Total files amount:", len(*files))
 
 	// go workers!
 	var wg sync.WaitGroup
@@ -62,11 +70,10 @@ func traverseAndReturnFilePaths(dirPath string) chan string {
 			defer wg.Done()
 			for {
 				file, ok := <-*files
-				if ok {
-					checkFile(file, &result)
-				} else {
-					return // no more files
+				if !ok {
+					return
 				}
+				checkFile(file, &result)
 			}
 		}()
 	}
@@ -117,12 +124,24 @@ func checkFile(filePath string, result *chan string) {
 		log.Error("Could not open", filePath)
 		return
 	}
-	content, err := ioutil.ReadAll(file)
-	if strings.Contains(string(content), containsFilter) {
-		*result <- filePath
-	}
+	checkFileContent(filePath, file, result)
 	err = file.Close()
 	if err != nil {
 		log.Error("Could not close", filePath)
+	}
+}
+
+func checkFileContent(filePath string, file *os.File, result *chan string) {
+	contentBytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		log.Error("Could not read", filePath)
+		return
+	}
+	content := string(contentBytes)
+	if ignoreCasing {
+		content = strings.ToLower(content)
+	}
+	if strings.Contains(content, containsFilter) {
+		*result <- filePath
 	}
 }

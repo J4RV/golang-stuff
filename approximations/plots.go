@@ -13,6 +13,7 @@ import (
 	"gonum.org/v1/plot/vg/draw"
 )
 
+// PlotResult TODO DOCS
 func PlotResult(points *[]Point, path string, cells ...Cell) {
 	p, err := plot.New()
 	checkPlotErr(err)
@@ -21,8 +22,9 @@ func PlotResult(points *[]Point, path string, cells ...Cell) {
 	p.Y.Label.Text = "Y"
 
 	min, max := minMaxX(points)
-	expand := (max-min)*.2 + 0.00001 // 0.00001 for edge cases where min and max are the same. if that happens, the plot library freezes
-	step := (max - min) * 0.002
+	width := max - min
+	expand := width*.2 + 0.00001 // 0.00001 for edge cases where min and max are the same. if that happens, the plot library freezes
+	step := width * 0.002
 
 	// Points plot
 	scattered, err := plotter.NewScatter(pointsToPlotter(points))
