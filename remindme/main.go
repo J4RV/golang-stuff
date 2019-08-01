@@ -25,7 +25,7 @@ func main() {
 
 	err := beeep.Alert(
 		*msg,
-		fmt.Sprintf("Han pasado %s", timeToSleep.String()),
+		fmt.Sprintf("Time elapsed: %s", timeToSleep.String()),
 		"C:/Go/static/img/information.png",
 	)
 	if err != nil {
