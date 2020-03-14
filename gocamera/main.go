@@ -36,7 +36,7 @@ func main() {
 }
 
 func takePicture() {
-	name := time.Now().Format("2006.01.02 15:04:05")
+	name := time.Now().Format("2006-01-02_15:04:05")+".jpg"
 	path := "$HOME/photos/"+name
 	c := exec.Command("raspistill", "-o", path)
 	if c.Run() != nil {
