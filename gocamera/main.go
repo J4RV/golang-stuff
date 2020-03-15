@@ -3,7 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 	"os/exec"
+	"path"
 	"time"
 
 	"github.com/robfig/cron/v3"
@@ -13,11 +15,21 @@ const EVERY_FOUR_HOURS = "0 0/4 ? * * *"
 const EVERY_30_SECS = "0/30 * * * * *"
 
 var testFlag bool
+var homePath = os.Getenv("HOME")
 
 func main() {
+	initialize()
+	startCRON()
+	select {} // permanent sleep, don't exit main
+}
+
+// init is evil!
+func initialize() {
 	flag.BoolVar(&testFlag, "test", false, "Takes a picture every 30 seconds instead")
 	flag.Parse()
+}
 
+func startCRON() {
 	c := cron.New(cron.WithSeconds())
 
 	cronExp := EVERY_FOUR_HOURS
@@ -32,20 +44,16 @@ func main() {
 
 	c.Start()
 	fmt.Println("CRON started successfully with expression: " + cronExp)
-	select {} // permanent sleep, don't exit main
 }
 
 func takePicture() {
 	name := time.Now().Format("2006-01-02_15:04:05") + ".jpg"
-	path := "$HOME/" + name
+	path := path.Join(homePath, name)
 
 	fmt.Println("Taking a picture at", path)
 	c := exec.Command("raspistill", "-t", "1500", "-o", path)
-	out, err := c.CombinedOutput()
 
-	if err != nil {
+	if err := c.Run(); err != nil {
 		fmt.Println(err)
-	} else if testFlag {
-		fmt.Println(string(out))
 	}
 }
