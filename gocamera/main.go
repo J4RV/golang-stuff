@@ -48,7 +48,7 @@ func startCRON() {
 
 func takePicture() {
 	name := time.Now().Format("2006-01-02_15:04:05") + ".jpg"
-	path := path.Join(homePath, name)
+	path := path.Join(homePath, "photos", name)
 
 	fmt.Println("Taking a picture at", path)
 	c := exec.Command("raspistill", "-t", "1500", "-o", path)
