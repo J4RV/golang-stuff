@@ -39,12 +39,13 @@ func takePicture() {
 	name := time.Now().Format("2006-01-02_15:04:05") + ".jpg"
 	path := "$HOME/" + name
 
-    fmt.Println("Taking a picture at", path)
+	fmt.Println("Taking a picture at", path)
 	c := exec.Command("raspistill", "-t", "1500", "-o", path)
-	err := c.Run()
+	out, err := c.CombinedOutput()
 
 	if err != nil {
-		fmt.Print("  Couldn't take picture:\n  ")
 		fmt.Println(err)
+	} else if testFlag {
+		fmt.Println(string(out))
 	}
 }
