@@ -11,7 +11,7 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
-const EVERY_FOUR_HOURS = "0 0 0/4 * *"
+const EVERY_FOUR_HOURS = "0 0 0/4 * * *"
 const EVERY_30_SECS = "0/30 * * * * *"
 
 var testFlag bool
